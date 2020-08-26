@@ -173,7 +173,7 @@ bool Okex_Set_Leverage(string sym, double leverage);
 #import
 
 
-
+input group "---------------CRYPTO BRIDGE API SETUP---------------"
 input string Binance_Api_Key = "";
 input string Binance_Api_Secret = "";
 
@@ -204,7 +204,9 @@ input string Okex_LiveDemo = "live";
 input string Okex_text_0 = "Market Type: margin, spot, futures, swap, option";
 input string Okex_Market_Type = "swap";
 
-input string Partial_TakeProfit_0 = "--------------------------------";
+input group "---------------CRYPTO BRIDGE VISUAL SETUP---------------"
+
+
 input string Partial_TakeProfit_1 = "TP/SL Line style only works with lineThickness == 1";
 input ENUM_LINE_STYLE TP_SL_lineStyle = STYLE_SOLID;
 input int TP_SL_lineThickness = 2;
@@ -221,11 +223,9 @@ input ENUM_LINE_STYLE OrderlineStyle = STYLE_SOLID;
 input int OrderlineThickness = 1;
 input color Order_Color_Buy = clrBlueViolet;
 input color Order_Color_Sell = clrRosyBrown;
-
 /*
  Create an ENUM to have a droplist of the available exchanges within your robot's expert properties
 */
-
 enum ENUM_AVAILABLE_EXCHANGE
 {
   BINANCE_DEX = 0,
@@ -240,8 +240,7 @@ enum ENUM_AVAILABLE_EXCHANGE
 
 };
 
-input string EXCHANGE_0 = "--------------------------------------------------";
-input int Exchange_RateLimiterDelay = 1000;
+
 input string EXCHANGE_1 = "-----ADJUSTMENTS BELOW ARE FOR CUSTOM ROBOTS------";
 input ENUM_AVAILABLE_EXCHANGE Exchange_Number;
 input string Exchange_Symbol_Name = "BTCUSDT";
@@ -249,6 +248,10 @@ input double Exchange_Lotsize = 1.0;
 input int Exchange_Lot_Precision = 8;
 input int Exchange_Quote_Precision = 8;
 input double Exchange_Leverage = 35;
+
+input int Exchange_Millisecond_RateLimiter = 1000;
+
+input group "---------------CRYPTO BRIDGE END SETUP---------------"
 
 class CryptoBridge
 {
@@ -865,14 +868,23 @@ bool CryptoBridge::Get_Position(string sym, int exchangeNumber, int quote_precis
    /*
   delete the TP and SL lines on the chart if exists
   */
-  DeleteOjectLinesByName("TP1");
-  DeleteOjectLinesByName("TP2");
-  DeleteOjectLinesByName("TP3");
-  DeleteOjectLinesByName("TP4");
-  DeleteOjectLinesByName("SL1");
-  DeleteOjectLinesByName("SL2");
-  DeleteOjectLinesByName("SL3");
-  DeleteOjectLinesByName("SL4");
+  DeleteOjectLinesByName("TP1b");
+  DeleteOjectLinesByName("TP2b");
+  DeleteOjectLinesByName("TP3b");
+  DeleteOjectLinesByName("TP4b");
+  DeleteOjectLinesByName("SL1b");
+  DeleteOjectLinesByName("SL2b");
+  DeleteOjectLinesByName("SL3b");
+  DeleteOjectLinesByName("SL4b");
+  
+  DeleteOjectLinesByName("TP1s");
+  DeleteOjectLinesByName("TP2s");
+  DeleteOjectLinesByName("TP3s");
+  DeleteOjectLinesByName("TP4s");
+  DeleteOjectLinesByName("SL1s");
+  DeleteOjectLinesByName("SL2s");
+  DeleteOjectLinesByName("SL3s");
+  DeleteOjectLinesByName("SL4s");
 
   if (exchangeNumber == 2)
   { 
@@ -1227,7 +1239,7 @@ void CryptoBridge::Parse_Positions(string exchangeName, int pos_location, int li
         //Buy or Sell or None(bybit) or BOTH for binanceFutures
         int dash6 = StringFind(position_info, "_", dash5 + 1);
         string orderside = StringSubstr(position_info, dash5 + 1, (dash6 - dash5) - 1);
-        //  Print("Dash6 (orderside) : " + orderside  );//+ " dash4 (length) " + dash4 + " dash5 (length) " + dash5
+          Print("Dash6 (orderside) : " + orderside  );//+ " dash4 (length) " + dash4 + " dash5 (length) " + dash5
 
         // Price
         int dash7 = StringFind(position_info, "_", dash6 + 1);
@@ -1248,6 +1260,7 @@ void CryptoBridge::Parse_Positions(string exchangeName, int pos_location, int li
         ArrayResize(exchange_ordersize_p, counterD + 1, 0);
 
         // COUNTER STARTS AT ZERO for array[0] =
+        Print("ParsePositions counterD " + counterD);
         exchange_name_p[counterD] = exchange;
         exchange_symbol_p[counterD] = symbol;
         exchange_orderside_p[counterD] = orderside;
