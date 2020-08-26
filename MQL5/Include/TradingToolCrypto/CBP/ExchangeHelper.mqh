@@ -1,3 +1,9 @@
+#import "TTC_PRO.ex5"
+void ttc_g();
+string ttc_e();
+string ttc_d(string hexData);
+#import
+
 #include <TradingToolCrypto\MQL\sha256.mqh>
 #include <TradingToolCrypto\MQL\Jason.mqh>
 #include <TradingToolCrypto\MQL\HEX.mqh>
