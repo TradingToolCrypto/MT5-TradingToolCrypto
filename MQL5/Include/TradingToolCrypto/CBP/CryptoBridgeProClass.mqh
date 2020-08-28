@@ -8,6 +8,7 @@
 int GetOrderNumberFromLineName(string linename);
 string GetVolumeFromLineName(string linename);
 string GetSideFromLineName(string linename);
+string GetTypeFromLineName(string linename);
 string GetObjectDesc(int what_order_number);
 void DeleteOjectLinesByName(string linedesc);
 void DeleteOjectLinesByDesc(string linedesc);
@@ -272,7 +273,10 @@ public:
   bool Open_Trade(string sym, string side, string orderType, string orderSize, string orderPrice, int quoteDigit, int lotDigit, int exchangeNumber);
   bool Open_Trade_Stop(string sym, string side, string orderType, string orderSize, string stopPrice, int quoteDigit, int lotDigit, int exchangeNumber);
   bool Open_Trade_StopLimit(string sym, string side, string orderType, string orderSize, string orderPrice, string stopPrice, int quoteDigit, int lotDigit, int exchangeNumber);
-  bool Modify_Trade(string sym, string id, string orderPrice ,int orderNumber, string orderSide, string orderSize, int quoteDigit, int lotDigit,int exchangeNumber);
+  bool Modify_Trade(string sym, string side, string orderType, string orderSize,string orderPrice, string id, int orderNumber,  int quoteDigit, int lotDigit,int exchangeNumber);
+   
+  
+  
   bool Cancel_Trade(string sym, string orderId, int exchangeNumber, int order_number);
   bool Cancel_Trade_All(string sym, int exchangeNumber);
   bool Hedge_Mode(bool on_true_off_false, int exchangeNumber);
@@ -404,8 +408,10 @@ bool CryptoBridge::Hedge_Mode(bool on_true_off_false, int exchangeNumber)
 
 //+------------------------------------------------------------------+
 //|     modify order by id                                           |
+//bool Modify_Trade(string sym, string side, string orderType, string orderSize,string orderPrice, string id, int orderNumber,  int quoteDigit, int lotDigit,int exchangeNumber);
+   
 //+------------------------------------------------------------------+
-bool CryptoBridge::Modify_Trade(string sym, string id, string orderPrice, int orderNumber, string orderSide, string orderSize, int quoteDigit, int lotDigit,int exchangeNumber)
+bool CryptoBridge::Modify_Trade(string sym, string side, string orderType, string orderSize,string orderPrice, string id, int orderNumber,  int quoteDigit, int lotDigit,int exchangeNumber)
 {
 
   if (exchangeNumber == 1)
@@ -436,7 +442,14 @@ bool CryptoBridge::Modify_Trade(string sym, string id, string orderPrice, int or
       /*
       Place a new order 
       */
-     return (BinanceFutures_Open_Trade(sym, orderSide, "LIMIT", orderSize, orderPrice,quoteDigit,lotDigit));
+      
+      if(orderType=="LIMIT"){
+         return (BinanceFutures_Open_Trade(sym, side, "LIMIT", orderSize, orderPrice,quoteDigit,lotDigit));
+      }
+       if(orderType=="STOPMARKET"){
+         return (BinanceFutures_Open_Trade_Stop(sym, side, "STOP_MARKET", orderSize, orderPrice,quoteDigit,lotDigit));
+      }
+   
   }
   if (exchangeNumber == 6)
   {
@@ -926,6 +939,7 @@ bool CryptoBridge::Get_OpenOrders(string sym, int exchangeNumber, int quote_prec
   
   DeleteGlobalPrefix(prefix + "_Order_" + sym + "_MARKET");
   DeleteGlobalPrefix(prefix + "_Order_" + sym + "_LIMIT");
+  DeleteGlobalPrefix(prefix + "_Order_" + sym + "_STOP");
   DeleteGlobalPrefix(prefix + "_Order_" + sym + "_STOPMARKET");
   DeleteGlobalPrefix(prefix + "_Order_" + sym + "_STOP_MARKET");
   DeleteGlobalPrefix(prefix + "_Order_" + sym + "_STOPLIMIT");
@@ -1162,11 +1176,11 @@ void CryptoBridge::Parse_Orders(string exchangeName, int order_location, int id_
 
       if (exchange_orderside[i] == "BUY")
       {
-        CreateOrderEntryLine(exchange_symbol[i] + "_BUY_"  +exchange_ordersize[i] + "_" + IntegerToString(i), GetObjectDesc(i), bar_close - 6000, exchange_orderprice[i], bar_close, exchange_orderprice[i], Order_Color_Buy, OrderlineThickness, OrderlineStyle);
+        CreateOrderEntryLine(exchange_symbol[i] +"_"+exchange_ordertype[i]+ "_BUY_"  +exchange_ordersize[i] + "_" + IntegerToString(i), GetObjectDesc(i), bar_close - 6000, exchange_orderprice[i], bar_close, exchange_orderprice[i], Order_Color_Buy, OrderlineThickness, OrderlineStyle);
       }
       if (exchange_orderside[i] == "SELL")
       {
-        CreateOrderEntryLine(exchange_symbol[i] + "_SELL_" +exchange_ordersize[i] + "_" + IntegerToString(i), GetObjectDesc(i), bar_close - 6000, exchange_orderprice[i], bar_close, exchange_orderprice[i], Order_Color_Sell, OrderlineThickness, OrderlineStyle);
+        CreateOrderEntryLine(exchange_symbol[i] +"_"+exchange_ordertype[i]+ "_SELL_" +exchange_ordersize[i] + "_" + IntegerToString(i), GetObjectDesc(i), bar_close - 6000, exchange_orderprice[i], bar_close, exchange_orderprice[i], Order_Color_Sell, OrderlineThickness, OrderlineStyle);
       }
     }
   }
@@ -1239,7 +1253,7 @@ void CryptoBridge::Parse_Positions(string exchangeName, int pos_location, int li
         //Buy or Sell or None(bybit) or BOTH for binanceFutures
         int dash6 = StringFind(position_info, "_", dash5 + 1);
         string orderside = StringSubstr(position_info, dash5 + 1, (dash6 - dash5) - 1);
-          Print("Dash6 (orderside) : " + orderside  );//+ " dash4 (length) " + dash4 + " dash5 (length) " + dash5
+        //  Print("Dash6 (orderside) : " + orderside  );//+ " dash4 (length) " + dash4 + " dash5 (length) " + dash5
 
         // Price
         int dash7 = StringFind(position_info, "_", dash6 + 1);
