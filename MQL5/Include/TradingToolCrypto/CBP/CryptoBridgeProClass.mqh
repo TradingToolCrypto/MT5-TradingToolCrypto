@@ -1,8 +1,16 @@
 #property copyright "Copyright 2020, TradingToolCrypto Corp."
 #property link      "https://github.com/tradingtoolcrypto"
-#define VERSION 1.33
+#define VERSION 1.35
 /*
    https://github.com/tradingtoolcrypto
+   - v1.34 
+      - Modify_Trade (fixed for binance futures stop_loss order types )
+      - added orderID for OpenTrade()
+   - v1.35
+      - bitmex cancel orderID or cancel All 
+      - added ClientOrderID for ModifyTrade() and CancelTrade()
+      - bitmex NormalizeString on ModifyTrade 
+      - bitmex drag and drop pending orders works 
 */
 #import "CBP_Functions.ex5"
 int GetOrderNumberFromLineName(string linename);
@@ -27,11 +35,11 @@ string NormalizeString(string value, int digit);
 #import
 
 #import "Binance_api.ex5"
-bool Binance_Cancel_Trade(string sym, long orderId);
+bool Binance_Cancel_Trade(string sym, long orderId,string clientOrderId);
 bool Binance_Cancel_Trade_All(string sym);
-bool Binance_Open_Trade(string sym, string side, string orderType, string orderSize, string orderPrice, int quoteDigit, int lotDigit);
-bool Binance_Open_Trade_Stop(string sym, string side, string orderType, string orderSize, string stopPrice, int quoteDigit, int lotDigit);
-bool Binance_Open_Trade_StopLimit(string sym, string side, string orderType, string orderSize, string orderPrice, string stopPrice, int quoteDigit, int lotDigit);
+bool Binance_Open_Trade(string sym, string side, string orderType, string orderSize, string orderPrice, int quoteDigit, int lotDigit, string newClientOrderId);
+bool Binance_Open_Trade_Stop(string sym, string side, string orderType, string orderSize, string stopPrice, int quoteDigit, int lotDigit, string newClientOrderId);
+bool Binance_Open_Trade_StopLimit(string sym, string side, string orderType, string orderSize, string orderPrice, string stopPrice, int quoteDigit, int lotDigit, string newClientOrderId);
 bool Binance_Balance(string sym, string quotebase);
 bool Binance_GetPriceBest(string sym, int quote_digit);
 bool Binance_GetPrice(string sym);
@@ -41,11 +49,11 @@ bool Binance_GetOpenOrders(string sym, int quote_precision);
 #import
 
 #import "BinanceUS_api.ex5"
-bool Binance_US_Cancel_Trade(string sym, long orderId);
+bool Binance_US_Cancel_Trade(string sym, long orderId, string  clientOrderId);
 bool Binance_US_Cancel_Trade_All(string sym);
-bool Binance_US_Open_Trade(string sym, string side, string orderType, string orderSize, string orderPrice, int quoteDigit, int lotDigit);
-bool Binance_US_Open_Trade_Stop(string sym, string side, string orderType, string orderSize, string stopPrice, int quoteDigit, int lotDigit);
-bool Binance_US_Open_Trade_StopLimit(string sym, string side, string orderType, string orderSize, string orderPrice, string stopPrice, int quoteDigit, int lotDigit);
+bool Binance_US_Open_Trade(string sym, string side, string orderType, string orderSize, string orderPrice, int quoteDigit, int lotDigit,string newClientOrderId);
+bool Binance_US_Open_Trade_Stop(string sym, string side, string orderType, string orderSize, string stopPrice, int quoteDigit, int lotDigit,string newClientOrderId);
+bool Binance_US_Open_Trade_StopLimit(string sym, string side, string orderType, string orderSize, string orderPrice, string stopPrice, int quoteDigit, int lotDigit,string newClientOrderId);
 bool Binance_US_Balance(string sym, string quotebase);
 bool Binance_US_GetPriceBest(string sym, int quote_digit);
 bool Binance_US_GetPrice(string sym);
@@ -58,11 +66,11 @@ bool Binance_US_GetOpenOrders(string sym, int quote_precision);
 bool BinanceFutures_HedgeMode(string hedgeOn_true_else_false);
 bool BinanceFutures_Get_API_Key(string key, string secret, string livedemo);
 
-bool BinanceFutures_Cancel_Trade(string sym, long orderId);
+bool BinanceFutures_Cancel_Trade(string sym, long orderId,string clientOrderId);
 bool BinanceFutures_Cancel_Trade_ALL(string sym);
-bool BinanceFutures_Open_Trade(string sym, string side, string orderType, string orderSize, string orderPrice,int quoteDigit, int lotDigit);
-bool BinanceFutures_Open_Trade_Stop(string sym, string side, string orderType, string orderSize, string stopPrice, int quoteDigit, int lotDigit);
-bool BinanceFutures_Open_Trade_StopLimit(string sym, string side, string orderType, string orderSize, string orderPrice, string stopPrice,int quoteDigit, int lotDigit);
+bool BinanceFutures_Open_Trade(string sym, string side, string orderType, string orderSize, string orderPrice,int quoteDigit, int lotDigit,string orderId);
+bool BinanceFutures_Open_Trade_Stop(string sym, string side, string orderType, string orderSize, string stopPrice, int quoteDigit, int lotDigit,string orderId);
+bool BinanceFutures_Open_Trade_StopLimit(string sym, string side, string orderType, string orderSize, string orderPrice, string stopPrice,int quoteDigit, int lotDigit,string orderId);
 bool BinanceFutures_Close_Trade(string sym, string side, string orderType, string orderSize, string orderPrice, int quoteDigit, int lotDigit);
 bool BinanceFutures_Balance(string sym, string quotebase);
 bool BinanceFutures_GetPriceBest(string sym, int quote_digit);
@@ -91,11 +99,12 @@ bool Binance_Dex_Time_Sales(string symbol, int limit);
 #import
 
 #import "Bybit_api.ex5"
-bool Bybit_Modify_Trade(string sym, string orderId, string price, int quoteDigit, int lotDigit);
-bool Bybit_Cancel_Trade(string sym, string orderId);
+bool Bybit_Modify_Trade(string sym, string orderId, string clientOrderId, string price, int quoteDigit, int lotDigit);
+bool Bybit_Cancel_Trade(string sym, string orderId, string clientOrderId);
 bool Bybit_Cancel_Trade_All(string sym);
-bool Bybit_Open_Trade(string sym, string side, string orderType, string orderSize, string orderPrice, int quoteDigit, int lotDigit);
-bool Bybit_Open_Trade_Stop(string sym, string side, string orderType, string orderSize, string stopPrice, int quoteDigit, int lotDigit);
+bool Bybit_Cancel_Trade_Stop(string sym, string orderId, string clientOrderId);
+bool Bybit_Open_Trade(string sym, string side, string orderType, string orderSize, string orderPrice, int quoteDigit, int lotDigit,string orderId);
+bool Bybit_Open_Trade_Stop(string sym, string side, string orderType, string orderSize, string stopPrice, int quoteDigit, int lotDigit,string orderId);
 bool Bybit_Balance(string sym, string quotebase);
 bool Bybit_GetOpenOrders(string sym, int quote_precision);
 bool Bybit_GetPriceBest(string sym, int quoteDigit);
@@ -114,9 +123,11 @@ bool Bybit_Set_Leverage(string sym, double leverage);
 #import "Bitmex_api.ex5"
 bool Bitmex_GetOpenOrders(string sym, int quote_precision);
 bool Bitmex_Positions(string sym, int quote_precision);
-bool Bitmex_Cancel_Trade(string sym, string orderId);
+bool Bitmex_Cancel_Trade(string sym, string orderId, string clientOrderId);
 bool Bitmex_Cancel_Trade_All(string sym);
-bool Bitmex_Open_Trade(string sym, string side, string orderType, string orderSize, string orderPrice, int quoteDigit, int lotDigit);
+bool Bitmex_Open_Trade(string sym, string side, string orderType, string orderSize, string orderPrice, int quoteDigit, int lotDigit,string orderId);
+bool Bitmex_Open_Trade_Stop(string sym, string side, string orderType, string orderSize, string stopPrice, int quoteDigit, int lotDigit, string orderId);
+bool Bitmex_Modify_Trade(string sym, string side, string orderType, string orderSize, string orderPrice, string orderId,string clientOrderId, int quoteDigit, int lotDigit);
 bool Bitmex_Balance(string sym, string quotebase);
 bool Bitmex_GetPriceBest(string sym);
 bool Bitmex_GetPrice(string sym);
@@ -270,14 +281,14 @@ public:
   bool Get_OpenOrders(string sym, int exchangeNumber, int quote_precision);
   string Get_Exchange_Name(int exchangeNumber);
   bool Get_Exchange_Server_Time(int exchangeNumber);
-  bool Open_Trade(string sym, string side, string orderType, string orderSize, string orderPrice, int quoteDigit, int lotDigit, int exchangeNumber);
-  bool Open_Trade_Stop(string sym, string side, string orderType, string orderSize, string stopPrice, int quoteDigit, int lotDigit, int exchangeNumber);
-  bool Open_Trade_StopLimit(string sym, string side, string orderType, string orderSize, string orderPrice, string stopPrice, int quoteDigit, int lotDigit, int exchangeNumber);
-  bool Modify_Trade(string sym, string side, string orderType, string orderSize,string orderPrice, string id, int orderNumber,  int quoteDigit, int lotDigit,int exchangeNumber);
+  bool Open_Trade(string sym, string side, string orderType, string orderSize, string orderPrice, int quoteDigit, int lotDigit, int exchangeNumber,string orderId);
+  bool Open_Trade_Stop(string sym, string side, string orderType, string orderSize, string stopPrice, int quoteDigit, int lotDigit, int exchangeNumber,string orderId);
+  bool Open_Trade_StopLimit(string sym, string side, string orderType, string orderSize, string orderPrice, string stopPrice, int quoteDigit, int lotDigit, int exchangeNumber,string orderId);
+  bool Modify_Trade(string sym, string side, string orderType, string orderSize,string orderPrice, string id,string clientId, int orderNumber,  int quoteDigit, int lotDigit,int exchangeNumber);
    
   
   
-  bool Cancel_Trade(string sym, string orderId, int exchangeNumber, int order_number);
+  bool Cancel_Trade(string sym, string orderId, int exchangeNumber, int order_number, string clientOrderId);
   bool Cancel_Trade_All(string sym, int exchangeNumber);
   bool Hedge_Mode(bool on_true_off_false, int exchangeNumber);
   void Parse_Orders(string exchangeName, int order_location, int id_location);
@@ -390,7 +401,7 @@ string CryptoBridge::Get_Exchange_Name(int exchange_number)
 
 bool CryptoBridge::Hedge_Mode(bool on_true_off_false, int exchangeNumber)
 {
-
+  Print("CBP HedgeMode");
   if (exchangeNumber == 5)
   {
     if (on_true_off_false)
@@ -411,21 +422,21 @@ bool CryptoBridge::Hedge_Mode(bool on_true_off_false, int exchangeNumber)
 //bool Modify_Trade(string sym, string side, string orderType, string orderSize,string orderPrice, string id, int orderNumber,  int quoteDigit, int lotDigit,int exchangeNumber);
    
 //+------------------------------------------------------------------+
-bool CryptoBridge::Modify_Trade(string sym, string side, string orderType, string orderSize,string orderPrice, string id, int orderNumber,  int quoteDigit, int lotDigit,int exchangeNumber)
+bool CryptoBridge::Modify_Trade(string sym, string side, string orderType, string orderSize,string orderPrice, string id, string clientId, int orderNumber,  int quoteDigit, int lotDigit,int exchangeNumber)
 {
-
+  Print("CBP ModifyTrade | ID " + id + " |  Client ID " + clientId);
   if (exchangeNumber == 1)
   {
     // return (Binance_Open_Trade(sym, side, orderType, orderSize, orderPrice));
   }
   if (exchangeNumber == 2)
   {
-    return (Bybit_Modify_Trade(sym, id, orderPrice,quoteDigit,lotDigit));
+    return (Bybit_Modify_Trade(sym, id,clientId, orderPrice,quoteDigit,lotDigit));
   }
 
   if (exchangeNumber == 3)
   {
-    // return (Bitmex_Open_Trade(sym, side, orderType, orderSize, orderPrice));
+    return (Bitmex_Modify_Trade(sym, side, orderType, orderSize, orderPrice, id,clientId, quoteDigit, lotDigit));
   }
 
   if (exchangeNumber == 4)
@@ -438,16 +449,16 @@ bool CryptoBridge::Modify_Trade(string sym, string side, string orderType, strin
       /*
       Cancelt the order 
       */
-      CryptoBridge::Cancel_Trade(sym,id,exchangeNumber,orderNumber);
+      CryptoBridge::Cancel_Trade(sym,id,exchangeNumber,orderNumber, id);
       /*
       Place a new order 
       */
       
       if(orderType=="LIMIT"){
-         return (BinanceFutures_Open_Trade(sym, side, "LIMIT", orderSize, orderPrice,quoteDigit,lotDigit));
+         return (BinanceFutures_Open_Trade(sym, side, orderType, orderSize, orderPrice,quoteDigit,lotDigit,id));
       }
-       if(orderType=="STOPMARKET"){
-         return (BinanceFutures_Open_Trade_Stop(sym, side, "STOP_MARKET", orderSize, orderPrice,quoteDigit,lotDigit));
+       if(orderType=="STOP_LOSS"){
+         return (BinanceFutures_Open_Trade_Stop(sym, side, orderType, orderSize, orderPrice,quoteDigit,lotDigit,id));
       }
    
   }
@@ -464,21 +475,21 @@ bool CryptoBridge::Modify_Trade(string sym, string side, string orderType, strin
 //+------------------------------------------------------------------+
 //|     market or limit order                                        |
 //+------------------------------------------------------------------+
-bool CryptoBridge::Open_Trade(string sym, string side, string orderType, string orderSize, string orderPrice, int quoteDigit, int lotDigit, int exchangeNumber)
+bool CryptoBridge::Open_Trade(string sym, string side, string orderType, string orderSize, string orderPrice, int quoteDigit, int lotDigit, int exchangeNumber, string orderId)
 {
-
+  Print("CBP OpenTrade");
   if (exchangeNumber == 1)
   {
-    return (Binance_Open_Trade(sym, side, orderType, orderSize, orderPrice,quoteDigit,lotDigit));
+    return (Binance_Open_Trade(sym, side, orderType, orderSize, orderPrice,quoteDigit,lotDigit,orderId));
   }
   if (exchangeNumber == 2)
   {
-    return (Bybit_Open_Trade(sym, side, orderType, orderSize, orderPrice,quoteDigit,lotDigit));
+    return (Bybit_Open_Trade(sym, side, orderType, orderSize, orderPrice,quoteDigit,lotDigit,orderId));
   }
 
   if (exchangeNumber == 3)
   {
-    return (Bitmex_Open_Trade(sym, side, orderType, orderSize, orderPrice,quoteDigit,lotDigit));
+    return (Bitmex_Open_Trade(sym, side, orderType, orderSize, orderPrice,quoteDigit,lotDigit,orderId));
   }
 
   if (exchangeNumber == 4)
@@ -488,11 +499,11 @@ bool CryptoBridge::Open_Trade(string sym, string side, string orderType, string 
 
   if (exchangeNumber == 5)
   {
-    return (BinanceFutures_Open_Trade(sym, side, orderType, orderSize, orderPrice,quoteDigit,lotDigit));
+    return (BinanceFutures_Open_Trade(sym, side, orderType, orderSize, orderPrice,quoteDigit,lotDigit,orderId));
   }
   if (exchangeNumber == 6)
   {
-    return (Binance_US_Open_Trade(sym, side, orderType, orderSize, orderPrice,quoteDigit,lotDigit));
+    return (Binance_US_Open_Trade(sym, side, orderType, orderSize, orderPrice,quoteDigit,lotDigit,orderId));
   }
   if (exchangeNumber == 7)
   {
@@ -503,24 +514,30 @@ bool CryptoBridge::Open_Trade(string sym, string side, string orderType, string 
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-bool CryptoBridge::Open_Trade_Stop(string sym, string side, string orderType, string orderSize, string stopPrice, int quoteDigit, int lotDigit, int exchangeNumber)
+bool CryptoBridge::Open_Trade_Stop(string sym, string side, string orderType, string orderSize, string stopPrice, int quoteDigit, int lotDigit, int exchangeNumber, string orderId)
 {
-
+  Print("CBP OpenTradeStop");
   if (exchangeNumber == 1)
   {
-    return (Binance_Open_Trade_Stop(sym, side, orderType, orderSize,stopPrice,quoteDigit,lotDigit));
+    return (Binance_Open_Trade_Stop(sym, side, orderType, orderSize,stopPrice,quoteDigit,lotDigit,orderId));
   }
   if (exchangeNumber == 2)
   {
-    return (Bybit_Open_Trade_Stop(sym, side, orderType, orderSize, stopPrice,quoteDigit,lotDigit));
+    return (Bybit_Open_Trade_Stop(sym, side, orderType, orderSize, stopPrice,quoteDigit,lotDigit,orderId));
   }
+  
+  if (exchangeNumber == 3)
+  {
+    return (Bitmex_Open_Trade_Stop(sym, side, orderType, orderSize, stopPrice,quoteDigit,lotDigit,orderId));
+  }
+  
   if (exchangeNumber == 5)
   {
-    return (BinanceFutures_Open_Trade_Stop(sym, side, orderType, orderSize, stopPrice,quoteDigit,lotDigit));
+    return (BinanceFutures_Open_Trade_Stop(sym, side, orderType, orderSize, stopPrice,quoteDigit,lotDigit,orderId));
   }
   if (exchangeNumber == 6)
   {
-    return (Binance_US_Open_Trade_Stop(sym, side, orderType, orderSize,stopPrice,quoteDigit,lotDigit));
+    return (Binance_US_Open_Trade_Stop(sym, side, orderType, orderSize,stopPrice,quoteDigit,lotDigit,orderId));
   }
 
   return (false);
@@ -528,29 +545,29 @@ bool CryptoBridge::Open_Trade_Stop(string sym, string side, string orderType, st
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-bool CryptoBridge::Open_Trade_StopLimit(string sym, string side, string orderType, string orderSize, string orderPrice, string stopPrice, int quoteDigit, int lotDigit, int exchangeNumber)
+bool CryptoBridge::Open_Trade_StopLimit(string sym, string side, string orderType, string orderSize, string orderPrice, string stopPrice, int quoteDigit, int lotDigit, int exchangeNumber, string orderId)
 {
-
+   Print("CBP OpenTradeStopLimit");
   if (exchangeNumber == 1)
   {
-    return (Binance_Open_Trade_StopLimit(sym, side, orderType, orderSize, orderPrice, stopPrice,quoteDigit,lotDigit));
+    return (Binance_Open_Trade_StopLimit(sym, side, orderType, orderSize, orderPrice, stopPrice,quoteDigit,lotDigit,orderId));
   }
   if (exchangeNumber == 5)
   {
-    return (BinanceFutures_Open_Trade_StopLimit(sym, side, orderType, orderSize, orderPrice, stopPrice,quoteDigit,lotDigit));
+    return (BinanceFutures_Open_Trade_StopLimit(sym, side, orderType, orderSize, orderPrice, stopPrice,quoteDigit,lotDigit,orderId));
   }
   if (exchangeNumber == 6)
   {
-    return (Binance_US_Open_Trade_StopLimit(sym, side, orderType, orderSize, orderPrice, stopPrice,quoteDigit,lotDigit));
+    return (Binance_US_Open_Trade_StopLimit(sym, side, orderType, orderSize, orderPrice, stopPrice,quoteDigit,lotDigit,orderId));
   }
   return (false);
 }
 //+------------------------------------------------------------------+
 //|       cancel specific order based on order ID                    |
 //+------------------------------------------------------------------+
-bool CryptoBridge::Cancel_Trade(string sym, string orderId, int exchangeNumber, int order_number)
+bool CryptoBridge::Cancel_Trade(string sym, string orderId, int exchangeNumber, int order_number, string clientOrderId)
 {
-
+   Print("CBP Cancel Trade" + " | orderID " + orderId + " | clientID " + clientOrderId );
   string name = CryptoBridge::Get_Exchange_Name(exchangeNumber);
   
   DeleteGlobalOrderName(name, sym, order_number + 1); // Globals start at a value of 1
@@ -561,28 +578,28 @@ bool CryptoBridge::Cancel_Trade(string sym, string orderId, int exchangeNumber, 
 
   if (exchangeNumber == 1)
   {
-    return (Binance_Cancel_Trade(sym, StringToInteger(orderId)));
+    return (Binance_Cancel_Trade(sym, StringToInteger(orderId), clientOrderId));
   }
 
   if (exchangeNumber == 2)
   {
-    return (Bybit_Cancel_Trade(sym, orderId));
+    return (Bybit_Cancel_Trade(sym, orderId,clientOrderId));
   }
 
   if (exchangeNumber == 3)
   {
 
-    return (Bitmex_Cancel_Trade(sym, orderId));
+    return (Bitmex_Cancel_Trade(sym, orderId,clientOrderId));
   }
 
   if (exchangeNumber == 5)
   {
-    return (BinanceFutures_Cancel_Trade(sym, StringToInteger(orderId)));
+    return (BinanceFutures_Cancel_Trade(sym, StringToInteger(orderId),clientOrderId));
   }
 
   if (exchangeNumber == 6)
   {
-    return (Binance_US_Cancel_Trade(sym, StringToInteger(orderId)));
+    return (Binance_US_Cancel_Trade(sym, StringToInteger(orderId), clientOrderId ));
   }
   if (exchangeNumber == 7)
   {
@@ -596,7 +613,7 @@ bool CryptoBridge::Cancel_Trade(string sym, string orderId, int exchangeNumber, 
 //+------------------------------------------------------------------+
 bool CryptoBridge::Cancel_Trade_All(string sym, int exchangeNumber)
 {
-
+Print("CBP CancelAllTrades");
   string prefix = CryptoBridge::Get_Exchange_Name(exchangeNumber);
   
   DeleteGlobalPrefix(prefix + "_Order_" + sym); //- this is the global assigned to the orders
@@ -637,7 +654,7 @@ bool CryptoBridge::Cancel_Trade_All(string sym, int exchangeNumber)
 //+------------------------------------------------------------------+
 bool CryptoBridge::Get_Exchange_Server_Time(int exchangeNumber)
 {
-
+   Print("CBP ServerTime");
   //Binance_Dex_BlockTime()
   if (exchangeNumber == 0)
   {
@@ -1167,21 +1184,33 @@ void CryptoBridge::Parse_Orders(string exchangeName, int order_location, int id_
       }
     }
   }
-
-  if (counterC > 0)
+  int m_loop = 0;
+  int loop_main = ArraySize(exchange_name);
+  if (loop_main > 0)
   {
-
-    for (int i = counterC - 1; i > -1; i--)
+    for (int i =0; i < loop_main; i++)// working for bitmex oct25 - 2020 ( does this break other exchanges?)
+   // for (int i = loop_main - 1; i > -1; i--)
     {
+      
+      
+      Print("Debug:ParseOrders:CreateLines | i=" + i + " m="+m_loop + " | counterC " + counterC + " | " + exchange_orderside[i] + " | " + GetObjectDesc(m_loop));
 
       if (exchange_orderside[i] == "BUY")
       {
-        CreateOrderEntryLine(exchange_symbol[i] +"_"+exchange_ordertype[i]+ "_BUY_"  +exchange_ordersize[i] + "_" + IntegerToString(i), GetObjectDesc(i), bar_close - 6000, exchange_orderprice[i], bar_close, exchange_orderprice[i], Order_Color_Buy, OrderlineThickness, OrderlineStyle);
+        CreateOrderEntryLine(exchange_symbol[i] +"_"+exchange_ordertype[i]+ "_BUY_"  +exchange_ordersize[i] + "_" + IntegerToString(i), GetObjectDesc(m_loop), bar_close - 6000, exchange_orderprice[i], bar_close, exchange_orderprice[i], Order_Color_Buy, OrderlineThickness, OrderlineStyle);
+        // Update after creating the lines
+        m_loop++;
       }
       if (exchange_orderside[i] == "SELL")
       {
-        CreateOrderEntryLine(exchange_symbol[i] +"_"+exchange_ordertype[i]+ "_SELL_" +exchange_ordersize[i] + "_" + IntegerToString(i), GetObjectDesc(i), bar_close - 6000, exchange_orderprice[i], bar_close, exchange_orderprice[i], Order_Color_Sell, OrderlineThickness, OrderlineStyle);
+        CreateOrderEntryLine(exchange_symbol[i] +"_"+exchange_ordertype[i]+ "_SELL_" +exchange_ordersize[i] + "_" + IntegerToString(i), GetObjectDesc(m_loop), bar_close - 6000, exchange_orderprice[i], bar_close, exchange_orderprice[i], Order_Color_Sell, OrderlineThickness, OrderlineStyle);
+        // Update after creating the lines
+        m_loop++;
+      
       }
+      
+      
+      
     }
   }
 }
@@ -1274,7 +1303,6 @@ void CryptoBridge::Parse_Positions(string exchangeName, int pos_location, int li
         ArrayResize(exchange_ordersize_p, counterD + 1, 0);
 
         // COUNTER STARTS AT ZERO for array[0] =
-        Print("ParsePositions counterD " + counterD);
         exchange_name_p[counterD] = exchange;
         exchange_symbol_p[counterD] = symbol;
         exchange_orderside_p[counterD] = orderside;
@@ -1287,6 +1315,8 @@ void CryptoBridge::Parse_Positions(string exchangeName, int pos_location, int li
       }
     }
   }
+
+
 
   if (counterB > 0)
   {
@@ -1346,10 +1376,12 @@ void CryptoBridge::Parse_Positions(string exchangeName, int pos_location, int li
     }
   }
 
-  if (counterE > 0)
+  int loop_liq = ArraySize(liquidationarray);
+
+  if (loop_liq > 0)
   {
-    ArrayResize(liquidationarray, counterE, 0);
-    for (int i = 0; i < counterE; i++)
+    ArrayResize(liquidationarray, loop_liq);
+    for (int i = 0; i < loop_liq; i++)
     {
 
       if (liquidationarray[i] > 0)
