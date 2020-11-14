@@ -1,16 +1,21 @@
+//+------------------------------------------------------------------+
+//|                                                      ProjectName |
+//|                                      Copyright 2020, CompanyName |
+//|                                       http://www.companyname.net |
+//+------------------------------------------------------------------+
 #property copyright "Copyright 2020, TradingToolCrypto Corp."
 #property link      "https://github.com/tradingtoolcrypto"
 #define VERSION 1.35
 /*
    https://github.com/tradingtoolcrypto
-   - v1.34 
+   - v1.34
       - Modify_Trade (fixed for binance futures stop_loss order types )
       - added orderID for OpenTrade()
    - v1.35
-      - bitmex cancel orderID or cancel All 
+      - bitmex cancel orderID or cancel All
       - added ClientOrderID for ModifyTrade() and CancelTrade()
-      - bitmex NormalizeString on ModifyTrade 
-      - bitmex drag and drop pending orders works 
+      - bitmex NormalizeString on ModifyTrade
+      - bitmex drag and drop pending orders works
 */
 #import "CBP_Functions.ex5"
 int GetOrderNumberFromLineName(string linename);
@@ -66,6 +71,9 @@ bool Binance_US_GetOpenOrders(string sym, int quote_precision);
 bool BinanceFutures_HedgeMode(string hedgeOn_true_else_false);
 bool BinanceFutures_Get_API_Key(string key, string secret, string livedemo);
 
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
 bool BinanceFutures_Cancel_Trade(string sym, long orderId,string clientOrderId);
 bool BinanceFutures_Cancel_Trade_ALL(string sym);
 bool BinanceFutures_Open_Trade(string sym, string side, string orderType, string orderSize, string orderPrice,int quoteDigit, int lotDigit,string orderId);
@@ -239,18 +247,18 @@ input color Order_Color_Sell = clrRosyBrown;
  Create an ENUM to have a droplist of the available exchanges within your robot's expert properties
 */
 enum ENUM_AVAILABLE_EXCHANGE
-{
-  BINANCE_DEX = 0,
-  BINANCE = 1,
-  BYBIT = 2,
-  BITMEX = 3,
-  KUCOIN = 4,
-  BINANCE_FUTURES = 5,
-  BINANCE_US = 6,
-  DERIBIT = 7,
-  OKEX = 8
+  {
+   BINANCE_DEX = 0,
+   BINANCE = 1,
+   BYBIT = 2,
+   BITMEX = 3,
+   KUCOIN = 4,
+   BINANCE_FUTURES = 5,
+   BINANCE_US = 6,
+   DERIBIT = 7,
+   OKEX = 8
 
-};
+  };
 
 
 input string EXCHANGE_1 = "-----ADJUSTMENTS BELOW ARE FOR CUSTOM ROBOTS------";
@@ -265,823 +273,842 @@ input int Exchange_Millisecond_RateLimiter = 1000;
 
 input group "---------------CRYPTO BRIDGE END SETUP---------------"
 
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
 class CryptoBridge
-{
+  {
 protected:
-  string my_name;
+   string            my_name;
 
 public:
-  bool Init_Api_Keys(int exchange);
-  bool Get_OpenInterest(string sym, int exchangeNumber, int quote_precision);
-  bool Get_FundRate(string sym, int exchangeNumber, int quote_precision);
-  bool Get_Balance(string sym, string quote_base, int exchangeNumber);
-  bool Get_PriceBest(string sym, int exchangeNumber, int quote_precision);
-  bool Get_Price(string sym, int exchangeNumber, int quote_precision);
-  bool Get_Position(string sym, int exchangeNumber, int quote_precision);
-  bool Get_OpenOrders(string sym, int exchangeNumber, int quote_precision);
-  string Get_Exchange_Name(int exchangeNumber);
-  bool Get_Exchange_Server_Time(int exchangeNumber);
-  bool Open_Trade(string sym, string side, string orderType, string orderSize, string orderPrice, int quoteDigit, int lotDigit, int exchangeNumber,string orderId);
-  bool Open_Trade_Stop(string sym, string side, string orderType, string orderSize, string stopPrice, int quoteDigit, int lotDigit, int exchangeNumber,string orderId);
-  bool Open_Trade_StopLimit(string sym, string side, string orderType, string orderSize, string orderPrice, string stopPrice, int quoteDigit, int lotDigit, int exchangeNumber,string orderId);
-  bool Modify_Trade(string sym, string side, string orderType, string orderSize,string orderPrice, string id,string clientId, int orderNumber,  int quoteDigit, int lotDigit,int exchangeNumber);
-   
-  
-  
-  bool Cancel_Trade(string sym, string orderId, int exchangeNumber, int order_number, string clientOrderId);
-  bool Cancel_Trade_All(string sym, int exchangeNumber);
-  bool Hedge_Mode(bool on_true_off_false, int exchangeNumber);
-  void Parse_Orders(string exchangeName, int order_location, int id_location);
-  void Parse_Positions(string exchangeName, int pos_location, int liq_location, int quoteDigit);
-  void Parse_Wallets(string exchangeName);
-  double Get_Wallet_Info(int robotInstance, string exchangeName, string walletInfoSymbol);
-  bool Margin_Close_Position(string sym, string side, string orderType, string orderSize, string orderPrice, int quoteDigit, int lotDigit, int exchangeNumber);
-  bool Margin_Set_Leverage(string sym, double leverage, int exchangeNumber);
-};
+   bool              Init_Api_Keys(int exchange);
+   bool              Get_OpenInterest(string sym, int exchangeNumber, int quote_precision);
+   bool              Get_FundRate(string sym, int exchangeNumber, int quote_precision);
+   bool              Get_Balance(string sym, string quote_base, int exchangeNumber);
+   bool              Get_PriceBest(string sym, int exchangeNumber, int quote_precision);
+   bool              Get_Price(string sym, int exchangeNumber, int quote_precision);
+   bool              Get_Position(string sym, int exchangeNumber, int quote_precision);
+   bool              Get_OpenOrders(string sym, int exchangeNumber, int quote_precision);
+   string            Get_Exchange_Name(int exchangeNumber);
+   bool              Get_Exchange_Server_Time(int exchangeNumber);
+   bool              Open_Trade(string sym, string side, string orderType, string orderSize, string orderPrice, int quoteDigit, int lotDigit, int exchangeNumber,string orderId);
+   bool              Open_Trade_Stop(string sym, string side, string orderType, string orderSize, string stopPrice, int quoteDigit, int lotDigit, int exchangeNumber,string orderId);
+   bool              Open_Trade_StopLimit(string sym, string side, string orderType, string orderSize, string orderPrice, string stopPrice, int quoteDigit, int lotDigit, int exchangeNumber,string orderId);
+   bool              Modify_Trade(string sym, string side, string orderType, string orderSize,string orderPrice, string id,string clientId, int orderNumber,  int quoteDigit, int lotDigit,int exchangeNumber);
+
+
+
+   bool              Cancel_Trade(string sym, string orderId, int exchangeNumber, int order_number, string clientOrderId);
+   bool              Cancel_Trade_All(string sym, int exchangeNumber);
+   bool              Hedge_Mode(bool on_true_off_false, int exchangeNumber);
+   void              Parse_Orders(string exchangeName, int order_location, int id_location);
+   void              Parse_Positions(string exchangeName, int pos_location, int liq_location, int quoteDigit);
+   void              Parse_Wallets(string exchangeName, int x, int y);
+   double            Get_Wallet_Info(int robotInstance, string exchangeName, string walletInfoSymbol);
+   bool              Margin_Close_Position(string sym, string side, string orderType, string orderSize, string orderPrice, int quoteDigit, int lotDigit, int exchangeNumber);
+   bool              Margin_Set_Leverage(string sym, double leverage, int exchangeNumber);
+  };
 //+------------------------------------------------------------------+
 //|               Run this function any time you switch exchanges.   |
 //+------------------------------------------------------------------+
 bool CryptoBridge::Init_Api_Keys(int exchange)
-{
-
-  GlobalVariableSet("Exchange", exchange);
-
-  if (exchange == 0)
   {
 
-    return (Binance_Dex_Get_API_Key(Binance_Api_Key, Binance_Api_Secret));
-  }
-  if (exchange == 1)
-  {
+   GlobalVariableSet("Exchange", exchange);
 
-    return (Binance_Get_API_Key(Binance_Api_Key, Binance_Api_Secret));
-  }
-  if (exchange == 2)
-  {
+   if(exchange == 0)
+     {
 
-    return (Bybit_Get_API_Key(Bybit_Api_Key, Bybit_Api_Secret, Bybit_LiveDemo));
-  }
-  if (exchange == 3)
-  {
+      return (Binance_Dex_Get_API_Key(Binance_Api_Key, Binance_Api_Secret));
+     }
+   if(exchange == 1)
+     {
 
-    return (Bitmex_Get_API_Key(Bitmex_Api_Key, Bitmex_Api_Secret));
-  }
-  if (exchange == 4)
-  {
+      return (Binance_Get_API_Key(Binance_Api_Key, Binance_Api_Secret));
+     }
+   if(exchange == 2)
+     {
 
-    return (Kucoin_Get_API_Key(Kucoin_Api_Key, Kucoin_Api_Secret, Kucoin_Passphase));
-  }
-  if (exchange == 5)
-  {
+      return (Bybit_Get_API_Key(Bybit_Api_Key, Bybit_Api_Secret, Bybit_LiveDemo));
+     }
+   if(exchange == 3)
+     {
 
-    return (BinanceFutures_Get_API_Key(BinanceFutures_Api_Key, BinanceFutures_Api_Secret, BinanceFutures_LiveDemo));
-  }
-  if (exchange == 6)
-  {
+      return (Bitmex_Get_API_Key(Bitmex_Api_Key, Bitmex_Api_Secret));
+     }
+   if(exchange == 4)
+     {
 
-    return (Binance_US_Get_API_Key(Binance_US_Api_Key, Binance_US_Api_Secret));
-  }
-  if (exchange == 7)
-  {
+      return (Kucoin_Get_API_Key(Kucoin_Api_Key, Kucoin_Api_Secret, Kucoin_Passphase));
+     }
+   if(exchange == 5)
+     {
 
-    return (Deribit_Get_API_Key(Deribit_Api_Key, Deribit_Api_Secret));
-  }
-  if (exchange == 8)
-  {
+      return (BinanceFutures_Get_API_Key(BinanceFutures_Api_Key, BinanceFutures_Api_Secret, BinanceFutures_LiveDemo));
+     }
+   if(exchange == 6)
+     {
 
-    return (Okex_Get_API_Key(Okex_Api_Key, Okex_Api_Secret, Okex_LiveDemo, Okex_Market_Type));
+      return (Binance_US_Get_API_Key(Binance_US_Api_Key, Binance_US_Api_Secret));
+     }
+   if(exchange == 7)
+     {
+
+      return (Deribit_Get_API_Key(Deribit_Api_Key, Deribit_Api_Secret));
+     }
+   if(exchange == 8)
+     {
+
+      return (Okex_Get_API_Key(Okex_Api_Key, Okex_Api_Secret, Okex_LiveDemo, Okex_Market_Type));
+     }
+   return (false);
   }
-  return (false);
-}
 
 //+------------------------------------------------------------------+
 //|   return the exchange name                                       |
 //+------------------------------------------------------------------+
 string CryptoBridge::Get_Exchange_Name(int exchange_number)
-{
+  {
 
-  if (exchange_number == 0)
-  {
-    return ("BinanceDex");
+   if(exchange_number == 0)
+     {
+      return ("BinanceDex");
+     }
+   if(exchange_number == 1)
+     {
+      return ("Binance");
+     }
+   if(exchange_number == 2)
+     {
+      return ("Bybit");
+     }
+   if(exchange_number == 3)
+     {
+      return ("Bitmex");
+     }
+   if(exchange_number == 4)
+     {
+      return ("Kucoin");
+     }
+   if(exchange_number == 5)
+     {
+      return ("BinanceFutures");
+     }
+   if(exchange_number == 6)
+     {
+      return ("BinanceUS");
+     }
+   if(exchange_number == 7)
+     {
+      return ("Deribit");
+     }
+   if(exchange_number == 8)
+     {
+      return ("Okex");
+     }
+   return ("");
   }
-  if (exchange_number == 1)
-  {
-    return ("Binance");
-  }
-  if (exchange_number == 2)
-  {
-    return ("Bybit");
-  }
-  if (exchange_number == 3)
-  {
-    return ("Bitmex");
-  }
-  if (exchange_number == 4)
-  {
-    return ("Kucoin");
-  }
-  if (exchange_number == 5)
-  {
-    return ("BinanceFutures");
-  }
-  if (exchange_number == 6)
-  {
-    return ("BinanceUS");
-  }
-  if (exchange_number == 7)
-  {
-    return ("Deribit");
-  }
-  if (exchange_number == 8)
-  {
-    return ("Okex");
-  }
-  return ("");
-}
 
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
 bool CryptoBridge::Hedge_Mode(bool on_true_off_false, int exchangeNumber)
-{
-  Print("CBP HedgeMode");
-  if (exchangeNumber == 5)
   {
-    if (on_true_off_false)
-    {
-      return (BinanceFutures_HedgeMode("true"));
-    }
-    else
-    {
-      return (BinanceFutures_HedgeMode("false"));
-    }
-  }
+   Print("CBP HedgeMode");
+   if(exchangeNumber == 5)
+     {
+      if(on_true_off_false)
+        {
+         return (BinanceFutures_HedgeMode("true"));
+        }
+      else
+        {
+         return (BinanceFutures_HedgeMode("false"));
+        }
+     }
 
-  return (false);
-}
+   return (false);
+  }
 
 //+------------------------------------------------------------------+
 //|     modify order by id                                           |
 //bool Modify_Trade(string sym, string side, string orderType, string orderSize,string orderPrice, string id, int orderNumber,  int quoteDigit, int lotDigit,int exchangeNumber);
-   
+
 //+------------------------------------------------------------------+
 bool CryptoBridge::Modify_Trade(string sym, string side, string orderType, string orderSize,string orderPrice, string id, string clientId, int orderNumber,  int quoteDigit, int lotDigit,int exchangeNumber)
-{
-  Print("CBP ModifyTrade | ID " + id + " |  Client ID " + clientId);
-  if (exchangeNumber == 1)
   {
-    // return (Binance_Open_Trade(sym, side, orderType, orderSize, orderPrice));
-  }
-  if (exchangeNumber == 2)
-  {
-    return (Bybit_Modify_Trade(sym, id,clientId, orderPrice,quoteDigit,lotDigit));
-  }
+   Print("CBP ModifyTrade | ID " + id + " |  Client ID " + clientId + " | Order ID " + orderType);
+   if(exchangeNumber == 1)
+     {
+      // return (Binance_Open_Trade(sym, side, orderType, orderSize, orderPrice));
+     }
+   if(exchangeNumber == 2)
+     {
+      return (Bybit_Modify_Trade(sym, id,clientId, orderPrice,quoteDigit,lotDigit));
+     }
 
-  if (exchangeNumber == 3)
-  {
-    return (Bitmex_Modify_Trade(sym, side, orderType, orderSize, orderPrice, id,clientId, quoteDigit, lotDigit));
-  }
+   if(exchangeNumber == 3)
+     {
+      return (Bitmex_Modify_Trade(sym, side, orderType, orderSize, orderPrice, id,clientId, quoteDigit, lotDigit));
+     }
 
-  if (exchangeNumber == 4)
-  {
-    // return (Kucoin_Open_Trade(sym, side, orderType, orderSize, orderPrice));
-  }
+   if(exchangeNumber == 4)
+     {
+      // return (Kucoin_Open_Trade(sym, side, orderType, orderSize, orderPrice));
+     }
 
-  if (exchangeNumber == 5)
-  {
+   if(exchangeNumber == 5)
+     {
+     
+     if(orderType=="STOPMARKET"){      //CBP returns on line drag/drop function
+      orderType="STOP_LOSS";           // Bug fixed Nov 11 - 2020
+     }
+     
       /*
-      Cancelt the order 
+      Cancelt the order
       */
-      CryptoBridge::Cancel_Trade(sym,id,exchangeNumber,orderNumber, id);
+      CryptoBridge::Cancel_Trade(sym,id,exchangeNumber,id,clientId );// Bug fixed Nov 11 - 2020
       /*
-      Place a new order 
+      Place a new order
       */
-      
-      if(orderType=="LIMIT"){
+
+      if(orderType=="LIMIT")
+        {
          return (BinanceFutures_Open_Trade(sym, side, orderType, orderSize, orderPrice,quoteDigit,lotDigit,id));
-      }
-       if(orderType=="STOP_LOSS"){
+        }
+      if(orderType=="STOP_LOSS")
+        {
          return (BinanceFutures_Open_Trade_Stop(sym, side, orderType, orderSize, orderPrice,quoteDigit,lotDigit,id));
-      }
-   
+        }
+
+     }
+   if(exchangeNumber == 6)
+     {
+      //  return (Binance_US_Open_Trade(sym, side, orderType, orderSize, orderPrice));
+     }
+   if(exchangeNumber == 7)
+     {
+      //  return (Deribit_Open_Trade(sym, side, orderType, orderSize, orderPrice));
+     }
+   return (false);
   }
-  if (exchangeNumber == 6)
-  {
-    //  return (Binance_US_Open_Trade(sym, side, orderType, orderSize, orderPrice));
-  }
-  if (exchangeNumber == 7)
-  {
-    //  return (Deribit_Open_Trade(sym, side, orderType, orderSize, orderPrice));
-  }
-  return (false);
-}
 //+------------------------------------------------------------------+
 //|     market or limit order                                        |
 //+------------------------------------------------------------------+
 bool CryptoBridge::Open_Trade(string sym, string side, string orderType, string orderSize, string orderPrice, int quoteDigit, int lotDigit, int exchangeNumber, string orderId)
-{
-  Print("CBP OpenTrade");
-  if (exchangeNumber == 1)
   {
-    return (Binance_Open_Trade(sym, side, orderType, orderSize, orderPrice,quoteDigit,lotDigit,orderId));
-  }
-  if (exchangeNumber == 2)
-  {
-    return (Bybit_Open_Trade(sym, side, orderType, orderSize, orderPrice,quoteDigit,lotDigit,orderId));
-  }
 
-  if (exchangeNumber == 3)
-  {
-    return (Bitmex_Open_Trade(sym, side, orderType, orderSize, orderPrice,quoteDigit,lotDigit,orderId));
-  }
+   Print("CBP OpenTrade " + sym + " | " + side + " | " + orderType + " | " + orderSize + " | " + orderPrice+ " | " + quoteDigit + " | " + lotDigit + " | " + exchangeNumber + " | " + orderId);
 
-  if (exchangeNumber == 4)
-  {
-    return (Kucoin_Open_Trade(sym, side, orderType, orderSize, orderPrice,quoteDigit,lotDigit));
-  }
+   if(exchangeNumber == 1)
+     {
+      return (Binance_Open_Trade(sym, side, orderType, orderSize, orderPrice,quoteDigit,lotDigit,orderId));
+     }
+   if(exchangeNumber == 2)
+     {
+      return (Bybit_Open_Trade(sym, side, orderType, orderSize, orderPrice,quoteDigit,lotDigit,orderId));
+     }
 
-  if (exchangeNumber == 5)
-  {
-    return (BinanceFutures_Open_Trade(sym, side, orderType, orderSize, orderPrice,quoteDigit,lotDigit,orderId));
+   if(exchangeNumber == 3)
+     {
+      return (Bitmex_Open_Trade(sym, side, orderType, orderSize, orderPrice,quoteDigit,lotDigit,orderId));
+     }
+
+   if(exchangeNumber == 4)
+     {
+      return (Kucoin_Open_Trade(sym, side, orderType, orderSize, orderPrice,quoteDigit,lotDigit));
+     }
+
+   if(exchangeNumber == 5)
+     {
+      return (BinanceFutures_Open_Trade(sym, side, orderType, orderSize, orderPrice,quoteDigit,lotDigit,orderId));
+     }
+   if(exchangeNumber == 6)
+     {
+      return (Binance_US_Open_Trade(sym, side, orderType, orderSize, orderPrice,quoteDigit,lotDigit,orderId));
+     }
+   if(exchangeNumber == 7)
+     {
+      return (Deribit_Open_Trade(sym, side, orderType, orderSize, orderPrice,quoteDigit,lotDigit));
+     }
+   return (false);
   }
-  if (exchangeNumber == 6)
-  {
-    return (Binance_US_Open_Trade(sym, side, orderType, orderSize, orderPrice,quoteDigit,lotDigit,orderId));
-  }
-  if (exchangeNumber == 7)
-  {
-    return (Deribit_Open_Trade(sym, side, orderType, orderSize, orderPrice,quoteDigit,lotDigit));
-  }
-  return (false);
-}
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
 bool CryptoBridge::Open_Trade_Stop(string sym, string side, string orderType, string orderSize, string stopPrice, int quoteDigit, int lotDigit, int exchangeNumber, string orderId)
-{
-  Print("CBP OpenTradeStop");
-  if (exchangeNumber == 1)
   {
-    return (Binance_Open_Trade_Stop(sym, side, orderType, orderSize,stopPrice,quoteDigit,lotDigit,orderId));
-  }
-  if (exchangeNumber == 2)
-  {
-    return (Bybit_Open_Trade_Stop(sym, side, orderType, orderSize, stopPrice,quoteDigit,lotDigit,orderId));
-  }
-  
-  if (exchangeNumber == 3)
-  {
-    return (Bitmex_Open_Trade_Stop(sym, side, orderType, orderSize, stopPrice,quoteDigit,lotDigit,orderId));
-  }
-  
-  if (exchangeNumber == 5)
-  {
-    return (BinanceFutures_Open_Trade_Stop(sym, side, orderType, orderSize, stopPrice,quoteDigit,lotDigit,orderId));
-  }
-  if (exchangeNumber == 6)
-  {
-    return (Binance_US_Open_Trade_Stop(sym, side, orderType, orderSize,stopPrice,quoteDigit,lotDigit,orderId));
-  }
+   Print("CBP OpenTradeStop " + sym + " | " + side + " | " + orderType + " | " + orderSize + " | " + stopPrice + " | " + quoteDigit + " | " + lotDigit + " | " + exchangeNumber + " | " + orderId);
+   if(exchangeNumber == 1)
+     {
+      return (Binance_Open_Trade_Stop(sym, side, orderType, orderSize,stopPrice,quoteDigit,lotDigit,orderId));
+     }
+   if(exchangeNumber == 2)
+     {
+      return (Bybit_Open_Trade_Stop(sym, side, orderType, orderSize, stopPrice,quoteDigit,lotDigit,orderId));
+     }
 
-  return (false);
-}
+   if(exchangeNumber == 3)
+     {
+      return (Bitmex_Open_Trade_Stop(sym, side, orderType, orderSize, stopPrice,quoteDigit,lotDigit,orderId));
+     }
+
+   if(exchangeNumber == 5)
+     {
+      return (BinanceFutures_Open_Trade_Stop(sym, side, orderType, orderSize, stopPrice,quoteDigit,lotDigit,orderId));
+     }
+   if(exchangeNumber == 6)
+     {
+      return (Binance_US_Open_Trade_Stop(sym, side, orderType, orderSize,stopPrice,quoteDigit,lotDigit,orderId));
+     }
+
+   return (false);
+  }
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
 bool CryptoBridge::Open_Trade_StopLimit(string sym, string side, string orderType, string orderSize, string orderPrice, string stopPrice, int quoteDigit, int lotDigit, int exchangeNumber, string orderId)
-{
-   Print("CBP OpenTradeStopLimit");
-  if (exchangeNumber == 1)
   {
-    return (Binance_Open_Trade_StopLimit(sym, side, orderType, orderSize, orderPrice, stopPrice,quoteDigit,lotDigit,orderId));
+
+   Print("CBP OpenTradeStopLimit " + sym + " | " + side + " | " + orderType + " | " + orderSize +" | " + orderPrice +  " | " + stopPrice + " | " + quoteDigit + " | " + lotDigit + " | " + exchangeNumber + " | " + orderId);
+   if(exchangeNumber == 1)
+     {
+      return (Binance_Open_Trade_StopLimit(sym, side, orderType, orderSize, orderPrice, stopPrice,quoteDigit,lotDigit,orderId));
+     }
+   if(exchangeNumber == 5)
+     {
+      return (BinanceFutures_Open_Trade_StopLimit(sym, side, orderType, orderSize, orderPrice, stopPrice,quoteDigit,lotDigit,orderId));
+     }
+   if(exchangeNumber == 6)
+     {
+      return (Binance_US_Open_Trade_StopLimit(sym, side, orderType, orderSize, orderPrice, stopPrice,quoteDigit,lotDigit,orderId));
+     }
+   return (false);
   }
-  if (exchangeNumber == 5)
-  {
-    return (BinanceFutures_Open_Trade_StopLimit(sym, side, orderType, orderSize, orderPrice, stopPrice,quoteDigit,lotDigit,orderId));
-  }
-  if (exchangeNumber == 6)
-  {
-    return (Binance_US_Open_Trade_StopLimit(sym, side, orderType, orderSize, orderPrice, stopPrice,quoteDigit,lotDigit,orderId));
-  }
-  return (false);
-}
 //+------------------------------------------------------------------+
 //|       cancel specific order based on order ID                    |
 //+------------------------------------------------------------------+
 bool CryptoBridge::Cancel_Trade(string sym, string orderId, int exchangeNumber, int order_number, string clientOrderId)
-{
-   Print("CBP Cancel Trade" + " | orderID " + orderId + " | clientID " + clientOrderId );
-  string name = CryptoBridge::Get_Exchange_Name(exchangeNumber);
-  
-  DeleteGlobalOrderName(name, sym, order_number + 1); // Globals start at a value of 1
-  DeleteSubWindowObjectName(0, "order_id" + IntegerToString(order_number));
-  DeleteSubWindowObjectName(0, "orderid" + IntegerToString(order_number));
-  DeleteSubWindowObjectName(0, "sub_order_" + IntegerToString(order_number));
-  DeleteOjectLinesByDesc(orderId);
-
-  if (exchangeNumber == 1)
   {
-    return (Binance_Cancel_Trade(sym, StringToInteger(orderId), clientOrderId));
-  }
+   Print("CBP Cancel Trade" + " | orderID " + orderId + " | clientID " + clientOrderId);
+   string name = CryptoBridge::Get_Exchange_Name(exchangeNumber);
 
-  if (exchangeNumber == 2)
-  {
-    return (Bybit_Cancel_Trade(sym, orderId,clientOrderId));
-  }
+   DeleteGlobalOrderName(name, sym, order_number + 1); // Globals start at a value of 1
+   DeleteSubWindowObjectName(0, "order_id" + IntegerToString(order_number));
+   DeleteSubWindowObjectName(0, "orderid" + IntegerToString(order_number));
+   DeleteSubWindowObjectName(0, "sub_order_" + IntegerToString(order_number));
+   DeleteOjectLinesByDesc(orderId);
 
-  if (exchangeNumber == 3)
-  {
+   if(exchangeNumber == 1)
+     {
+      return (Binance_Cancel_Trade(sym, StringToInteger(orderId), clientOrderId));
+     }
 
-    return (Bitmex_Cancel_Trade(sym, orderId,clientOrderId));
-  }
+   if(exchangeNumber == 2)
+     {
+      return (Bybit_Cancel_Trade(sym, orderId,clientOrderId));
+     }
 
-  if (exchangeNumber == 5)
-  {
-    return (BinanceFutures_Cancel_Trade(sym, StringToInteger(orderId),clientOrderId));
-  }
+   if(exchangeNumber == 3)
+     {
 
-  if (exchangeNumber == 6)
-  {
-    return (Binance_US_Cancel_Trade(sym, StringToInteger(orderId), clientOrderId ));
-  }
-  if (exchangeNumber == 7)
-  {
-    return (Deribit_Cancel_Trade(sym, orderId));
-  }
+      return (Bitmex_Cancel_Trade(sym, orderId,clientOrderId));
+     }
 
-  return (false);
-}
+   if(exchangeNumber == 5)
+     {
+      return (BinanceFutures_Cancel_Trade(sym, StringToInteger(orderId),clientOrderId));
+     }
+
+   if(exchangeNumber == 6)
+     {
+      return (Binance_US_Cancel_Trade(sym, StringToInteger(orderId), clientOrderId));
+     }
+   if(exchangeNumber == 7)
+     {
+      return (Deribit_Cancel_Trade(sym, orderId));
+     }
+
+   return (false);
+  }
 //+------------------------------------------------------------------+
 //|       cancel all orders                                          |
 //+------------------------------------------------------------------+
 bool CryptoBridge::Cancel_Trade_All(string sym, int exchangeNumber)
-{
-Print("CBP CancelAllTrades");
-  string prefix = CryptoBridge::Get_Exchange_Name(exchangeNumber);
-  
-  DeleteGlobalPrefix(prefix + "_Order_" + sym); //- this is the global assigned to the orders
-  DeleteSubWindowObjectAll(0, "sub_order_");   //  - this is the order string
-  DeleteSubWindowObjectAll(0, "order_id");     //    - this is the order id string
-  DeleteSubWindowObjectAll(0, "orderid");      //     - this is the order edit button "X" to cancel individual orders
-  DeleteOjectLines(sym);                                        // - deletes the lines on the chart
-
-  if (exchangeNumber == 1)
   {
-    return (Binance_Cancel_Trade_All(sym));
-  }
+   Print("CBP CancelAllTrades");
+   string prefix = CryptoBridge::Get_Exchange_Name(exchangeNumber);
 
-  if (exchangeNumber == 2)
-  {
-    return (Bybit_Cancel_Trade_All(sym));
-  }
+   DeleteGlobalPrefix(prefix + "_Order_" + sym); //- this is the global assigned to the orders
+   DeleteSubWindowObjectAll(0, "sub_order_");   //  - this is the order string
+   DeleteSubWindowObjectAll(0, "order_id");     //    - this is the order id string
+   DeleteSubWindowObjectAll(0, "orderid");      //     - this is the order edit button "X" to cancel individual orders
+   DeleteOjectLines(sym);                                        // - deletes the lines on the chart
 
-  if (exchangeNumber == 3)
-  {
-    return (Bitmex_Cancel_Trade_All(sym));
-  }
+   if(exchangeNumber == 1)
+     {
+      return (Binance_Cancel_Trade_All(sym));
+     }
 
-  if (exchangeNumber == 5)
-  {
-    return (BinanceFutures_Cancel_Trade_ALL(sym));
-  }
+   if(exchangeNumber == 2)
+     {
+      return (Bybit_Cancel_Trade_All(sym));
+     }
 
-  if (exchangeNumber == 6)
-  {
-    return (Binance_US_Cancel_Trade_All(sym));
-  }
+   if(exchangeNumber == 3)
+     {
+      return (Bitmex_Cancel_Trade_All(sym));
+     }
 
-  return (false);
-}
+   if(exchangeNumber == 5)
+     {
+      return (BinanceFutures_Cancel_Trade_ALL(sym));
+     }
+
+   if(exchangeNumber == 6)
+     {
+      return (Binance_US_Cancel_Trade_All(sym));
+     }
+
+   return (false);
+  }
 //+------------------------------------------------------------------+
 //|  fetch server time                                               |
 //+------------------------------------------------------------------+
 bool CryptoBridge::Get_Exchange_Server_Time(int exchangeNumber)
-{
+  {
    Print("CBP ServerTime");
-  //Binance_Dex_BlockTime()
-  if (exchangeNumber == 0)
-  {
-    return (Binance_Dex_BlockTime());
-  }
+//Binance_Dex_BlockTime()
+   if(exchangeNumber == 0)
+     {
+      return (Binance_Dex_BlockTime());
+     }
 
-  if (exchangeNumber == 1)
-  {
-    return (Binance_GetServerTime());
-  }
+   if(exchangeNumber == 1)
+     {
+      return (Binance_GetServerTime());
+     }
 
-  if (exchangeNumber == 2)
-  {
-    return (Bybit_GetServerTime());
-  }
+   if(exchangeNumber == 2)
+     {
+      return (Bybit_GetServerTime());
+     }
 
-  if (exchangeNumber == 3)
-  {
-    return (Bitmex_GetServerTime());
-  }
+   if(exchangeNumber == 3)
+     {
+      return (Bitmex_GetServerTime());
+     }
 
-  if (exchangeNumber == 4)
-  {
-    return (Kucoin_GetServerTime());
-  }
+   if(exchangeNumber == 4)
+     {
+      return (Kucoin_GetServerTime());
+     }
 
-  if (exchangeNumber == 5)
-  {
-    return (BinanceFutures_GetServerTime());
-  }
+   if(exchangeNumber == 5)
+     {
+      return (BinanceFutures_GetServerTime());
+     }
 
-  if (exchangeNumber == 6)
-  {
-    return (Binance_US_GetServerTime());
+   if(exchangeNumber == 6)
+     {
+      return (Binance_US_GetServerTime());
+     }
+   if(exchangeNumber == 7)
+     {
+      return (Deribit_GetServerTime());
+     }
+   if(exchangeNumber == 8)
+     {
+      return (Okex_GetServerTime());
+     }
+   return (false);
   }
-  if (exchangeNumber == 7)
-  {
-    return (Deribit_GetServerTime());
-  }
-  if (exchangeNumber == 8)
-  {
-    return (Okex_GetServerTime());
-  }
-  return (false);
-}
 //+------------------------------------------------------------------+
 //|  Returns the top of the orderbook values: best bid and ask       |
 //+------------------------------------------------------------------+
 bool CryptoBridge::Get_PriceBest(string sym, int exchangeNumber, int quote_precision)
-{
-  if (exchangeNumber == 0)
   {
-    return (Binance_Dex_GetPriceBest(sym));
-  }
-  if (exchangeNumber == 1)
-  {
-    return (Binance_GetPriceBest(sym, quote_precision));
-  }
-  if (exchangeNumber == 2)
-  {
-    return (Bybit_GetPriceBest(sym, quote_precision));
-  }
-  if (exchangeNumber == 3)
-  {
-    return (Bitmex_GetPriceBest(sym));
-  }
+   if(exchangeNumber == 0)
+     {
+      return (Binance_Dex_GetPriceBest(sym));
+     }
+   if(exchangeNumber == 1)
+     {
+      return (Binance_GetPriceBest(sym, quote_precision));
+     }
+   if(exchangeNumber == 2)
+     {
+      return (Bybit_GetPriceBest(sym, quote_precision));
+     }
+   if(exchangeNumber == 3)
+     {
+      return (Bitmex_GetPriceBest(sym));
+     }
 
-  if (exchangeNumber == 4)
-  {
-    return (Kucoin_GetPriceBest(sym));
-  }
+   if(exchangeNumber == 4)
+     {
+      return (Kucoin_GetPriceBest(sym));
+     }
 
-  if (exchangeNumber == 5)
-  {
-    return (BinanceFutures_GetPriceBest(sym, quote_precision));
+   if(exchangeNumber == 5)
+     {
+      return (BinanceFutures_GetPriceBest(sym, quote_precision));
+     }
+   if(exchangeNumber == 6)
+     {
+      return (Binance_US_GetPriceBest(sym, quote_precision));
+     }
+   if(exchangeNumber == 7)
+     {
+      return (Deribit_GetPriceBest(sym, quote_precision));
+     }
+   if(exchangeNumber == 8)
+     {
+      return (Okex_GetPriceBest(sym, quote_precision));
+     }
+   return (false);
   }
-  if (exchangeNumber == 6)
-  {
-    return (Binance_US_GetPriceBest(sym, quote_precision));
-  }
-  if (exchangeNumber == 7)
-  {
-    return (Deribit_GetPriceBest(sym, quote_precision));
-  }
-  if (exchangeNumber == 8)
-  {
-    return (Okex_GetPriceBest(sym, quote_precision));
-  }
-  return (false);
-}
 //+------------------------------------------------------------------+
 //|   fetch   the last traded price                                  |
 //+------------------------------------------------------------------+
 bool CryptoBridge::Get_Price(string sym, int exchangeNumber, int quote_precision)
-{
+  {
 
-  if (exchangeNumber == 0)
-  {
-    return (Binance_Dex_GetPrice(sym));
-  }
+   if(exchangeNumber == 0)
+     {
+      return (Binance_Dex_GetPrice(sym));
+     }
 
-  if (exchangeNumber == 1)
-  {
-    return (Binance_GetPrice(sym));
-  }
-  if (exchangeNumber == 2)
-  {
-    return (Bybit_GetPrice(sym, quote_precision));
-  }
-  if (exchangeNumber == 3)
-  {
-    return (Bitmex_GetPrice(sym));
-  }
-  if (exchangeNumber == 4)
-  {
-    return (Kucoin_GetPrice(sym));
-  }
+   if(exchangeNumber == 1)
+     {
+      return (Binance_GetPrice(sym));
+     }
+   if(exchangeNumber == 2)
+     {
+      return (Bybit_GetPrice(sym, quote_precision));
+     }
+   if(exchangeNumber == 3)
+     {
+      return (Bitmex_GetPrice(sym));
+     }
+   if(exchangeNumber == 4)
+     {
+      return (Kucoin_GetPrice(sym));
+     }
 
-  if (exchangeNumber == 5)
-  {
-    return (BinanceFutures_GetPrice(sym, quote_precision));
+   if(exchangeNumber == 5)
+     {
+      return (BinanceFutures_GetPrice(sym, quote_precision));
+     }
+   if(exchangeNumber == 6)
+     {
+      return (Binance_US_GetPrice(sym));
+     }
+   if(exchangeNumber == 7)
+     {
+      return (Deribit_GetPrice(sym));
+     }
+   if(exchangeNumber == 8)
+     {
+      return (Okex_GetPrice(sym, quote_precision));
+     }
+   return (false);
   }
-  if (exchangeNumber == 6)
-  {
-    return (Binance_US_GetPrice(sym));
-  }
-  if (exchangeNumber == 7)
-  {
-    return (Deribit_GetPrice(sym));
-  }
-  if (exchangeNumber == 8)
-  {
-    return (Okex_GetPrice(sym, quote_precision));
-  }
-  return (false);
-}
 //+------------------------------------------------------------------+
 //|   fetch OpenInterest                                             |
 //+------------------------------------------------------------------+
 bool CryptoBridge::Get_OpenInterest(string sym, int exchangeNumber, int quote_precision)
-{
+  {
 
-  if (exchangeNumber == 0)
-  {
-    // return (Binance_Dex_GetPrice(sym));
-  }
+   if(exchangeNumber == 0)
+     {
+      // return (Binance_Dex_GetPrice(sym));
+     }
 
-  if (exchangeNumber == 1)
-  {
-    //  return (Binance_GetPrice(sym));
-  }
-  if (exchangeNumber == 2)
-  {
-    return (Bybit_GetOpenInterest(sym, quote_precision));
-  }
-  if (exchangeNumber == 3)
-  {
-    //  return (Bitmex_GetPrice(sym));
-  }
-  if (exchangeNumber == 4)
-  {
-    //  return (Kucoin_GetPrice(sym));
-  }
+   if(exchangeNumber == 1)
+     {
+      //  return (Binance_GetPrice(sym));
+     }
+   if(exchangeNumber == 2)
+     {
+      return (Bybit_GetOpenInterest(sym, quote_precision));
+     }
+   if(exchangeNumber == 3)
+     {
+      //  return (Bitmex_GetPrice(sym));
+     }
+   if(exchangeNumber == 4)
+     {
+      //  return (Kucoin_GetPrice(sym));
+     }
 
-  if (exchangeNumber == 5)
-  {
-    return (BinanceFutures_GetOpenInterest(sym, quote_precision));
+   if(exchangeNumber == 5)
+     {
+      return (BinanceFutures_GetOpenInterest(sym, quote_precision));
+     }
+   if(exchangeNumber == 6)
+     {
+      //  return (Binance_US_GetPrice(sym));
+     }
+   if(exchangeNumber == 7)
+     {
+      //  return (Deribit_GetPrice(sym));
+     }
+   if(exchangeNumber == 8)
+     {
+      // return (Okex_GetPrice(sym,quote_precision));
+     }
+   return (false);
   }
-  if (exchangeNumber == 6)
-  {
-    //  return (Binance_US_GetPrice(sym));
-  }
-  if (exchangeNumber == 7)
-  {
-    //  return (Deribit_GetPrice(sym));
-  }
-  if (exchangeNumber == 8)
-  {
-    // return (Okex_GetPrice(sym,quote_precision));
-  }
-  return (false);
-}
 //+------------------------------------------------------------------+
 //|   fetch FundRate                                                 |
 //+------------------------------------------------------------------+
 bool CryptoBridge::Get_FundRate(string sym, int exchangeNumber, int quote_precision)
-{
+  {
 
-  if (exchangeNumber == 0)
-  {
-    //  return (Binance_Dex_GetPrice(sym));
-  }
+   if(exchangeNumber == 0)
+     {
+      //  return (Binance_Dex_GetPrice(sym));
+     }
 
-  if (exchangeNumber == 1)
-  {
-    //  return (Binance_GetPrice(sym));
-  }
-  if (exchangeNumber == 2)
-  {
-    return (Bybit_GetFundRate(sym, quote_precision));
-  }
-  if (exchangeNumber == 3)
-  {
-    //  return (Bitmex_GetPrice(sym));
-  }
-  if (exchangeNumber == 4)
-  {
-    //  return (Kucoin_GetPrice(sym));
-  }
+   if(exchangeNumber == 1)
+     {
+      //  return (Binance_GetPrice(sym));
+     }
+   if(exchangeNumber == 2)
+     {
+      return (Bybit_GetFundRate(sym, quote_precision));
+     }
+   if(exchangeNumber == 3)
+     {
+      //  return (Bitmex_GetPrice(sym));
+     }
+   if(exchangeNumber == 4)
+     {
+      //  return (Kucoin_GetPrice(sym));
+     }
 
-  if (exchangeNumber == 5)
-  {
-    return (BinanceFutures_GetFundRate(sym, quote_precision));
+   if(exchangeNumber == 5)
+     {
+      return (BinanceFutures_GetFundRate(sym, quote_precision));
+     }
+   if(exchangeNumber == 6)
+     {
+      //return (Binance_US_GetPrice(sym));
+     }
+   if(exchangeNumber == 7)
+     {
+      //  return (Deribit_GetPrice(sym));
+     }
+   if(exchangeNumber == 8)
+     {
+      //  return (Okex_GetPrice(sym,quote_precision));
+     }
+   return (false);
   }
-  if (exchangeNumber == 6)
-  {
-    //return (Binance_US_GetPrice(sym));
-  }
-  if (exchangeNumber == 7)
-  {
-    //  return (Deribit_GetPrice(sym));
-  }
-  if (exchangeNumber == 8)
-  {
-    //  return (Okex_GetPrice(sym,quote_precision));
-  }
-  return (false);
-}
 //+------------------------------------------------------------------+
 //|   fetch the open positions                                       |
 //+------------------------------------------------------------------+
 bool CryptoBridge::Get_Position(string sym, int exchangeNumber, int quote_precision)
-{
-  //deletes the existing positions in memory
-  string prefix = CryptoBridge::Get_Exchange_Name(exchangeNumber);
-  
-  DeleteGlobalPrefix(prefix + "_POS_");     // - this is the position global variable
-  DeleteGlobalPrefix(prefix + "_LIQ_");     // - this is the pos  liq global variable
-  DeleteSubWindowObjectAll(0, "sub_pos_"); // - this is the position string
-  DeleteSubWindowObjectAll(0, "sub_liq_"); // - this is the liquidation string
+  {
+//deletes the existing positions in memory
+   string prefix = CryptoBridge::Get_Exchange_Name(exchangeNumber);
+
+   DeleteGlobalPrefix(prefix + "_POS_");     // - this is the position global variable
+   DeleteGlobalPrefix(prefix + "_LIQ_");     // - this is the pos  liq global variable
+   DeleteSubWindowObjectAll(0, "sub_pos_"); // - this is the position string
+   DeleteSubWindowObjectAll(0, "sub_liq_"); // - this is the liquidation string
    /*
-  delete the TP and SL lines on the chart if exists
-  */
-  DeleteOjectLinesByName("TP1b");
-  DeleteOjectLinesByName("TP2b");
-  DeleteOjectLinesByName("TP3b");
-  DeleteOjectLinesByName("TP4b");
-  DeleteOjectLinesByName("SL1b");
-  DeleteOjectLinesByName("SL2b");
-  DeleteOjectLinesByName("SL3b");
-  DeleteOjectLinesByName("SL4b");
-  
-  DeleteOjectLinesByName("TP1s");
-  DeleteOjectLinesByName("TP2s");
-  DeleteOjectLinesByName("TP3s");
-  DeleteOjectLinesByName("TP4s");
-  DeleteOjectLinesByName("SL1s");
-  DeleteOjectLinesByName("SL2s");
-  DeleteOjectLinesByName("SL3s");
-  DeleteOjectLinesByName("SL4s");
+   delete the TP and SL lines on the chart if exists
+   */
+   DeleteOjectLinesByName("TP1b");
+   DeleteOjectLinesByName("TP2b");
+   DeleteOjectLinesByName("TP3b");
+   DeleteOjectLinesByName("TP4b");
+   DeleteOjectLinesByName("SL1b");
+   DeleteOjectLinesByName("SL2b");
+   DeleteOjectLinesByName("SL3b");
+   DeleteOjectLinesByName("SL4b");
 
-  if (exchangeNumber == 2)
-  { 
-    if(sym==""){
-    Bybit_Positions("BTCUSD", quote_precision);
-    Bybit_Positions("EOSUSD", quote_precision);
-    Bybit_Positions("XRPUSD", quote_precision);
-    Bybit_Positions("ETHUSD", quote_precision);
-     return(true);
-    }else{
-      return (Bybit_Positions(sym, quote_precision));
-    }
-    
-  }
+   DeleteOjectLinesByName("TP1s");
+   DeleteOjectLinesByName("TP2s");
+   DeleteOjectLinesByName("TP3s");
+   DeleteOjectLinesByName("TP4s");
+   DeleteOjectLinesByName("SL1s");
+   DeleteOjectLinesByName("SL2s");
+   DeleteOjectLinesByName("SL3s");
+   DeleteOjectLinesByName("SL4s");
 
-  if (exchangeNumber == 3)
-  {
-    return (Bitmex_Positions(sym, quote_precision));
-  }
+   if(exchangeNumber == 2)
+     {
+      if(sym=="")
+        {
+         Bybit_Positions("BTCUSD", quote_precision);
+         Bybit_Positions("EOSUSD", quote_precision);
+         Bybit_Positions("XRPUSD", quote_precision);
+         Bybit_Positions("ETHUSD", quote_precision);
+         return(true);
+        }
+      else
+        {
+         return (Bybit_Positions(sym, quote_precision));
+        }
 
-  if (exchangeNumber == 5)
-  {
-    return (BinanceFutures_Positions(sym, quote_precision));
-  }
+     }
 
-  if (exchangeNumber == 7)
-  {
-    return (Deribit_Positions(sym, quote_precision));
+   if(exchangeNumber == 3)
+     {
+      return (Bitmex_Positions(sym, quote_precision));
+     }
+
+   if(exchangeNumber == 5)
+     {
+      return (BinanceFutures_Positions(sym, quote_precision));
+     }
+
+   if(exchangeNumber == 7)
+     {
+      return (Deribit_Positions(sym, quote_precision));
+     }
+   return (false);
   }
-  return (false);
-}
 //+------------------------------------------------------------------+
 //| sets orders information within subwindow                         |
 //+------------------------------------------------------------------+
 bool CryptoBridge::Get_OpenOrders(string sym, int exchangeNumber, int quote_precision)
-{
-  //deletes the existing orders in memory
-  string prefix = CryptoBridge::Get_Exchange_Name(exchangeNumber);
-  
-  DeleteGlobalPrefix(prefix + "_Order_" + sym + "_MARKET");
-  DeleteGlobalPrefix(prefix + "_Order_" + sym + "_LIMIT");
-  DeleteGlobalPrefix(prefix + "_Order_" + sym + "_STOP");
-  DeleteGlobalPrefix(prefix + "_Order_" + sym + "_STOPMARKET");
-  DeleteGlobalPrefix(prefix + "_Order_" + sym + "_STOP_MARKET");
-  DeleteGlobalPrefix(prefix + "_Order_" + sym + "_STOPLIMIT");
-  DeleteGlobalPrefix(prefix + "_Order_" + sym + "_STOP_LIMIT");
-
-  DeleteSubWindowObjectAll(0, "sub_order_"); // - this is the order string
-  DeleteSubWindowObjectAll(0, "order_id");   //   - this is the order id string
-  DeleteSubWindowObjectAll(0, "orderid");    //    - this is the order edit button "X" to cancel individual orders
-
-  DeleteOjectLines(sym);
-
-  if (exchangeNumber == 1)
   {
-    return (Binance_GetOpenOrders(sym, quote_precision));
-  }
+//deletes the existing orders in memory
+   string prefix = CryptoBridge::Get_Exchange_Name(exchangeNumber);
 
-  if (exchangeNumber == 2)
-  {
-    return (Bybit_GetOpenOrders(sym, quote_precision));
-  }
-  if (exchangeNumber == 3)
-  {
-    return (Bitmex_GetOpenOrders(sym, quote_precision));
-  }
+   DeleteGlobalPrefix(prefix + "_Order_" + sym + "_MARKET");
+   DeleteGlobalPrefix(prefix + "_Order_" + sym + "_LIMIT");
+   DeleteGlobalPrefix(prefix + "_Order_" + sym + "_STOP");
+   DeleteGlobalPrefix(prefix + "_Order_" + sym + "_STOPMARKET");
+   DeleteGlobalPrefix(prefix + "_Order_" + sym + "_STOP_MARKET");
+   DeleteGlobalPrefix(prefix + "_Order_" + sym + "_STOPLIMIT");
+   DeleteGlobalPrefix(prefix + "_Order_" + sym + "_STOP_LIMIT");
 
-  if (exchangeNumber == 5)
-  {
-    return (BinanceFutures_GetOpenOrders(sym, quote_precision));
-  }
+   DeleteSubWindowObjectAll(0, "sub_order_"); // - this is the order string
+   DeleteSubWindowObjectAll(0, "order_id");   //   - this is the order id string
+   DeleteSubWindowObjectAll(0, "orderid");    //    - this is the order edit button "X" to cancel individual orders
 
-  if (exchangeNumber == 6)
-  {
-    return (Binance_US_GetOpenOrders(sym, quote_precision));
-  }
-  if (exchangeNumber == 7)
-  {
-    return (Deribit_GetOpenOrders(sym));
-  }
+   DeleteOjectLines(sym);
 
-  return (false);
-}
+   if(exchangeNumber == 1)
+     {
+      return (Binance_GetOpenOrders(sym, quote_precision));
+     }
+
+   if(exchangeNumber == 2)
+     {
+      return (Bybit_GetOpenOrders(sym, quote_precision));
+     }
+   if(exchangeNumber == 3)
+     {
+      return (Bitmex_GetOpenOrders(sym, quote_precision));
+     }
+
+   if(exchangeNumber == 5)
+     {
+      return (BinanceFutures_GetOpenOrders(sym, quote_precision));
+     }
+
+   if(exchangeNumber == 6)
+     {
+      return (Binance_US_GetOpenOrders(sym, quote_precision));
+     }
+   if(exchangeNumber == 7)
+     {
+      return (Deribit_GetOpenOrders(sym));
+     }
+
+   return (false);
+  }
 
 //+------------------------------------------------------------------+
 //| return true if pos closed on                                     |
 //+------------------------------------------------------------------+
 bool CryptoBridge::Margin_Close_Position(string sym, string side, string orderType, string orderSize, string orderPrice, int quoteDigit, int lotDigit, int exchangeNumber)
-{
+  {
 
-  if (exchangeNumber == 2)
-  {
-    return (Bybit_ClosePosition(sym, orderType));
-  }
-  if (exchangeNumber == 3)
-  {
-    return (Bitmex_ClosePosition(sym, orderType));
-  }
+   if(exchangeNumber == 2)
+     {
+      return (Bybit_ClosePosition(sym, orderType));
+     }
+   if(exchangeNumber == 3)
+     {
+      return (Bitmex_ClosePosition(sym, orderType));
+     }
 
-  if (exchangeNumber == 5)
-  {
-    return (BinanceFutures_Close_Trade(sym, side, orderType, orderSize, orderPrice,quoteDigit, lotDigit));
+   if(exchangeNumber == 5)
+     {
+      return (BinanceFutures_Close_Trade(sym, side, orderType, orderSize, orderPrice,quoteDigit, lotDigit));
+     }
+   return (false);
   }
-  return (false);
-}
 //+------------------------------------------------------------------+
 //| return the new leverage value                                    |
 //+------------------------------------------------------------------+
 bool CryptoBridge::Margin_Set_Leverage(string sym, double leverage, int exchangeNumber)
-{
-  if (exchangeNumber == 2)
   {
-    return (Bybit_Set_Leverage(sym, leverage));
-  }
-  if (exchangeNumber == 3)
-  {
-    return (Bitmex_Set_Leverage(sym, leverage));
-  }
+   if(exchangeNumber == 2)
+     {
+      return (Bybit_Set_Leverage(sym, leverage));
+     }
+   if(exchangeNumber == 3)
+     {
+      return (Bitmex_Set_Leverage(sym, leverage));
+     }
 
-  if (exchangeNumber == 5)
-  {
-    return (BinanceFutures_Set_Leverage(sym, leverage));
-  }
+   if(exchangeNumber == 5)
+     {
+      return (BinanceFutures_Set_Leverage(sym, leverage));
+     }
 
-  return (false);
-}
+   return (false);
+  }
 
 //+------------------------------------------------------------------+
 //| return all wallet balances                                       |
 //+------------------------------------------------------------------+
 bool CryptoBridge::Get_Balance(string sym, string quote_base, int exchangeNumber)
-{
-  string prefix = CryptoBridge::Get_Exchange_Name(exchangeNumber);
-  DeleteGlobalPrefix(prefix + "_Wallet_");
+  {
+   string prefix = CryptoBridge::Get_Exchange_Name(exchangeNumber);
+   DeleteGlobalPrefix(prefix + "_Wallet_");
 
-  if (exchangeNumber == 1)
-  {
-    return (Binance_Balance(sym, quote_base));
-  }
-  if (exchangeNumber == 2)
-  {
-    return (Bybit_Balance(sym, quote_base));
-  }
-  if (exchangeNumber == 3)
-  {
-    return (Bitmex_Balance(sym, quote_base));
-  }
-  if (exchangeNumber == 4)
-  {
-    return (Kucoin_Balance(sym, quote_base));
-  }
-  if (exchangeNumber == 5)
-  {
-    return (BinanceFutures_Balance(sym, quote_base));
-  }
+   if(exchangeNumber == 1)
+     {
+      return (Binance_Balance(sym, quote_base));
+     }
+   if(exchangeNumber == 2)
+     {
+      return (Bybit_Balance(sym, quote_base));
+     }
+   if(exchangeNumber == 3)
+     {
+      return (Bitmex_Balance(sym, quote_base));
+     }
+   if(exchangeNumber == 4)
+     {
+      return (Kucoin_Balance(sym, quote_base));
+     }
+   if(exchangeNumber == 5)
+     {
+      return (BinanceFutures_Balance(sym, quote_base));
+     }
 
-  if (exchangeNumber == 6)
-  {
-    return (Binance_US_Balance(sym, quote_base));
-  }
-  if (exchangeNumber == 7)
-  {
-    return (Deribit_Balance(sym, quote_base));
-  }
+   if(exchangeNumber == 6)
+     {
+      return (Binance_US_Balance(sym, quote_base));
+     }
+   if(exchangeNumber == 7)
+     {
+      return (Deribit_Balance(sym, quote_base));
+     }
 
-  return (false);
-}
+   return (false);
+  }
 
 //+------------------------------------------------------------------+
 //| Binance_Order_GVTETH_LIMIT_SELL_0.00750000_8.00000000            |
@@ -1093,127 +1120,123 @@ string exchange_orderside[];
 double exchange_orderprice[];
 double exchange_ordersize[];
 void CryptoBridge::Parse_Orders(string exchangeName, int order_location, int id_location)
-{
-  // Empty previous data
-  ArrayFree(exchange_name);
-  ArrayFree(exchange_symbol);
-  ArrayFree(exchange_ordertype);
-  ArrayFree(exchange_orderside);
-  ArrayFree(exchange_orderprice);
-  ArrayFree(exchange_ordersize);
-
-  SetSubWindowText("sub_orders_text_", "Orders", order_location, 0, Gray, 10);
-
-  string myarray[];
-  int total = GlobalVariablesTotal();
-  string name = "";
-  string order_info = "";
-  int counterC = 0;
-  int counterD = 0;
-  string orderstring = "";
-  datetime bar_close = iTime(NULL, PERIOD_CURRENT, 0);
-
-  for (int i = 0; i < total; i++)
   {
-    name = GlobalVariableName(i);
-    int dash0 = StringFind(name, "_", 0);
+// Empty previous data
+   ArrayFree(exchange_name);
+   ArrayFree(exchange_symbol);
+   ArrayFree(exchange_ordertype);
+   ArrayFree(exchange_orderside);
+   ArrayFree(exchange_orderprice);
+   ArrayFree(exchange_ordersize);
 
-    string exchange = StringSubstr(name, 0, dash0);
+   SetSubWindowText("sub_orders_text_", "Orders", order_location, 0, Gray, 10);
 
-    //  exchange_name[i] = exchange;
+   string myarray[];
+   int total = GlobalVariablesTotal();
+   string name = "";
+   string order_info = "";
+   int counterC = 0;
+   int counterD = 0;
+   string orderstring = "";
+   datetime bar_close = iTime(NULL, PERIOD_CURRENT, 0);
 
-    if (exchange == exchangeName && dash0 != -1)
-    {
-      int dash1 = StringFind(name, "_", dash0 + 1);   // SCAN AFTER THE PREVIOUS DASH
-      string wal = StringSubstr(name, dash0 + 1, -1); //
-      int dash2 = StringFind(wal, "_", 0);            // SCAN AFTER THE PREVIOUS DASH
+   for(int i = 0; i < total; i++)
+     {
+      name = GlobalVariableName(i);
+      int dash0 = StringFind(name, "_", 0);
 
-      string named_order = StringSubstr(wal, 0, 5); // Binance_Order_
+      string exchange = StringSubstr(name, 0, dash0);
 
-      if ("Order" == named_order && dash2 != -1)
-      {
-        ArrayResize(myarray, counterC + 1, 0); // COUNTER STARTS AT ZERO SO WE ADD ONE
-                                               // ArrayResize(myarray_id,counterC+1,0);// COUNTER STARTS AT ZERO SO WE ADD ONE
+      //  exchange_name[i] = exchange;
 
-        order_info = StringSubstr(name, dash1 + 1, -1); // DONT INCLUDE THE DASH2
+      if(exchange == exchangeName && dash0 != -1)
+        {
+         int dash1 = StringFind(name, "_", dash0 + 1);   // SCAN AFTER THE PREVIOUS DASH
+         string wal = StringSubstr(name, dash0 + 1, -1); //
+         int dash2 = StringFind(wal, "_", 0);            // SCAN AFTER THE PREVIOUS DASH
 
-        //GVTETH_LIMIT_SELL_0.00750000_8.00000000
-        int dash3 = StringFind(order_info, "_", 0);
-        string symbol = StringSubstr(order_info, 0, dash3);
-        //  Print("Dash3 (symbol) : " + symbol);
+         string named_order = StringSubstr(wal, 0, 5); // Binance_Order_
 
-        int dash4 = StringFind(order_info, "_", dash3 + 1);
-        string ordertype = StringSubstr(order_info, dash3 + 1, (dash4 - dash3) - 1);
-        //  Print("Dash4 (ordertype) : " + ordertype + " dash3 (length) " + dash3 + " dash4 (length) " + dash4 );
+         if("Order" == named_order && dash2 != -1)
+           {
+            ArrayResize(myarray, counterC + 1, 0); // COUNTER STARTS AT ZERO SO WE ADD ONE
+            // ArrayResize(myarray_id,counterC+1,0);// COUNTER STARTS AT ZERO SO WE ADD ONE
 
-        int dash5 = StringFind(order_info, "_", dash4 + 1);
-        string orderside = StringSubstr(order_info, dash4 + 1, (dash5 - dash4) - 1);
-        //   Print("Dash5 (orderside) : " + orderside + " dash4 (length) " + dash4 + " dash5 (length) " + dash5 );
+            order_info = StringSubstr(name, dash1 + 1, -1); // DONT INCLUDE THE DASH2
 
-        int dash6 = StringFind(order_info, "_", dash5 + 1);
-        string orderprice = StringSubstr(order_info, dash5 + 1, (dash6 - dash5) - 1);
-        // Print("Dash6 (orderprice) : " + orderprice + " dash5 (length) " + dash5 + " dash6 (length) " + dash6 );
+            //GVTETH_LIMIT_SELL_0.00750000_8.00000000
+            int dash3 = StringFind(order_info, "_", 0);
+            string symbol = StringSubstr(order_info, 0, dash3);
+            //  Print("Dash3 (symbol) : " + symbol);
 
-        int dash7 = StringFind(order_info, "_", dash6 + 1);
-        string ordersize = StringSubstr(order_info, dash6 + 1, (dash7 - dash6) - 1);
-        //  Print("Dash7 (ordersize) : " + ordersize + " dash6 (length) " + dash6 + " dash7 (length) " + dash7 );
+            int dash4 = StringFind(order_info, "_", dash3 + 1);
+            string ordertype = StringSubstr(order_info, dash3 + 1, (dash4 - dash3) - 1);
+            //  Print("Dash4 (ordertype) : " + ordertype + " dash3 (length) " + dash3 + " dash4 (length) " + dash4 );
 
-        // COUNTER STARTS AT ZERO SO WE ADD ONE
-        ArrayResize(exchange_name, counterD + 1, 0);
-        ArrayResize(exchange_symbol, counterD + 1, 0);
-        ArrayResize(exchange_ordertype, counterD + 1, 0);
-        ArrayResize(exchange_orderside, counterD + 1, 0);
-        ArrayResize(exchange_orderprice, counterD + 1, 0);
-        ArrayResize(exchange_ordersize, counterD + 1, 0);
+            int dash5 = StringFind(order_info, "_", dash4 + 1);
+            string orderside = StringSubstr(order_info, dash4 + 1, (dash5 - dash4) - 1);
+            //   Print("Dash5 (orderside) : " + orderside + " dash4 (length) " + dash4 + " dash5 (length) " + dash5 );
 
-        // COUNTER STARTS AT ZERO for array[0] =
-        exchange_name[counterD] = exchange;
-        exchange_symbol[counterD] = symbol;
-        exchange_ordertype[counterD] = ordertype;
-        exchange_orderside[counterD] = orderside;
-        exchange_orderprice[counterD] = StringToDouble(orderprice);
-        exchange_ordersize[counterD] = StringToDouble(ordersize);
-        myarray[counterC] = order_info;
+            int dash6 = StringFind(order_info, "_", dash5 + 1);
+            string orderprice = StringSubstr(order_info, dash5 + 1, (dash6 - dash5) - 1);
+            // Print("Dash6 (orderprice) : " + orderprice + " dash5 (length) " + dash5 + " dash6 (length) " + dash6 );
 
-        counterC++; // COUNTER ADDS ONE
-        counterD++;
+            int dash7 = StringFind(order_info, "_", dash6 + 1);
+            string ordersize = StringSubstr(order_info, dash6 + 1, (dash7 - dash6) - 1);
+            //  Print("Dash7 (ordersize) : " + ordersize + " dash6 (length) " + dash6 + " dash7 (length) " + dash7 );
 
-        /*
-         Create order object on the chart 
-        */
-      }
-    }
+            // COUNTER STARTS AT ZERO SO WE ADD ONE
+            ArrayResize(exchange_name, counterD + 1, 0);
+            ArrayResize(exchange_symbol, counterD + 1, 0);
+            ArrayResize(exchange_ordertype, counterD + 1, 0);
+            ArrayResize(exchange_orderside, counterD + 1, 0);
+            ArrayResize(exchange_orderprice, counterD + 1, 0);
+            ArrayResize(exchange_ordersize, counterD + 1, 0);
+
+            // COUNTER STARTS AT ZERO for array[0] =
+            exchange_name[counterD] = exchange;
+            exchange_symbol[counterD] = symbol;
+            exchange_ordertype[counterD] = ordertype;
+            exchange_orderside[counterD] = orderside;
+            exchange_orderprice[counterD] = StringToDouble(orderprice);
+            exchange_ordersize[counterD] = StringToDouble(ordersize);
+            myarray[counterC] = order_info;
+
+            counterC++; // COUNTER ADDS ONE
+            counterD++;
+
+
+           }
+        }
+     }
+   /*
+          Create order object on the chart
+   */
+   int m_loop = 0;
+   int loop_main = ArraySize(exchange_name);
+   if(loop_main > 0)
+     {
+      for(int i =0; i < loop_main; i++) // working for bitmex oct25 - 2020 ( does this break other exchanges?)
+         // for (int i = loop_main - 1; i > -1; i--)
+        {
+         // Print("Debug:ParseOrders:CreateLines | i=" + i + " m="+m_loop + " | counterC " + counterC + " | " + exchange_orderside[i] + " | " + GetObjectDesc(m_loop));
+
+         if(exchange_orderside[i] == "BUY")
+           {
+            CreateOrderEntryLine(exchange_symbol[i] +"_"+exchange_ordertype[i]+ "_BUY_"  +exchange_ordersize[i] + "_" + IntegerToString(i), GetObjectDesc(m_loop), bar_close - 6000, exchange_orderprice[i], bar_close, exchange_orderprice[i], Order_Color_Buy, OrderlineThickness, OrderlineStyle);
+            // Update after creating the lines
+            m_loop++;
+           }
+         if(exchange_orderside[i] == "SELL")
+           {
+            CreateOrderEntryLine(exchange_symbol[i] +"_"+exchange_ordertype[i]+ "_SELL_" +exchange_ordersize[i] + "_" + IntegerToString(i), GetObjectDesc(m_loop), bar_close - 6000, exchange_orderprice[i], bar_close, exchange_orderprice[i], Order_Color_Sell, OrderlineThickness, OrderlineStyle);
+            // Update after creating the lines
+            m_loop++;
+
+           }
+        }
+     }
   }
-  int m_loop = 0;
-  int loop_main = ArraySize(exchange_name);
-  if (loop_main > 0)
-  {
-    for (int i =0; i < loop_main; i++)// working for bitmex oct25 - 2020 ( does this break other exchanges?)
-   // for (int i = loop_main - 1; i > -1; i--)
-    {
-      
-      
-      Print("Debug:ParseOrders:CreateLines | i=" + i + " m="+m_loop + " | counterC " + counterC + " | " + exchange_orderside[i] + " | " + GetObjectDesc(m_loop));
-
-      if (exchange_orderside[i] == "BUY")
-      {
-        CreateOrderEntryLine(exchange_symbol[i] +"_"+exchange_ordertype[i]+ "_BUY_"  +exchange_ordersize[i] + "_" + IntegerToString(i), GetObjectDesc(m_loop), bar_close - 6000, exchange_orderprice[i], bar_close, exchange_orderprice[i], Order_Color_Buy, OrderlineThickness, OrderlineStyle);
-        // Update after creating the lines
-        m_loop++;
-      }
-      if (exchange_orderside[i] == "SELL")
-      {
-        CreateOrderEntryLine(exchange_symbol[i] +"_"+exchange_ordertype[i]+ "_SELL_" +exchange_ordersize[i] + "_" + IntegerToString(i), GetObjectDesc(m_loop), bar_close - 6000, exchange_orderprice[i], bar_close, exchange_orderprice[i], Order_Color_Sell, OrderlineThickness, OrderlineStyle);
-        // Update after creating the lines
-        m_loop++;
-      
-      }
-      
-      
-      
-    }
-  }
-}
 
 //+------------------------------------------------------------------+
 //| Binance_Pos_GVTETH_MARKET_SELL_0.00750000_8.00000000            |
@@ -1225,223 +1248,224 @@ double exchange_orderprice_p[];
 double exchange_ordersize_p[];
 double exchange_orderliquidation_p[];
 void CryptoBridge::Parse_Positions(string exchangeName, int pos_location, int liq_location, int quoteDigit)
-{
-
-  // Empty previous data
-  ArrayFree(exchange_name_p);
-  ArrayFree(exchange_symbol_p);
-  ArrayFree(exchange_orderside_p);
-  ArrayFree(exchange_orderprice_p);
-  ArrayFree(exchange_ordersize_p);
-  ArrayFree(exchange_orderliquidation_p);
-
-  // Positions Lable on the chart
-  SetSubWindowText("sub_position_text_", "Positions", pos_location, 0, Gray, 10);
-  SetSubWindowText("sub_liq_text_", "LIQ", 210, 0, Gray, 10);
-
-  string myarray[];
-  int total = GlobalVariablesTotal();
-  string name = "";
-  string position_info = "";
-
-  int counterB = 0; // COUNTER STARTS AT ZERO
-  int counterD = 0; // COUNTER STARTS AT ZERO
-
-  for (int i = 0; i < total; i++)
   {
-    name = GlobalVariableName(i);
-    int dash1 = StringFind(name, "_", 0);
 
-    string exchange = StringSubstr(name, 0, dash1);
-    if (exchange == exchangeName && dash1 != -1)
-    {
+// Empty previous data
+   ArrayFree(exchange_name_p);
+   ArrayFree(exchange_symbol_p);
+   ArrayFree(exchange_orderside_p);
+   ArrayFree(exchange_orderprice_p);
+   ArrayFree(exchange_ordersize_p);
+   ArrayFree(exchange_orderliquidation_p);
 
-      int dash2 = StringFind(name, "_", dash1 + 1);
-      string wal = StringSubstr(name, dash1 + 1, -1);
+// Positions Lable on the chart
+   SetSubWindowText("sub_position_text_", "Positions", pos_location, 0, Gray, 10);
+   SetSubWindowText("sub_liq_text_", "LIQ", 210, 0, Gray, 10);
 
-      int dash3 = StringFind(wal, "_", 0);
+   string myarray[];
+   int total = GlobalVariablesTotal();
+   string name = "";
+   string position_info = "";
 
-      string wall = StringSubstr(wal, 0, 3); // POS"
+   int counterB = 0; // COUNTER STARTS AT ZERO
+   int counterD = 0; // COUNTER STARTS AT ZERO
 
-      if ("POS" == wall && dash3 != -1)
-      {
+   for(int i = 0; i < total; i++)
+     {
+      name = GlobalVariableName(i);
+      int dash1 = StringFind(name, "_", 0);
 
-        ArrayResize(myarray, counterB + 1, 0);             // COUNTER STARTS AT ZERO SO WE ADD ONE
-        position_info = StringSubstr(name, dash2 + 1, -1); // DONT INCLUDE THE DASH2
+      string exchange = StringSubstr(name, 0, dash1);
+      if(exchange == exchangeName && dash1 != -1)
+        {
 
-        //GVTETH
-        int dash4 = StringFind(position_info, "_", 0);
-        string symbol = StringSubstr(position_info, 0, dash4);
-        //  Print("Dash4 (symbol) : " + symbol);
+         int dash2 = StringFind(name, "_", dash1 + 1);
+         string wal = StringSubstr(name, dash1 + 1, -1);
 
-        //MARKET
-        int dash5 = StringFind(position_info, "_", dash4 + 1);
-        string ordertype = StringSubstr(position_info, dash4 + 1, (dash5 - dash4) - 1);
-        //  Print("Dash5 (ordertype) : " + ordertype  );//+ " dash4 (length) " + dash4 + " dash5 (length) " + dash5
+         int dash3 = StringFind(wal, "_", 0);
 
-        //Buy or Sell or None(bybit) or BOTH for binanceFutures
-        int dash6 = StringFind(position_info, "_", dash5 + 1);
-        string orderside = StringSubstr(position_info, dash5 + 1, (dash6 - dash5) - 1);
-        //  Print("Dash6 (orderside) : " + orderside  );//+ " dash4 (length) " + dash4 + " dash5 (length) " + dash5
+         string wall = StringSubstr(wal, 0, 3); // POS"
 
-        // Price
-        int dash7 = StringFind(position_info, "_", dash6 + 1);
-        string orderprice = StringSubstr(position_info, dash6 + 1, (dash7 - dash6) - 1);
-        //  Print("Dash7 (orderprice) : " + orderprice  );//+ " dash5 (length) " + dash5 + " dash6 (length) " + dash6
+         if("POS" == wall && dash3 != -1)
+           {
 
-        // volume
-        int dash8 = StringFind(position_info, "_", dash7 + 1);
-        string ordersize = StringSubstr(position_info, dash7 + 1, (dash8 - dash7) - 1);
-        //  Print("Dash8 (ordersize) : " + ordersize );// + " dash6 (length) " + dash6 + " dash7 (length) " + dash7
+            ArrayResize(myarray, counterB + 1, 0);             // COUNTER STARTS AT ZERO SO WE ADD ONE
+            position_info = StringSubstr(name, dash2 + 1, -1); // DONT INCLUDE THE DASH2
 
-        // COUNTER STARTS AT ZERO SO WE ADD ONE
-        ArrayResize(exchange_name_p, counterD + 1, 0);
-        ArrayResize(exchange_symbol_p, counterD + 1, 0);
+            //GVTETH
+            int dash4 = StringFind(position_info, "_", 0);
+            string symbol = StringSubstr(position_info, 0, dash4);
+            //  Print("Dash4 (symbol) : " + symbol);
 
-        ArrayResize(exchange_orderside_p, counterD + 1, 0);
-        ArrayResize(exchange_orderprice_p, counterD + 1, 0);
-        ArrayResize(exchange_ordersize_p, counterD + 1, 0);
+            //MARKET
+            int dash5 = StringFind(position_info, "_", dash4 + 1);
+            string ordertype = StringSubstr(position_info, dash4 + 1, (dash5 - dash4) - 1);
+            //  Print("Dash5 (ordertype) : " + ordertype  );//+ " dash4 (length) " + dash4 + " dash5 (length) " + dash5
 
-        // COUNTER STARTS AT ZERO for array[0] =
-        exchange_name_p[counterD] = exchange;
-        exchange_symbol_p[counterD] = symbol;
-        exchange_orderside_p[counterD] = orderside;
-        exchange_orderprice_p[counterD] = StringToDouble(orderprice);
-        exchange_ordersize_p[counterD] = StringToDouble(ordersize);
+            //Buy or Sell or None(bybit) or BOTH for binanceFutures
+            int dash6 = StringFind(position_info, "_", dash5 + 1);
+            string orderside = StringSubstr(position_info, dash5 + 1, (dash6 - dash5) - 1);
+            //  Print("Dash6 (orderside) : " + orderside  );//+ " dash4 (length) " + dash4 + " dash5 (length) " + dash5
 
-        myarray[counterB] = position_info; // COUNTER STARTS AT ZERO for array[0] =
-        counterB++;                        // COUNTER ADDS ONE
-        counterD++;                        // COUNTER ADDS ONE
-      }
-    }
+            // Price
+            int dash7 = StringFind(position_info, "_", dash6 + 1);
+            string orderprice = StringSubstr(position_info, dash6 + 1, (dash7 - dash6) - 1);
+            //  Print("Dash7 (orderprice) : " + orderprice  );//+ " dash5 (length) " + dash5 + " dash6 (length) " + dash6
+
+            // volume
+            int dash8 = StringFind(position_info, "_", dash7 + 1);
+            string ordersize = StringSubstr(position_info, dash7 + 1, (dash8 - dash7) - 1);
+            //  Print("Dash8 (ordersize) : " + ordersize );// + " dash6 (length) " + dash6 + " dash7 (length) " + dash7
+
+            // COUNTER STARTS AT ZERO SO WE ADD ONE
+            ArrayResize(exchange_name_p, counterD + 1, 0);
+            ArrayResize(exchange_symbol_p, counterD + 1, 0);
+
+            ArrayResize(exchange_orderside_p, counterD + 1, 0);
+            ArrayResize(exchange_orderprice_p, counterD + 1, 0);
+            ArrayResize(exchange_ordersize_p, counterD + 1, 0);
+
+            // COUNTER STARTS AT ZERO for array[0] =
+            exchange_name_p[counterD] = exchange;
+            exchange_symbol_p[counterD] = symbol;
+            exchange_orderside_p[counterD] = orderside;
+            exchange_orderprice_p[counterD] = StringToDouble(orderprice);
+            exchange_ordersize_p[counterD] = StringToDouble(ordersize);
+
+            myarray[counterB] = position_info; // COUNTER STARTS AT ZERO for array[0] =
+            counterB++;                        // COUNTER ADDS ONE
+            counterD++;                        // COUNTER ADDS ONE
+           }
+        }
+     }
+
+
+
+   if(counterB > 0)
+     {
+      ArrayResize(myarray, counterB, 0);
+      datetime bar_close = iTime(NULL, PERIOD_CURRENT, 0);
+      for(int i = 0; i < counterB; i++)
+        {
+
+         if(exchange_ordersize_p[i] != 0)
+           {
+            SetSubWindowText("sub_pos_" + IntegerToString(i), myarray[i], pos_location, 20 + (25 * i), Gray, 10);
+            CreateEntryLine(exchange_symbol_p[i] + "_ENTRY", "desc", bar_close - 6000, exchange_orderprice_p[i], bar_close, exchange_orderprice_p[i], Entry_Color, EntrylineThickness, EntrylineStyle);
+           }
+        }
+     }
+
+   /*
+     - Need to loop over the
+     - Bybit_LIQ_ETHUSD global( double price )
+   */
+   double liquidationarray[];
+   int counterE = 0;
+   for(int i = 0; i < total; i++)
+     {
+      name = GlobalVariableName(i);
+      int dash1 = StringFind(name, "_", 0);
+
+      string exchange = StringSubstr(name, 0, dash1);
+      if(exchange == exchangeName && dash1 != -1)
+        {
+
+         int dash2 = StringFind(name, "_", dash1 + 1);
+         string wal = StringSubstr(name, dash1 + 1, -1);
+
+         int dash3 = StringFind(wal, "_", 0);
+
+         string wall = StringSubstr(wal, 0, 3); // LIQ"
+
+         if("LIQ" == wall && dash3 != -1)
+           {
+
+            string liq_info = StringSubstr(name, dash2 + 1, -1); // DONT INCLUDE THE DASH2
+            int dash4 = StringFind(liq_info, "_", 0);
+            string symbol = StringSubstr(liq_info, 0, dash4);
+            // Print("LIQ Dash4 (symbol) : " + symbol);
+            double liq = GlobalVariableGet(name);
+
+            // COUNTER STARTS AT ZERO SO WE ADD ONE
+            ArrayResize(exchange_orderliquidation_p, counterE + 1, 0);
+            exchange_orderliquidation_p[counterE] = liq;
+
+            // COUNTER STARTS AT ZERO SO WE ADD ONE
+            ArrayResize(liquidationarray, counterE + 1, 0);
+            liquidationarray[counterE] = StringToDouble(DoubleToString(liq, quoteDigit));
+            counterE++;
+           }
+        }
+     }
+
+   int loop_liq = ArraySize(liquidationarray);
+
+   if(loop_liq > 0)
+     {
+      ArrayResize(liquidationarray, loop_liq);
+      for(int i = 0; i < loop_liq; i++)
+        {
+
+         if(liquidationarray[i] > 0)
+           {
+            SetSubWindowText("sub_liq_" + IntegerToString(i), DoubleToString(liquidationarray[i], quoteDigit), liq_location, 20 + (25 * i), Gray, 10);
+           }
+        }
+     }
   }
-
-
-
-  if (counterB > 0)
-  {
-    ArrayResize(myarray, counterB, 0);
-    datetime bar_close = iTime(NULL, PERIOD_CURRENT, 0);
-    for (int i = 0; i < counterB; i++)
-    {
-
-      if (exchange_ordersize_p[i] != 0)
-      {
-        SetSubWindowText("sub_pos_" + IntegerToString(i), myarray[i], pos_location, 20 + (25 * i), Gray, 10);
-        CreateEntryLine(exchange_symbol_p[i] + "_ENTRY", "desc", bar_close - 6000, exchange_orderprice_p[i], bar_close, exchange_orderprice_p[i], Entry_Color, EntrylineThickness, EntrylineStyle);
-      }
-    }
-  }
-
-  /* 
-    - Need to loop over the
-    - Bybit_LIQ_ETHUSD global( double price )
-  */
-  double liquidationarray[];
-  int counterE = 0;
-  for (int i = 0; i < total; i++)
-  {
-    name = GlobalVariableName(i);
-    int dash1 = StringFind(name, "_", 0);
-
-    string exchange = StringSubstr(name, 0, dash1);
-    if (exchange == exchangeName && dash1 != -1)
-    {
-
-      int dash2 = StringFind(name, "_", dash1 + 1);
-      string wal = StringSubstr(name, dash1 + 1, -1);
-
-      int dash3 = StringFind(wal, "_", 0);
-
-      string wall = StringSubstr(wal, 0, 3); // LIQ"
-
-      if ("LIQ" == wall && dash3 != -1)
-      {
-
-        string liq_info = StringSubstr(name, dash2 + 1, -1); // DONT INCLUDE THE DASH2
-        int dash4 = StringFind(liq_info, "_", 0);
-        string symbol = StringSubstr(liq_info, 0, dash4);
-        // Print("LIQ Dash4 (symbol) : " + symbol);
-        double liq = GlobalVariableGet(name);
-
-        // COUNTER STARTS AT ZERO SO WE ADD ONE
-        ArrayResize(exchange_orderliquidation_p, counterE + 1, 0);
-        exchange_orderliquidation_p[counterE] = liq;
-
-        // COUNTER STARTS AT ZERO SO WE ADD ONE
-        ArrayResize(liquidationarray, counterE + 1, 0);
-        liquidationarray[counterE] = StringToDouble(DoubleToString(liq, quoteDigit));
-        counterE++;
-      }
-    }
-  }
-
-  int loop_liq = ArraySize(liquidationarray);
-
-  if (loop_liq > 0)
-  {
-    ArrayResize(liquidationarray, loop_liq);
-    for (int i = 0; i < loop_liq; i++)
-    {
-
-      if (liquidationarray[i] > 0)
-      {
-        SetSubWindowText("sub_liq_" + IntegerToString(i), DoubleToString(liquidationarray[i], quoteDigit), liq_location, 20 + (25 * i), Gray, 10);
-      }
-    }
-  }
-}
 /*
  parse exchange_wallet_SYMBOL
 */
-void CryptoBridge::Parse_Wallets(string exchangeName)
-{
-
-  string myarray[];
-  int total = GlobalVariablesTotal();
-  string name = "";
-  string wallet = "";
-
-  int countD = 0; // COUNTER STARTS AT ZERO
-
-  for (int i = 0; i < total; i++)
+void CryptoBridge::Parse_Wallets(string exchangeName, int x, int y)
   {
-    name = GlobalVariableName(i);
-    int dash1 = StringFind(name, "_", 0); // exchange_wallet_SYMBOL
 
-    string exchange = StringSubstr(name, 0, dash1);
-    if (exchange == exchangeName && dash1 != -1)
-    {
-      // Print(" MATCH exchange name " + exchange);
+   SetSubWindowText("sub_wallet_text_", "Wallets", x, y, Gray, 10);
+   string myarray[];
+   int total = GlobalVariablesTotal();
+   string name = "";
+   string wallet = "";
 
-      int dash2 = StringFind(name, "_", dash1 + 1);   // SCAN AFTER THE PREVIOUS DASH
-      string wal = StringSubstr(name, dash1 + 1, -1); // FIND THE "Wallet_sym"
+   int countD = 0; // COUNTER STARTS AT ZERO
 
-      int dash3 = StringFind(wal, "_", 0); // SCAN AFTER THE PREVIOUS DASH
-                                           //Wallet_GVT
+   for(int i = 0; i < total; i++)
+     {
+      name = GlobalVariableName(i);
+      int dash1 = StringFind(name, "_", 0); // exchange_wallet_SYMBOL
 
-      string wall = StringSubstr(wal, 0, 6); // Wallet"
-                                             //  Print("DEBUG2: " + wall);
+      string exchange = StringSubstr(name, 0, dash1);
+      if(exchange == exchangeName && dash1 != -1)
+        {
+         // Print(" MATCH exchange name " + exchange);
 
-      if ("Wallet" == wall && dash3 != -1)
-      {
-        ArrayResize(myarray, countD + 1, 0);        // count STARTS AT ZERO SO WE ADD ONE
-        wallet = StringSubstr(name, dash2 + 1, -1); // DONT INCLUDE THE DASH2
-        myarray[countD] = wallet;                   // count STARTS AT ZERO for array[0] =
-        countD++;                                   // count ADDS ONE
-      }
-    }
+         int dash2 = StringFind(name, "_", dash1 + 1);   // SCAN AFTER THE PREVIOUS DASH
+         string wal = StringSubstr(name, dash1 + 1, -1); // FIND THE "Wallet_sym"
+
+         int dash3 = StringFind(wal, "_", 0); // SCAN AFTER THE PREVIOUS DASH
+         //Wallet_GVT
+
+         string wall = StringSubstr(wal, 0, 6); // Wallet"
+         //  Print("DEBUG2: " + wall);
+
+         if("Wallet" == wall && dash3 != -1)
+           {
+            ArrayResize(myarray, countD + 1, 0);        // count STARTS AT ZERO SO WE ADD ONE
+            wallet = StringSubstr(name, dash2 + 1, -1); // DONT INCLUDE THE DASH2
+            myarray[countD] = wallet;                   // count STARTS AT ZERO for array[0] =
+            countD++;                                   // count ADDS ONE
+           }
+        }
+     }
+
+   if(countD > 0)
+     {
+      ArrayResize(myarray, countD, 0);
+      for(int i = 0; i < countD; i++)
+        {
+         SetSubWindowText("sub_wallet_" + IntegerToString(i), myarray[i] + "(" + DoubleToString(GetGlobal(exchangeName, "_Wallet_" + myarray[i]), 8) + ")", x, (y+16) + (20 * i), Green, 12);
+        }
+     }
   }
-
-  if (countD > 0)
-  {
-    ArrayResize(myarray, countD, 0);
-    for (int i = 0; i < countD; i++)
-    {
-      SetSubWindowText("sub_wallet_" + IntegerToString(i), myarray[i] + "(" + DoubleToString(GetGlobal(exchangeName, "_Wallet_" + myarray[i]), 8) + ")", 0, 120 + (25 * i), Green, 12);
-    }
-  }
-}
 
 /*
  parse RobotInstance_exchange_wallet_
@@ -1450,51 +1474,54 @@ void CryptoBridge::Parse_Wallets(string exchangeName)
  SYMBOL
 */
 double CryptoBridge::Get_Wallet_Info(int robotInstance, string exchangeName, string walletInfoSymbol)
-{
-
-  int total = GlobalVariablesTotal();
-  string name = "";
-  for (int i = 0; i < total; i++)
   {
-    name = GlobalVariableName(i);
-    int dash1 = StringFind(name, "_", 0); // robot_instance
-    string robot_number = StringSubstr(name, 0, dash1);
-    
-    long str_num = StringToInteger(robot_number);
-    
-    if (str_num == robotInstance  && dash1 != -1)
-    {
-      
-      int dash2 = StringFind(name, "_", dash1);   
-      int dash3 = StringFind(name, "_", dash2+1); 
-      int dash4 = StringFind(name, "_", dash3+1); 
-      int dash5 = StringFind(name, "_", dash4+1); 
-      int dash6 = StringFind(name, "_", dash5+1); 
-      
-      string ex_number = StringSubstr(name, 0,dash1);
-      string ex_name = StringSubstr(name, dash1+1,(dash3-dash2)-1 );
-      string ex_wallet = StringSubstr(name, dash3+1, (dash4-dash3)-1 );
-      
-      string ex_info = StringSubstr(name, dash4+1 ,-1);
-      
-      if(ex_name == exchangeName){
-         
-         if(ex_wallet == "Wallet"){
-         
-            if(ex_info == walletInfoSymbol){
-               return( GlobalVariableGet(name) );
-            }
-         
-         
-         }
-      
-      }
-      
-      
-    }
+
+   int total = GlobalVariablesTotal();
+   string name = "";
+   for(int i = 0; i < total; i++)
+     {
+      name = GlobalVariableName(i);
+      int dash1 = StringFind(name, "_", 0); // robot_instance
+      string robot_number = StringSubstr(name, 0, dash1);
+
+      long str_num = StringToInteger(robot_number);
+
+      if(str_num == robotInstance  && dash1 != -1)
+        {
+
+         int dash2 = StringFind(name, "_", dash1);
+         int dash3 = StringFind(name, "_", dash2+1);
+         int dash4 = StringFind(name, "_", dash3+1);
+         int dash5 = StringFind(name, "_", dash4+1);
+         int dash6 = StringFind(name, "_", dash5+1);
+
+         string ex_number = StringSubstr(name, 0,dash1);
+         string ex_name = StringSubstr(name, dash1+1,(dash3-dash2)-1);
+         string ex_wallet = StringSubstr(name, dash3+1, (dash4-dash3)-1);
+
+         string ex_info = StringSubstr(name, dash4+1,-1);
+
+         if(ex_name == exchangeName)
+           {
+
+            if(ex_wallet == "Wallet")
+              {
+
+               if(ex_info == walletInfoSymbol)
+                 {
+                  return(GlobalVariableGet(name));
+                 }
+
+
+              }
+
+           }
+
+
+        }
+     }
+   return(0);
   }
-  return(0);
-}
 
 
 
