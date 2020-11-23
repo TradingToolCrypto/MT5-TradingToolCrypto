@@ -38,7 +38,9 @@ input group "---------------ORDER SEND CLASS SETUP---------------"
 input bool OSC_SEND_TO_EXCHANGE = true;
 input bool SEND_SL = false;
 input bool SEND_TP = false;
-input group "-------------ORDER SEND CLASS END SETUP-------------" CryptoBridge bridge;
+input group "-------------ORDER SEND CLASS END SETUP-------------" 
+
+CryptoBridge bridge;
 
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -310,7 +312,8 @@ bool OrderSendCBP(const MqlTradeRequest &m_request, MqlTradeResult &m_result)
             */
          if(m_request.tp != 0)
            {
-            if(!bridge.Modify_Trade(Exchange_Symbol_Name,"SELL","LIMIT",Exchange_Lotsize,tp,order_id+"tp",0,Exchange_Quote_Precision,Exchange_Lot_Precision,Exchange_Number))
+           //Modify_Trade(string sym, string side, string orderType, string orderSize,string orderPrice, string id, string clientId, int orderNumber,  int quoteDigit, int lotDigit,int exchangeNumber)
+            if(!bridge.Modify_Trade(Exchange_Symbol_Name,"SELL","LIMIT",Exchange_Lotsize,tp,"",order_id+"tp",0,Exchange_Quote_Precision,Exchange_Lot_Precision,Exchange_Number))
               {
                bridge.Open_Trade(Exchange_Symbol_Name, "SELL", "LIMIT", Exchange_Lotsize, tp, Exchange_Quote_Precision, Exchange_Lot_Precision, Exchange_Number,order_id+"tp");
               }
@@ -318,7 +321,7 @@ bool OrderSendCBP(const MqlTradeRequest &m_request, MqlTradeResult &m_result)
 
          if(m_request.sl != 0)
            {
-            if(!bridge.Modify_Trade(Exchange_Symbol_Name,"SELL","STOP_LOSS",Exchange_Lotsize,sl,order_id+"sl",0,Exchange_Quote_Precision,Exchange_Lot_Precision,Exchange_Number))
+            if(!bridge.Modify_Trade(Exchange_Symbol_Name,"SELL","STOP_LOSS",Exchange_Lotsize,sl,"",order_id+"sl",0,Exchange_Quote_Precision,Exchange_Lot_Precision,Exchange_Number))
               {
                bridge.Open_Trade_Stop(Exchange_Symbol_Name, "SELL", "STOP_LOSS", Exchange_Lotsize, sl, Exchange_Quote_Precision, Exchange_Lot_Precision, Exchange_Number,order_id+"sl");
               }
@@ -333,7 +336,7 @@ bool OrderSendCBP(const MqlTradeRequest &m_request, MqlTradeResult &m_result)
 
          if(m_request.tp != 0)
            {
-            if(!bridge.Modify_Trade(Exchange_Symbol_Name,"BUY","LIMIT",Exchange_Lotsize,tp,order_id+"tp",0,Exchange_Quote_Precision,Exchange_Lot_Precision,Exchange_Number))
+            if(!bridge.Modify_Trade(Exchange_Symbol_Name,"BUY","LIMIT",Exchange_Lotsize,tp,"",order_id+"tp",0,Exchange_Quote_Precision,Exchange_Lot_Precision,Exchange_Number))
               {
                bridge.Open_Trade(Exchange_Symbol_Name, "BUY", "LIMIT", Exchange_Lotsize, tp, Exchange_Quote_Precision, Exchange_Lot_Precision, Exchange_Number,order_id+"tp");
               }
@@ -341,7 +344,7 @@ bool OrderSendCBP(const MqlTradeRequest &m_request, MqlTradeResult &m_result)
 
          if(m_request.sl != 0)
            {
-            if(!bridge.Modify_Trade(Exchange_Symbol_Name,"BUY","STOP_LOSS",Exchange_Lotsize,sl,order_id+"sl",0,Exchange_Quote_Precision,Exchange_Lot_Precision,Exchange_Number))
+            if(!bridge.Modify_Trade(Exchange_Symbol_Name,"BUY","STOP_LOSS",Exchange_Lotsize,sl,"",order_id+"sl",0,Exchange_Quote_Precision,Exchange_Lot_Precision,Exchange_Number))
               {
                bridge.Open_Trade_Stop(Exchange_Symbol_Name, "BUY", "STOP_LOSS", Exchange_Lotsize, sl, Exchange_Quote_Precision, Exchange_Lot_Precision, Exchange_Number,order_id+"sl");
 
