@@ -382,3 +382,49 @@ string get_signal(int strategy, double price, int bar_index)
 
    return ("false");
 }
+
+/*
+ More Oct 2020
+*/
+
+
+string get_signal_EMA_CROSS()
+{
+   double ema1a = 0;
+   double ema2a = 0;
+   
+   double ema1b = 0;
+   double ema2b = 0;
+
+   //--- do we have enough bars to work with
+   int Mybars = Bars(market_name, 0);
+   if (Mybars < EMA_PERIOD_A && Mybars < EMA_PERIOD_B) // if total bars is less than 60 bars
+   {
+      Print("We have less than enough bars on the chart, Robot will wait for more bars before deciding on what to do next");
+      return (0);
+   }
+
+   CopyBuffer(EMA_handle_1, 0, 0, 5, EMA_1);
+   CopyBuffer(EMA_handle_2, 0, 0, 5, EMA_2);
+
+   // the indicator arrays
+   ArraySetAsSeries(EMA_1, true);
+   ArraySetAsSeries(EMA_2, true);
+
+   ema1a = EMA_1[0];
+   ema2a = EMA_2[0];
+   
+    ema1b = EMA_1[1];
+   ema2b = EMA_2[1];
+   
+   // cross up 
+   if(ema1a > ema2a && ema1b <= ema2b){
+      return("CROSSUP");
+   }
+   // cross down
+   if(ema1a < ema2a && ema1b >= ema2b){
+      return("CROSSDOWN");
+   }
+   
+ return("NONE");
+}

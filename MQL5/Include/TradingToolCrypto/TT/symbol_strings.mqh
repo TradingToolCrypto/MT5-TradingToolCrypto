@@ -202,9 +202,52 @@ string symbol_price(string text, string suffix_identifier){
                //--- Get the separator code
                u_sep=StringGetCharacter(sep,0);
                int dash_count = StringSplit(text,u_sep,array_text);
-               if(dash_count>1){
+               if(dash_count>2){
                //--- Work with the strings individually
                   return(array_text[2]); 
                }   
       return("");         
 }
+
+
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+string symbol_remove_suffix(string chart_symbol)
+  {
+
+
+   /*
+      BTCUSDT.binance
+      BTCUSD.b2b
+   */
+   const string sep=".";            // A separator as a character
+   ushort u_sep;                    // The code of the separator character
+   string result[];                 // An array to get strings
+   u_sep=StringGetCharacter(sep,0);
+   int k=StringSplit(chart_symbol,u_sep,result);
+   string value ="";
+   if(k>0){
+      value = result[0];
+   }
+   return(value);
+  }
+
+string symbol_return_suffix(string chart_symbol)
+  {
+   /*
+      BTCUSDT.binance
+      BTCUSD.b2b
+   */
+   const string sep=".";            // A separator as a character
+   ushort u_sep;                    // The code of the separator character
+   string result[];                 // An array to get strings
+   u_sep=StringGetCharacter(sep,0);
+   int k=StringSplit(chart_symbol,u_sep,result);
+   string value ="";
+   if(k>1){
+   //Print(" DEBUG K " + k  + " symbol " + chart_symbol);
+      value = sep + result[1];
+   }
+   return(value);
+  }
