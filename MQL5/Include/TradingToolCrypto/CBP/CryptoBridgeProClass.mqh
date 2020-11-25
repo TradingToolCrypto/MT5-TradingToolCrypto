@@ -145,9 +145,9 @@ bool Bitmex_Set_Leverage(string sym, double leverage);
 
 #import "Kucoin_api.ex5"
 bool Kucoin_Cancel_Trade(string sym, int orderId);
-bool Kucoin_Open_Trade(string sym, string side, string orderType, string orderSize, string orderPrice, int quoteDigit, int lotDigit);
+bool Kucoin_Open_Trade(string sym, string side, string orderType, string orderSize, string orderPrice, int quoteDigit, int lotDigit, string newClientOrderId);
 bool Kucoin_Balance(string sym, string quotebase);
-bool Kucoin_GetPriceBest(string sym);
+bool Kucoin_GetPriceBest(string sym,int quoteDigit);
 bool Kucoin_GetPrice(string sym);
 bool Kucoin_GetServerTime();
 bool Kucoin_Get_API_Key(string key, string secret, string passphase);
@@ -275,6 +275,7 @@ protected:
 
 public:
    bool              Init_Api_Keys(int exchange);
+   bool              Deinit_Api_Keys(int exchange);
    bool              Cancel_Trade_All(string sym, int exchangeNumber);
    bool              Cancel_Trade(string sym, string orderId, int exchangeNumber, int order_number, string clientOrderId);
    bool              Get_Balance(string sym, string quote_base, int exchangeNumber);
@@ -305,6 +306,8 @@ bool CryptoBridge::Init_Api_Keys(int exchange)
   {
 
    add_chart_indicator();
+   
+   add_unique_id();
 
    if(exchange == 0)
      {
@@ -352,6 +355,14 @@ bool CryptoBridge::Init_Api_Keys(int exchange)
       return (Okex_Get_API_Key(Okex_Api_Key, Okex_Api_Secret, Okex_LiveDemo, Okex_Market_Type));
      }
    return (false);
+  }
+  
+bool CryptoBridge::Deinit_Api_Keys(int exchange)
+  {
+   Comment("");
+   Print("CBP DEINIT()" + DoubleToString(delete_unique_id()) );
+   ObjectsDeleteAll(NULL,-1,-1);
+   return(true);
   }
 
 //+------------------------------------------------------------------+
@@ -456,7 +467,8 @@ bool CryptoBridge::Modify_Trade(string sym, string side, string orderType, strin
       /*
       Cancelt the order
       */
-      CryptoBridge::Cancel_Trade(sym,id,exchangeNumber,id,clientId); // Bug fixed Nov 11 - 2020
+      CryptoBridge::Cancel_Trade(sym,id,exchangeNumber,0,clientId); // Bug fixed Nov 11 - 2020
+      //Cancel_Trade(string sym, string orderId, int exchangeNumber, int order_number, string clientOrderId);
       /*
       Place a new order
       */
@@ -486,7 +498,7 @@ bool CryptoBridge::Modify_Trade(string sym, string side, string orderType, strin
 //+------------------------------------------------------------------+
 bool CryptoBridge::Open_Trade(string sym, string side, string orderType, string orderSize, string orderPrice, int quoteDigit, int lotDigit, int exchangeNumber, string orderId)
   {
-   Print("CBP OpenTrade " + sym + " | " + side + " | " + orderType + " | " + orderSize + " | " + orderPrice+ " | " + quoteDigit + " | " + lotDigit + " | " + exchangeNumber + " | " + orderId);
+   Print("CBP OpenTrade " + sym + " | " + side + " | " + orderType + " | " + orderSize + " | " + orderPrice+ " | " + IntegerToString(quoteDigit) + " | " + IntegerToString(lotDigit) + " | " + IntegerToString(exchangeNumber) + " | " + orderId);
    if(exchangeNumber == 1)
      {
       return (Binance_Open_Trade(sym, side, orderType, orderSize, orderPrice,quoteDigit,lotDigit,orderId));
@@ -501,7 +513,7 @@ bool CryptoBridge::Open_Trade(string sym, string side, string orderType, string 
      }
    if(exchangeNumber == 4)
      {
-      return (Kucoin_Open_Trade(sym, side, orderType, orderSize, orderPrice,quoteDigit,lotDigit));
+      return (Kucoin_Open_Trade(sym, side, orderType, orderSize, orderPrice,quoteDigit,lotDigit, orderId));
      }
    if(exchangeNumber == 5)
      {
@@ -522,7 +534,7 @@ bool CryptoBridge::Open_Trade(string sym, string side, string orderType, string 
 //+------------------------------------------------------------------+
 bool CryptoBridge::Open_Trade_Stop(string sym, string side, string orderType, string orderSize, string stopPrice, int quoteDigit, int lotDigit, int exchangeNumber, string orderId)
   {
-   Print("CBP OpenTradeStop " + sym + " | " + side + " | " + orderType + " | " + orderSize + " | " + stopPrice + " | " + quoteDigit + " | " + lotDigit + " | " + exchangeNumber + " | " + orderId);
+   Print("CBP OpenTradeStop " + sym + " | " + side + " | " + orderType + " | " + orderSize + " | " + stopPrice + " | " + IntegerToString(quoteDigit) + " | " + IntegerToString(lotDigit) + " | " + IntegerToString(exchangeNumber) + " | " + orderId);
    if(exchangeNumber == 1)
      {
       return (Binance_Open_Trade_Stop(sym, side, orderType, orderSize,stopPrice,quoteDigit,lotDigit,orderId));
@@ -550,7 +562,7 @@ bool CryptoBridge::Open_Trade_Stop(string sym, string side, string orderType, st
 //+------------------------------------------------------------------+
 bool CryptoBridge::Open_Trade_StopLimit(string sym, string side, string orderType, string orderSize, string orderPrice, string stopPrice, int quoteDigit, int lotDigit, int exchangeNumber, string orderId)
   {
-   Print("CBP OpenTradeStopLimit " + sym + " | " + side + " | " + orderType + " | " + orderSize +" | " + orderPrice +  " | " + stopPrice + " | " + quoteDigit + " | " + lotDigit + " | " + exchangeNumber + " | " + orderId);
+   Print("CBP OpenTradeStopLimit " + sym + " | " + side + " | " + orderType + " | " + orderSize +" | " + orderPrice +  " | " + stopPrice + " | " + IntegerToString(quoteDigit) + " | " + IntegerToString(lotDigit) + " | " + IntegerToString(exchangeNumber) + " | " + orderId);
    if(exchangeNumber == 1)
      {
       return (Binance_Open_Trade_StopLimit(sym, side, orderType, orderSize, orderPrice, stopPrice,quoteDigit,lotDigit,orderId));
@@ -709,7 +721,7 @@ bool CryptoBridge::Get_PriceBest(string sym, int exchangeNumber, int quote_preci
      }
    if(exchangeNumber == 4)
      {
-      return (Kucoin_GetPriceBest(sym));
+      return (Kucoin_GetPriceBest(sym,quote_precision));
      }
    if(exchangeNumber == 5)
      {
@@ -867,6 +879,7 @@ bool CryptoBridge::Get_FundRate(string sym, int exchangeNumber, int quote_precis
 bool CryptoBridge::Get_Position(string sym, int exchangeNumber, int quote_precision)
   {
    Print("CBP Position");
+   ObjectDelete(0, sym + "_ENTRY");
    string prefix = CryptoBridge::Get_Exchange_Name(exchangeNumber);
    DeleteGlobalPrefix(prefix + "_POS_");     // - this is the position global variable
    DeleteGlobalPrefix(prefix + "_LIQ_");     // - this is the pos  liq global variable
@@ -1148,7 +1161,7 @@ void CryptoBridge::Parse_Orders(string exchangeName, int order_location, int id_
             exchange_orderside[counterD] = orderside;
             exchange_orderprice[counterD] = StringToDouble(orderprice);
             exchange_ordersize[counterD] = StringToDouble(ordersize);
-            exchange_orderindex[counterD] = GlobalVariableGet(name);
+            exchange_orderindex[counterD] =  (int) GlobalVariableGet(name);
             counterD++;
            }
         }
@@ -1501,7 +1514,31 @@ void add_chart_indicator()
    */
    int indicator_handle=iCustom(NULL,PERIOD_CURRENT,"SubWindow");
    int subwindow=(int)ChartGetInteger(0,CHART_WINDOWS_TOTAL);
-   Print("iCustom SubWindow handle: " + indicator_handle + " window: " + subwindow);
+   Print("iCustom SubWindow handle: " + IntegerToString(indicator_handle) + " window: " + IntegerToString(subwindow));
    ChartIndicatorAdd(0,subwindow,indicator_handle);
   }
 //+------------------------------------------------------------------+
+void add_unique_id(){
+   const string id = "CBP";
+   double value = GlobalVariableGet(id);
+   if(value == 0){
+      GlobalVariableSet(id,1);
+   }
+   
+    if(value > 0){
+      GlobalVariableSet(id,value+1);
+   }
+   
+}
+
+double delete_unique_id(){
+   const string id = "CBP";
+   double value = GlobalVariableGet(id);
+   if(value > 0){
+      GlobalVariableSet(id,value-1);
+   }else{
+       GlobalVariableSet(id,0);
+   }
+   value = GlobalVariableGet(id);
+   return(value);
+}
