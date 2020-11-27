@@ -878,7 +878,7 @@ bool CryptoBridge::Get_FundRate(string sym, int exchangeNumber, int quote_precis
 //+------------------------------------------------------------------+
 bool CryptoBridge::Get_Position(string sym, int exchangeNumber, int quote_precision)
   {
-   Print("CBP Position");
+   Print("CBP GetPosition " + sym);
    ObjectDelete(0, sym + "_ENTRY");
    string prefix = CryptoBridge::Get_Exchange_Name(exchangeNumber);
    DeleteGlobalPrefix(prefix + "_POS_");     // - this is the position global variable
@@ -944,7 +944,7 @@ bool CryptoBridge::Get_Position(string sym, int exchangeNumber, int quote_precis
 //+------------------------------------------------------------------+
 bool CryptoBridge::Get_OpenOrders(string sym, int exchangeNumber, int quote_precision)
   {
-   Print("CBP OpenOrders");
+   Print("CBP GetOpenOrders " + sym);
    string prefix = CryptoBridge::Get_Exchange_Name(exchangeNumber);
 
    DeleteGlobalPrefix(prefix + "_Order_" + sym + "_MARKET");
@@ -1033,7 +1033,7 @@ bool CryptoBridge::Margin_Set_Leverage(string sym, double leverage, int exchange
 //+------------------------------------------------------------------+
 bool CryptoBridge::Get_Balance(string sym, string quote_base, int exchangeNumber)
   {
-   Print("CBP Balance");
+   Print("CBP GetBalance");
    string prefix = CryptoBridge::Get_Exchange_Name(exchangeNumber);
    DeleteGlobalPrefix(prefix + "_Wallet_");
 
@@ -1080,6 +1080,8 @@ double exchange_ordersize[];
 int exchange_orderindex[];
 void CryptoBridge::Parse_Orders(string exchangeName, int order_location, int id_location)
   {
+  
+  Print(" CBP Parse Orders " + exchangeName  );
 
    int dash0 = 0;
    string name = "";
@@ -1199,7 +1201,7 @@ double exchange_ordersize_p[];
 double exchange_orderliquidation_p[];
 void CryptoBridge::Parse_Positions(string exchangeName, int pos_location, int liq_location, int quoteDigit)
   {
-
+   Print(" CBP Parse Positions " + exchangeName  );
 // Empty previous data
    ArrayFree(exchange_name_p);
    ArrayFree(exchange_symbol_p);
@@ -1491,7 +1493,7 @@ void add_chart_indicator()
         {
          //--- get the short name of an indicator
          string name=ChartIndicatorName(0,w,i);
-         Print(" Indicator Name " + name);
+        
          if(name == "SubWindow")
            {
             //--- get the handle of an indicator
@@ -1514,7 +1516,7 @@ void add_chart_indicator()
    */
    int indicator_handle=iCustom(NULL,PERIOD_CURRENT,"SubWindow");
    int subwindow=(int)ChartGetInteger(0,CHART_WINDOWS_TOTAL);
-   Print("iCustom SubWindow handle: " + IntegerToString(indicator_handle) + " window: " + IntegerToString(subwindow));
+   
    ChartIndicatorAdd(0,subwindow,indicator_handle);
   }
 //+------------------------------------------------------------------+
