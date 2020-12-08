@@ -306,7 +306,7 @@ bool CryptoBridge::Init_Api_Keys(int exchange)
   {
 
    add_chart_indicator();
-   
+
    add_unique_id();
 
    if(exchange == 0)
@@ -356,11 +356,14 @@ bool CryptoBridge::Init_Api_Keys(int exchange)
      }
    return (false);
   }
-  
+
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
 bool CryptoBridge::Deinit_Api_Keys(int exchange)
   {
    Comment("");
-   Print("CBP DEINIT()" + DoubleToString(delete_unique_id()) );
+   Print("CBP DEINIT()" + DoubleToString(delete_unique_id()));
    ObjectsDeleteAll(NULL,-1,-1);
    return(true);
   }
@@ -436,10 +439,15 @@ bool CryptoBridge::Hedge_Mode(bool on_true_off_false, int exchangeNumber)
 //+------------------------------------------------------------------+
 bool CryptoBridge::Modify_Trade(string sym, string side, string orderType, string orderSize,string orderPrice, string id, string clientId, int orderNumber,  int quoteDigit, int lotDigit,int exchangeNumber)
   {
-   Print("CBP ModifyTrade | ID " + id + " |  Client ID " + clientId + " | Order ID " + orderType);
+   Print("CBP ModifyTrade | ID " + id + " |  Client ID " + clientId + " | Order Type " + orderType);
    if(exchangeNumber == 1)
      {
-      // return (Binance_Open_Trade(sym, side, orderType, orderSize, orderPrice));
+      CryptoBridge::Cancel_Trade(sym,id,exchangeNumber,0,clientId);
+
+      if(orderType=="LIMIT")
+        {
+         return (Binance_Open_Trade(sym, side, orderType, orderSize, orderPrice,quoteDigit,lotDigit,id));
+        }
      }
    if(exchangeNumber == 2)
      {
@@ -465,10 +473,10 @@ bool CryptoBridge::Modify_Trade(string sym, string side, string orderType, strin
         }
 
       /*
-      Cancelt the order
+      Cancel the order
       */
       CryptoBridge::Cancel_Trade(sym,id,exchangeNumber,0,clientId); // Bug fixed Nov 11 - 2020
-      //Cancel_Trade(string sym, string orderId, int exchangeNumber, int order_number, string clientOrderId);
+
       /*
       Place a new order
       */
@@ -485,7 +493,11 @@ bool CryptoBridge::Modify_Trade(string sym, string side, string orderType, strin
      }
    if(exchangeNumber == 6)
      {
-      //  return (Binance_US_Open_Trade(sym, side, orderType, orderSize, orderPrice));
+      CryptoBridge::Cancel_Trade(sym,id,exchangeNumber,0,clientId);
+      if(orderType=="LIMIT")
+        {
+         return (Binance_US_Open_Trade(sym, side, orderType, orderSize, orderPrice,quoteDigit,lotDigit,id));
+        }
      }
    if(exchangeNumber == 7)
      {
@@ -1080,8 +1092,8 @@ double exchange_ordersize[];
 int exchange_orderindex[];
 void CryptoBridge::Parse_Orders(string exchangeName, int order_location, int id_location)
   {
-  
-  Print(" CBP Parse Orders " + exchangeName  );
+
+   Print(" CBP Parse Orders " + exchangeName);
 
    int dash0 = 0;
    string name = "";
@@ -1163,7 +1175,7 @@ void CryptoBridge::Parse_Orders(string exchangeName, int order_location, int id_
             exchange_orderside[counterD] = orderside;
             exchange_orderprice[counterD] = StringToDouble(orderprice);
             exchange_ordersize[counterD] = StringToDouble(ordersize);
-            exchange_orderindex[counterD] =  (int) GlobalVariableGet(name);
+            exchange_orderindex[counterD] = (int) GlobalVariableGet(name);
             counterD++;
            }
         }
@@ -1201,7 +1213,7 @@ double exchange_ordersize_p[];
 double exchange_orderliquidation_p[];
 void CryptoBridge::Parse_Positions(string exchangeName, int pos_location, int liq_location, int quoteDigit)
   {
-   Print(" CBP Parse Positions " + exchangeName  );
+   Print(" CBP Parse Positions " + exchangeName);
 // Empty previous data
    ArrayFree(exchange_name_p);
    ArrayFree(exchange_symbol_p);
@@ -1493,7 +1505,7 @@ void add_chart_indicator()
         {
          //--- get the short name of an indicator
          string name=ChartIndicatorName(0,w,i);
-        
+
          if(name == "SubWindow")
            {
             //--- get the handle of an indicator
@@ -1516,31 +1528,42 @@ void add_chart_indicator()
    */
    int indicator_handle=iCustom(NULL,PERIOD_CURRENT,"SubWindow");
    int subwindow=(int)ChartGetInteger(0,CHART_WINDOWS_TOTAL);
-   
+
    ChartIndicatorAdd(0,subwindow,indicator_handle);
   }
 //+------------------------------------------------------------------+
-void add_unique_id(){
+void add_unique_id()
+  {
    const string id = "CBP";
    double value = GlobalVariableGet(id);
-   if(value == 0){
+   if(value == 0)
+     {
       GlobalVariableSet(id,1);
-   }
-   
-    if(value > 0){
-      GlobalVariableSet(id,value+1);
-   }
-   
-}
+     }
 
-double delete_unique_id(){
+   if(value > 0)
+     {
+      GlobalVariableSet(id,value+1);
+     }
+
+  }
+
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+double delete_unique_id()
+  {
    const string id = "CBP";
    double value = GlobalVariableGet(id);
-   if(value > 0){
+   if(value > 0)
+     {
       GlobalVariableSet(id,value-1);
-   }else{
-       GlobalVariableSet(id,0);
-   }
+     }
+   else
+     {
+      GlobalVariableSet(id,0);
+     }
    value = GlobalVariableGet(id);
    return(value);
-}
+  }
+//+------------------------------------------------------------------+
