@@ -920,19 +920,7 @@ bool CryptoBridge::Get_Position(string sym, int exchangeNumber, int quote_precis
 
    if(exchangeNumber == 2)
      {
-      if(sym=="")
-        {
-         Bybit_Positions("BTCUSD", quote_precision);
-         Bybit_Positions("EOSUSD", quote_precision);
-         Bybit_Positions("XRPUSD", quote_precision);
-         Bybit_Positions("ETHUSD", quote_precision);
-         return(true);
-        }
-      else
-        {
-         return (Bybit_Positions(sym, quote_precision));
-        }
-
+      return (Bybit_Positions(sym, quote_precision));
      }
 
    if(exchangeNumber == 3)
