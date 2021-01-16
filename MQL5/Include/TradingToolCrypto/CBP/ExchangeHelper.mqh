@@ -406,15 +406,10 @@ string build_hash(string message_body, string secret)
 //+------------------------------------------------------------------+
 void Global_Delete(string text)
   {
-
-   GlobalVariablesDeleteAll(text,0);
-
+   if(text !=""){
+      GlobalVariablesDeleteAll(text,0);
+   }
   }
-
-
-
-
-
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
