@@ -17,6 +17,9 @@
       - bitmex NormalizeString on ModifyTrade
       - bitmex drag and drop pending orders works
       - fixed bug in lines desc with incorrect order_id #
+      
+   - v1.36 
+      - remove okex, kucoin, coinbase, binance dex, 
 */
 #import "CBP_Functions.ex5"
 int GetOrderNumberFromLineName(string linename);
@@ -87,7 +90,7 @@ bool BinanceFutures_GetServerTime();
 bool BinanceFutures_Set_Leverage(string sym, double leverage);
 bool BinanceFutures_Positions(string sym, int quoteDigit); // returns the users open positions
 #import
-
+/*
 #import "Binance_Dex_api.ex5"
 bool Biance_Dex_Cancel_Trade(string sym, int orderId);
 bool Binance_Dex_Open_Trade(string sym, string side, string orderType, string orderSize, string orderPrice, int quoteDigit, int lotDigit);
@@ -102,7 +105,7 @@ bool Binance_Dex_Markets(int List_total);
 bool Binance_Dex_Order_List(string address);
 bool Binance_Dex_Time_Sales(string symbol, int limit);
 #import
-
+*/
 #import "Bybit_api.ex5"
 bool Bybit_Modify_Trade(string sym, string orderId, string clientOrderId, string price, int quoteDigit, int lotDigit);
 bool Bybit_Cancel_Trade(string sym, string orderId, string clientOrderId);
@@ -142,7 +145,7 @@ bool Bitmex_GetChat(int id);
 bool Bitmex_ClosePosition(string sym, string ordertype);
 bool Bitmex_Set_Leverage(string sym, double leverage);
 #import
-
+/*
 #import "Kucoin_api.ex5"
 bool Kucoin_Cancel_Trade(string sym, int orderId);
 bool Kucoin_Open_Trade(string sym, string side, string orderType, string orderSize, string orderPrice, int quoteDigit, int lotDigit, string newClientOrderId);
@@ -186,7 +189,7 @@ bool Okex_Positions(string sym, int quoteDigit);
 bool Okex_ClosePosition(string sym, string ordertype);
 bool Okex_Set_Leverage(string sym, double leverage);
 #import
-
+*/
 input group "---------------CRYPTO BRIDGE API SETUP---------------"
 input string Binance_Api_Key = "";
 input string Binance_Api_Secret = "";
@@ -205,6 +208,7 @@ input string Bybit_Api_Key = "";
 input string Bybit_Api_Secret = "";
 input string Bybit_LiveDemo = "live";
 
+/*
 input string Deribit_Api_Key = "";
 input string Deribit_Api_Secret = "";
 
@@ -217,6 +221,7 @@ input string Okex_Api_Secret = "";
 input string Okex_LiveDemo = "live";
 input string Okex_text_0 = "Market Type: margin, spot, futures, swap, option";
 input string Okex_Market_Type = "swap";
+*/
 
 input group "---------------CRYPTO BRIDGE VISUAL SETUP---------------"
 input string Partial_TakeProfit_1 = "TP/SL Line style only works with lineThickness == 1";
@@ -235,21 +240,20 @@ input ENUM_LINE_STYLE OrderlineStyle = STYLE_SOLID;
 input int OrderlineThickness = 1;
 input color Order_Color_Buy = clrBlueViolet;
 input color Order_Color_Sell = clrRosyBrown;
-input group "---------------CRYPTO BRIDGE VISUAL END SETUP---------------"
 /*
  Create an ENUM to have a droplist of the available exchanges within your robot's expert properties
 */
 enum ENUM_AVAILABLE_EXCHANGE
   {
-   BINANCE_DEX = 0,
+  // BINANCE_DEX = 0,
    BINANCE = 1,
-   BYBIT = 2,
-   BITMEX = 3,
-   KUCOIN = 4,
-   BINANCE_FUTURES = 5,
    BINANCE_US = 6,
-   DERIBIT = 7,
-   OKEX = 8
+   BINANCE_FUTURES = 5,
+   BITMEX = 3,
+   BYBIT = 2
+  // KUCOIN = 4,
+  //  DERIBIT = 7,
+  //  OKEX = 8
 
   };
 
@@ -262,7 +266,6 @@ input int Exchange_Lot_Precision = 8;
 input int Exchange_Quote_Precision = 8;
 input double Exchange_Leverage = 35;
 input int Exchange_Millisecond_RateLimiter = 1000;
-input group "---------------CUSTOM ROBOTS END---------------------";
 input group "---------------CRYPTO BRIDGE END SETUP---------------"
 
 //+------------------------------------------------------------------+
@@ -308,42 +311,43 @@ bool CryptoBridge::Init_Api_Keys(int exchange)
    add_chart_indicator();
 
    add_unique_id();
-
+   /*
    if(exchange == 0)
      {
-
       return (Binance_Dex_Get_API_Key(Binance_Api_Key, Binance_Api_Secret));
      }
+    */
    if(exchange == 1)
      {
-
       return (Binance_Get_API_Key(Binance_Api_Key, Binance_Api_Secret));
      }
    if(exchange == 2)
      {
-
       return (Bybit_Get_API_Key(Bybit_Api_Key, Bybit_Api_Secret, Bybit_LiveDemo));
      }
    if(exchange == 3)
      {
-
       return (Bitmex_Get_API_Key(Bitmex_Api_Key, Bitmex_Api_Secret));
      }
+   /*
    if(exchange == 4)
      {
 
       return (Kucoin_Get_API_Key(Kucoin_Api_Key, Kucoin_Api_Secret, Kucoin_Passphase));
      }
+   */
    if(exchange == 5)
      {
 
       return (BinanceFutures_Get_API_Key(BinanceFutures_Api_Key, BinanceFutures_Api_Secret, BinanceFutures_LiveDemo));
      }
+   
    if(exchange == 6)
      {
 
       return (Binance_US_Get_API_Key(Binance_US_Api_Key, Binance_US_Api_Secret));
      }
+   /*
    if(exchange == 7)
      {
 
@@ -354,6 +358,7 @@ bool CryptoBridge::Init_Api_Keys(int exchange)
 
       return (Okex_Get_API_Key(Okex_Api_Key, Okex_Api_Secret, Okex_LiveDemo, Okex_Market_Type));
      }
+   */
    return (false);
   }
 
@@ -523,10 +528,12 @@ bool CryptoBridge::Open_Trade(string sym, string side, string orderType, string 
      {
       return (Bitmex_Open_Trade(sym, side, orderType, orderSize, orderPrice,quoteDigit,lotDigit,orderId));
      }
+   /*
    if(exchangeNumber == 4)
      {
       return (Kucoin_Open_Trade(sym, side, orderType, orderSize, orderPrice,quoteDigit,lotDigit, orderId));
      }
+   */
    if(exchangeNumber == 5)
      {
       return (BinanceFutures_Open_Trade(sym, side, orderType, orderSize, orderPrice,quoteDigit,lotDigit,orderId));
@@ -535,10 +542,12 @@ bool CryptoBridge::Open_Trade(string sym, string side, string orderType, string 
      {
       return (Binance_US_Open_Trade(sym, side, orderType, orderSize, orderPrice,quoteDigit,lotDigit,orderId));
      }
+   /*
    if(exchangeNumber == 7)
      {
       return (Deribit_Open_Trade(sym, side, orderType, orderSize, orderPrice,quoteDigit,lotDigit));
      }
+   */
    return (false);
   }
 //+------------------------------------------------------------------+
@@ -623,10 +632,12 @@ bool CryptoBridge::Cancel_Trade(string sym, string orderId, int exchangeNumber, 
      {
       return (Binance_US_Cancel_Trade(sym, StringToInteger(orderId), clientOrderId));
      }
+   /*
    if(exchangeNumber == 7)
      {
       return (Deribit_Cancel_Trade(sym, orderId));
      }
+   */
    return (false);
   }
 //+------------------------------------------------------------------+
@@ -671,10 +682,12 @@ bool CryptoBridge::Cancel_Trade_All(string sym, int exchangeNumber)
 bool CryptoBridge::Get_Exchange_Server_Time(int exchangeNumber)
   {
    Print("CBP ServerTime");
+   /*
    if(exchangeNumber == 0)
      {
       return (Binance_Dex_BlockTime());
      }
+    */
    if(exchangeNumber == 1)
      {
       return (Binance_GetServerTime());
@@ -687,10 +700,12 @@ bool CryptoBridge::Get_Exchange_Server_Time(int exchangeNumber)
      {
       return (Bitmex_GetServerTime());
      }
+   /*
    if(exchangeNumber == 4)
      {
       return (Kucoin_GetServerTime());
      }
+   */
    if(exchangeNumber == 5)
      {
       return (BinanceFutures_GetServerTime());
@@ -699,6 +714,7 @@ bool CryptoBridge::Get_Exchange_Server_Time(int exchangeNumber)
      {
       return (Binance_US_GetServerTime());
      }
+   /*
    if(exchangeNumber == 7)
      {
       return (Deribit_GetServerTime());
@@ -707,6 +723,7 @@ bool CryptoBridge::Get_Exchange_Server_Time(int exchangeNumber)
      {
       return (Okex_GetServerTime());
      }
+   */
    return (false);
   }
 //+------------------------------------------------------------------+
@@ -715,10 +732,12 @@ bool CryptoBridge::Get_Exchange_Server_Time(int exchangeNumber)
 bool CryptoBridge::Get_PriceBest(string sym, int exchangeNumber, int quote_precision)
   {
    Print("CBP PriceBest");
+   /*
    if(exchangeNumber == 0)
      {
       return (Binance_Dex_GetPriceBest(sym));
      }
+   */
    if(exchangeNumber == 1)
      {
       return (Binance_GetPriceBest(sym, quote_precision));
@@ -731,10 +750,12 @@ bool CryptoBridge::Get_PriceBest(string sym, int exchangeNumber, int quote_preci
      {
       return (Bitmex_GetPriceBest(sym));
      }
+   /*
    if(exchangeNumber == 4)
      {
       return (Kucoin_GetPriceBest(sym,quote_precision));
      }
+   */
    if(exchangeNumber == 5)
      {
       return (BinanceFutures_GetPriceBest(sym, quote_precision));
@@ -743,6 +764,7 @@ bool CryptoBridge::Get_PriceBest(string sym, int exchangeNumber, int quote_preci
      {
       return (Binance_US_GetPriceBest(sym, quote_precision));
      }
+   /*
    if(exchangeNumber == 7)
      {
       return (Deribit_GetPriceBest(sym, quote_precision));
@@ -751,6 +773,7 @@ bool CryptoBridge::Get_PriceBest(string sym, int exchangeNumber, int quote_preci
      {
       return (Okex_GetPriceBest(sym, quote_precision));
      }
+   */
    return (false);
   }
 //+------------------------------------------------------------------+
@@ -759,10 +782,12 @@ bool CryptoBridge::Get_PriceBest(string sym, int exchangeNumber, int quote_preci
 bool CryptoBridge::Get_Price(string sym, int exchangeNumber, int quote_precision)
   {
    Print("CBP Price");
+   /*
    if(exchangeNumber == 0)
      {
       return (Binance_Dex_GetPrice(sym));
      }
+   */
    if(exchangeNumber == 1)
      {
       return (Binance_GetPrice(sym));
@@ -775,10 +800,12 @@ bool CryptoBridge::Get_Price(string sym, int exchangeNumber, int quote_precision
      {
       return (Bitmex_GetPrice(sym));
      }
+   /*
    if(exchangeNumber == 4)
      {
       return (Kucoin_GetPrice(sym));
      }
+   */
    if(exchangeNumber == 5)
      {
       return (BinanceFutures_GetPrice(sym, quote_precision));
@@ -787,6 +814,7 @@ bool CryptoBridge::Get_Price(string sym, int exchangeNumber, int quote_precision
      {
       return (Binance_US_GetPrice(sym));
      }
+   /*
    if(exchangeNumber == 7)
      {
       return (Deribit_GetPrice(sym));
@@ -795,6 +823,7 @@ bool CryptoBridge::Get_Price(string sym, int exchangeNumber, int quote_precision
      {
       return (Okex_GetPrice(sym, quote_precision));
      }
+   */
    return (false);
   }
 //+------------------------------------------------------------------+
@@ -897,6 +926,9 @@ bool CryptoBridge::Get_Position(string sym, int exchangeNumber, int quote_precis
    DeleteGlobalPrefix(prefix + "_LIQ_");     // - this is the pos  liq global variable
    DeleteSubWindowObjectAll(0, "sub_pos_"); // - this is the position string
    DeleteSubWindowObjectAll(0, "sub_liq_"); // - this is the liquidation string
+   
+   Print("CBP Deleted Globals and Subwindow");
+   
    /*
    delete the TP and SL lines on the chart if exists
    */
@@ -908,6 +940,8 @@ bool CryptoBridge::Get_Position(string sym, int exchangeNumber, int quote_precis
    DeleteOjectLinesByName("SL2b");
    DeleteOjectLinesByName("SL3b");
    DeleteOjectLinesByName("SL4b");
+   
+   Print("CBP Deleted Buy Lines");
 
    DeleteOjectLinesByName("TP1s");
    DeleteOjectLinesByName("TP2s");
@@ -917,6 +951,8 @@ bool CryptoBridge::Get_Position(string sym, int exchangeNumber, int quote_precis
    DeleteOjectLinesByName("SL2s");
    DeleteOjectLinesByName("SL3s");
    DeleteOjectLinesByName("SL4s");
+   
+   Print("CBP Deleted Sell Lines");
 
    if(exchangeNumber == 2)
      {
@@ -932,11 +968,12 @@ bool CryptoBridge::Get_Position(string sym, int exchangeNumber, int quote_precis
      {
       return (BinanceFutures_Positions(sym, quote_precision));
      }
-
+   /*
    if(exchangeNumber == 7)
      {
       return (Deribit_Positions(sym, quote_precision));
      }
+   */
    return (false);
   }
 //+------------------------------------------------------------------+
@@ -981,10 +1018,12 @@ bool CryptoBridge::Get_OpenOrders(string sym, int exchangeNumber, int quote_prec
      {
       return (Binance_US_GetOpenOrders(sym, quote_precision));
      }
+   /*
    if(exchangeNumber == 7)
      {
       return (Deribit_GetOpenOrders(sym));
      }
+   */
    return (false);
   }
 
@@ -1049,10 +1088,12 @@ bool CryptoBridge::Get_Balance(string sym, string quote_base, int exchangeNumber
      {
       return (Bitmex_Balance(sym, quote_base));
      }
+   /*
    if(exchangeNumber == 4)
      {
       return (Kucoin_Balance(sym, quote_base));
      }
+   */
    if(exchangeNumber == 5)
      {
       return (BinanceFutures_Balance(sym, quote_base));
@@ -1061,10 +1102,12 @@ bool CryptoBridge::Get_Balance(string sym, string quote_base, int exchangeNumber
      {
       return (Binance_US_Balance(sym, quote_base));
      }
+   /*
    if(exchangeNumber == 7)
      {
       return (Deribit_Balance(sym, quote_base));
      }
+   */
    return (false);
   }
 
