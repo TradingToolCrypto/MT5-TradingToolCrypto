@@ -5,7 +5,7 @@
 //+------------------------------------------------------------------+
 #property copyright "Copyright 2020, TradingToolCrypto Corp."
 #property link      "https://github.com/tradingtoolcrypto"
-#define VERSION 1.351
+#define VERSION 1.36
 /*FF
    https://github.com/tradingtoolcrypto
    - v1.34
@@ -17,9 +17,9 @@
       - bitmex NormalizeString on ModifyTrade
       - bitmex drag and drop pending orders works
       - fixed bug in lines desc with incorrect order_id #
-      
-   - v1.36 
-      - remove okex, kucoin, coinbase, binance dex, 
+
+   - v1.36
+      - remove okex, kucoin, coinbase, binance dex,
 */
 #import "CBP_Functions.ex5"
 int GetOrderNumberFromLineName(string linename);
@@ -245,15 +245,15 @@ input color Order_Color_Sell = clrRosyBrown;
 */
 enum ENUM_AVAILABLE_EXCHANGE
   {
-  // BINANCE_DEX = 0,
+// BINANCE_DEX = 0,
    BINANCE = 1,
    BINANCE_US = 6,
    BINANCE_FUTURES = 5,
    BITMEX = 3,
    BYBIT = 2
-  // KUCOIN = 4,
-  //  DERIBIT = 7,
-  //  OKEX = 8
+// KUCOIN = 4,
+//  DERIBIT = 7,
+//  OKEX = 8
 
   };
 
@@ -341,7 +341,7 @@ bool CryptoBridge::Init_Api_Keys(int exchange)
 
       return (BinanceFutures_Get_API_Key(BinanceFutures_Api_Key, BinanceFutures_Api_Secret, BinanceFutures_LiveDemo));
      }
-   
+
    if(exchange == 6)
      {
 
@@ -919,16 +919,16 @@ bool CryptoBridge::Get_FundRate(string sym, int exchangeNumber, int quote_precis
 //+------------------------------------------------------------------+
 bool CryptoBridge::Get_Position(string sym, int exchangeNumber, int quote_precision)
   {
-   Print("CBP GetPosition " + sym);
+   Print("CBP GetPosition on Symbol(" + sym + ")");
    ObjectDelete(0, sym + "_ENTRY");
    string prefix = CryptoBridge::Get_Exchange_Name(exchangeNumber);
    DeleteGlobalPrefix(prefix + "_POS_");     // - this is the position global variable
    DeleteGlobalPrefix(prefix + "_LIQ_");     // - this is the pos  liq global variable
    DeleteSubWindowObjectAll(0, "sub_pos_"); // - this is the position string
    DeleteSubWindowObjectAll(0, "sub_liq_"); // - this is the liquidation string
-   
-   Print("CBP Deleted Globals and Subwindow");
-   
+
+//  Print("CBP Deleted POS + LIQ Globals and Subwindow");
+
    /*
    delete the TP and SL lines on the chart if exists
    */
@@ -940,8 +940,8 @@ bool CryptoBridge::Get_Position(string sym, int exchangeNumber, int quote_precis
    DeleteOjectLinesByName("SL2b");
    DeleteOjectLinesByName("SL3b");
    DeleteOjectLinesByName("SL4b");
-   
-   Print("CBP Deleted Buy Lines");
+
+//  Print("CBP Deleted Buy Lines");
 
    DeleteOjectLinesByName("TP1s");
    DeleteOjectLinesByName("TP2s");
@@ -951,8 +951,8 @@ bool CryptoBridge::Get_Position(string sym, int exchangeNumber, int quote_precis
    DeleteOjectLinesByName("SL2s");
    DeleteOjectLinesByName("SL3s");
    DeleteOjectLinesByName("SL4s");
-   
-   Print("CBP Deleted Sell Lines");
+
+// Print("CBP Deleted Sell Lines");
 
    if(exchangeNumber == 2)
      {

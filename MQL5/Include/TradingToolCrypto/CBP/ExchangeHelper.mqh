@@ -46,10 +46,7 @@ string NormalizeString(string value, int digit)
      {
       const int placement = StringFind(value,".",0);
       const int lengt = StringLen(value);
-
-
-      Print(" Length " + IntegerToString(lengt) + " placement " + IntegerToString(placement));
-
+      //  Print(" Length " + IntegerToString(lengt) + " placement " + IntegerToString(placement));
       if(placement >=0)
         {
 
@@ -308,7 +305,7 @@ string Get_Trailing_ZerosC(string has_zeros)
    double zeros = StringToDouble(has_zeros);
    string out = "";
 
-   Print(" String In: " + has_zeros + "  DoubleOut: " + DoubleToString(zeros,8));
+//  Print(" String In: " + has_zeros + "  DoubleOut: " + DoubleToString(zeros,8));
 
    if(zeros > 1)
      {
@@ -385,7 +382,7 @@ string build_hash(string message_body, string secret)
 
 // BUILD THE HASH KEY
 
-   Print(" Build hash from string: " + message_body);
+//  Print(" Build hash from string: " + message_body);
    string hash = hash256.hmac(message_body,secret);
 
    /*
@@ -395,7 +392,7 @@ string build_hash(string message_body, string secret)
    string HEX =  convert_String_HEX(hash);
 
 
-   Print(" Hash result:  " + hash + "\nHEX: " + HEX);
+//  Print(" Hash result:  " + hash + "\nHEX: " + HEX);
    return(HEX);
 
   }
@@ -406,9 +403,10 @@ string build_hash(string message_body, string secret)
 //+------------------------------------------------------------------+
 void Global_Delete(string text)
   {
-   if(text !=""){
+   if(text !="")
+     {
       GlobalVariablesDeleteAll(text,0);
-   }
+     }
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -558,8 +556,3 @@ void ObjCreateButton(
    ObjectSetInteger(aChartID, aObjName, OBJPROP_TIMEFRAMES, aTimeFrames);
   }
 
-
-
-
-
-//+------------------------------------------------------------------+
