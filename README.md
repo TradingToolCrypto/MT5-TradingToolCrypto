@@ -11,3 +11,6 @@ Visit the [wiki](https://github.com/TradingToolCrypto/TradingTool/wiki) to disco
 
 # Trading Tool Crypto
 - [website](https://tradingtoolcrypto.github.io/index.html)
+
+# Change Log
+- [Project TradingToolCrypto](https://github.com/TradingToolCrypto/TradingTool-Wiki/projects/1)
