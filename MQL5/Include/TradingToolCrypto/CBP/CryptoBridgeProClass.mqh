@@ -5,7 +5,7 @@
 //+------------------------------------------------------------------+
 #property copyright "Copyright 2020, TradingToolCrypto Corp."
 #property link      "https://github.com/tradingtoolcrypto"
-#define VERSION 1.36
+#define VERSION 1.37
 /*FF
    https://github.com/tradingtoolcrypto
    - v1.34
@@ -20,6 +20,13 @@
 
    - v1.36
       - remove okex, kucoin, coinbase, binance dex,
+
+   - v1.37
+      - add bybit stoplimit order types
+      - binancefutures stop orders Globalvariable = STOPMARKET , GV missing price fixed by using the stopPrice
+      - delete all the globals that belong to this exchange configuration
+      - maintain the GV "CBP" when switching the exchanges. Only change the CBP value when the robot is removed.
+      - stoplimit orders send back the stopPrice aka Trigger price
 */
 #import "CBP_Functions.ex5"
 int GetOrderNumberFromLineName(string linename);
@@ -113,6 +120,7 @@ bool Bybit_Cancel_Trade_All(string sym);
 bool Bybit_Cancel_Trade_Stop(string sym, string orderId, string clientOrderId);
 bool Bybit_Open_Trade(string sym, string side, string orderType, string orderSize, string orderPrice, int quoteDigit, int lotDigit,string orderId);
 bool Bybit_Open_Trade_Stop(string sym, string side, string orderType, string orderSize, string stopPrice, int quoteDigit, int lotDigit,string orderId);
+bool Bybit_Open_Trade_StopLimit(string sym, string side, string orderType, string orderSize,string orderPrice, string stopPrice, int quoteDigit, int lotDigit, string newClientOrderId);
 bool Bybit_Balance(string sym, string quotebase);
 bool Bybit_GetOpenOrders(string sym, int quote_precision);
 bool Bybit_GetPriceBest(string sym, int quoteDigit);
@@ -134,6 +142,7 @@ bool Bitmex_Cancel_Trade(string sym, string orderId, string clientOrderId);
 bool Bitmex_Cancel_Trade_All(string sym);
 bool Bitmex_Open_Trade(string sym, string side, string orderType, string orderSize, string orderPrice, int quoteDigit, int lotDigit,string orderId);
 bool Bitmex_Open_Trade_Stop(string sym, string side, string orderType, string orderSize, string stopPrice, int quoteDigit, int lotDigit, string orderId);
+bool Bitmex_Open_Trade_StopLimit(string sym, string side, string orderType, string orderSize,string orderPrice, string stopPrice, int quoteDigit, int lotDigit, string orderId);
 bool Bitmex_Modify_Trade(string sym, string side, string orderType, string orderSize, string orderPrice, string orderId,string clientOrderId, int quoteDigit, int lotDigit);
 bool Bitmex_Balance(string sym, string quotebase);
 bool Bitmex_GetPriceBest(string sym);
@@ -368,8 +377,24 @@ bool CryptoBridge::Init_Api_Keys(int exchange)
 bool CryptoBridge::Deinit_Api_Keys(int exchange)
   {
    Comment("");
-   Print("CBP DEINIT()" + DoubleToString(delete_unique_id()));
-   ObjectsDeleteAll(NULL,-1,-1);
+   /*
+   exchange has not been activated
+   */
+   if(exchange== -1)
+     {
+      return(false);
+     }
+   string ex_name = Get_Exchange_Name(exchange);
+   int id = delete_unique_id();                                                     // Get the CBP unique ID number
+   Print("CBP DEINIT()" + IntegerToString(id) + " Exchange Name " + ex_name);
+   if(ex_name != "")
+     {
+      GlobalVariablesDeleteAll(ex_name,0);                                          // Delete all GV that belong to this exchange name
+      if(id!=0)
+        {
+         GlobalVariablesDeleteAll(IntegerToString(id) + ex_name,0);                 //Delete all GV that belong to this exchange name + unique_id
+        }
+     }
    return(true);
   }
 
@@ -444,7 +469,7 @@ bool CryptoBridge::Hedge_Mode(bool on_true_off_false, int exchangeNumber)
 //+------------------------------------------------------------------+
 bool CryptoBridge::Modify_Trade(string sym, string side, string orderType, string orderSize,string orderPrice, string id, string clientId, int orderNumber,  int quoteDigit, int lotDigit,int exchangeNumber)
   {
-   Print("CBP ModifyTrade | ID " + id + " |  Client ID " + clientId + " | Order Type " + orderType);
+   Print("CBP ModifyTrade | orderPrice " + orderPrice + " | ID " + id + " |  Client ID " + clientId + " | Order Type " + orderType + " | quoteDigit " + IntegerToString(quoteDigit) + " | lotDigit " + IntegerToString(lotDigit));
    if(exchangeNumber == 1)
      {
       CryptoBridge::Cancel_Trade(sym,id,exchangeNumber,0,clientId);
@@ -588,6 +613,14 @@ bool CryptoBridge::Open_Trade_StopLimit(string sym, string side, string orderTyp
      {
       return (Binance_Open_Trade_StopLimit(sym, side, orderType, orderSize, orderPrice, stopPrice,quoteDigit,lotDigit,orderId));
      }
+   if(exchangeNumber == 2)
+     {
+      return (Bybit_Open_Trade_StopLimit(sym, side, orderType, orderSize, orderPrice, stopPrice,quoteDigit,lotDigit,orderId));
+     }
+   if(exchangeNumber == 3)
+     {
+      return (Bitmex_Open_Trade_StopLimit(sym, side, orderType, orderSize, orderPrice, stopPrice,quoteDigit,lotDigit,orderId));
+     }
    if(exchangeNumber == 5)
      {
       return (BinanceFutures_Open_Trade_StopLimit(sym, side, orderType, orderSize, orderPrice, stopPrice,quoteDigit,lotDigit,orderId));
@@ -606,11 +639,19 @@ bool CryptoBridge::Cancel_Trade(string sym, string orderId, int exchangeNumber, 
    Print("CBP Cancel Trade" + " | orderID " + orderId + " | clientID " + clientOrderId);
    string name = CryptoBridge::Get_Exchange_Name(exchangeNumber);
 
-   DeleteGlobalOrderName(name, sym, order_number + 1); // Globals start at a value of 1
-   DeleteSubWindowObjectName(0, "order_id" + IntegerToString(order_number));
-   DeleteSubWindowObjectName(0, "orderid" + IntegerToString(order_number));
-   DeleteSubWindowObjectName(0, "sub_order_" + IntegerToString(order_number));
-   DeleteOjectLinesByDesc(orderId);
+   if(order_number != 0)
+     {
+      DeleteGlobalOrderName(name, sym, order_number + 1); // Globals start at a value of 1
+      DeleteSubWindowObjectName(0, "order_id" + IntegerToString(order_number));
+      DeleteSubWindowObjectName(0, "orderid" + IntegerToString(order_number));
+      DeleteSubWindowObjectName(0, "sub_order_" + IntegerToString(order_number));
+     }
+
+   if(orderId != "")
+     {
+      DeleteOjectLinesByDesc(orderId);
+     }
+
 
    if(exchangeNumber == 1)
      {
@@ -1478,7 +1519,6 @@ double CryptoBridge::Get_Wallet_Info(int robotInstance, string exchangeName, str
       name = GlobalVariableName(i);
       int dash1 = StringFind(name, "_", 0); // robot_instance
       string robot_number = StringSubstr(name, 0, dash1);
-
       long str_num = StringToInteger(robot_number);
 
       if(str_num == robotInstance  && dash1 != -1)
@@ -1489,11 +1529,9 @@ double CryptoBridge::Get_Wallet_Info(int robotInstance, string exchangeName, str
          int dash4 = StringFind(name, "_", dash3+1);
          int dash5 = StringFind(name, "_", dash4+1);
          int dash6 = StringFind(name, "_", dash5+1);
-
          string ex_number = StringSubstr(name, 0,dash1);
          string ex_name = StringSubstr(name, dash1+1,(dash3-dash2)-1);
          string ex_wallet = StringSubstr(name, dash3+1, (dash4-dash3)-1);
-
          string ex_info = StringSubstr(name, dash4+1,-1);
 
          if(ex_name == exchangeName)
@@ -1594,7 +1632,6 @@ double delete_unique_id()
      {
       GlobalVariableSet(id,0);
      }
-   value = GlobalVariableGet(id);
    return(value);
   }
 //+------------------------------------------------------------------+
