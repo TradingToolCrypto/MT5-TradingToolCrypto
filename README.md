@@ -10,7 +10,9 @@ All the tools are located in this repo , [click to download zip folder](https://
 Visit the [wiki](https://github.com/TradingToolCrypto/TradingTool/wiki) to discover all the trading tools and how to use them. 
 
 # Trading Tool Crypto
-- [website](https://tradingtoolcrypto.github.io/index.html)
+- [website](https://tradingtoolcrypto.com)
+- [Telegram Announcements](https://t.me/tradingtool)
+- [Telegram Group](https://t.me/TradingToolCrypto)
 
 # Change Log
 - [Project TradingToolCrypto](https://github.com/TradingToolCrypto/TradingTool-Wiki/projects/1)
