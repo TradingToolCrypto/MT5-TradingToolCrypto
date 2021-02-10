@@ -97,6 +97,26 @@ bool BinanceFutures_GetServerTime();
 bool BinanceFutures_Set_Leverage(string sym, double leverage);
 bool BinanceFutures_Positions(string sym, int quoteDigit); // returns the users open positions
 #import
+
+#import "BinanceFuturesCoin_api.ex5"
+bool BinanceFuturesC_HedgeMode(string hedgeOn_true_else_false);
+bool BinanceFuturesC_Get_API_Key(string key, string secret, string livedemo);
+bool BinanceFuturesC_Cancel_Trade(string sym, long orderId,string clientOrderId);
+bool BinanceFuturesC_Cancel_Trade_ALL(string sym);
+bool BinanceFuturesC_Open_Trade(string sym, string side, string orderType, string orderSize, string orderPrice,int quoteDigit, int lotDigit,string orderId);
+bool BinanceFuturesC_Open_Trade_Stop(string sym, string side, string orderType, string orderSize, string stopPrice, int quoteDigit, int lotDigit,string orderId);
+bool BinanceFuturesC_Open_Trade_StopLimit(string sym, string side, string orderType, string orderSize, string orderPrice, string stopPrice,int quoteDigit, int lotDigit,string orderId);
+bool BinanceFuturesC_Close_Trade(string sym, string side, string orderType, string orderSize, string orderPrice, int quoteDigit, int lotDigit);
+bool BinanceFuturesC_Balance(string sym, string quotebase);
+bool BinanceFuturesC_GetPriceBest(string sym, int quote_digit);
+bool BinanceFuturesC_GetPrice(string sym, int quoteDigit);
+bool BinanceFuturesC_GetOpenInterest(string sym, int quoteDigit);
+bool BinanceFuturesC_GetFundRate(string sym, int quoteDigit);
+bool BinanceFuturesC_GetOpenOrders(string sym, int quote_precision);
+bool BinanceFuturesC_GetServerTime();
+bool BinanceFuturesC_Set_Leverage(string sym, double leverage);
+bool BinanceFuturesC_Positions(string sym, int quoteDigit); // returns the users open positions
+#import
 /*
 #import "Binance_Dex_api.ex5"
 bool Biance_Dex_Cancel_Trade(string sym, int orderId);
@@ -115,6 +135,7 @@ bool Binance_Dex_Time_Sales(string symbol, int limit);
 */
 #import "Bybit_api.ex5"
 bool Bybit_Modify_Trade(string sym, string orderId, string clientOrderId, string price, int quoteDigit, int lotDigit);
+bool Bybit_Modify_Trade_Conditional(string sym, string orderId,string clientOrderId, string price, int quoteDigit, int lotDigit);
 bool Bybit_Cancel_Trade(string sym, string orderId, string clientOrderId);
 bool Bybit_Cancel_Trade_All(string sym);
 bool Bybit_Cancel_Trade_Stop(string sym, string orderId, string clientOrderId);
@@ -154,6 +175,27 @@ bool Bitmex_GetChat(int id);
 bool Bitmex_ClosePosition(string sym, string ordertype);
 bool Bitmex_Set_Leverage(string sym, double leverage);
 #import
+
+#import "ftx_api.ex5"
+bool FTX_Get_API_Key(string key, string secret);
+bool FTX_GetServerTime();
+bool FTX_GetPrice(string sym, int quoteDigit);
+bool FTX_GetOpenInterest(string sym, int quoteDigit);
+bool FTX_GetFundRate(string sym, int quoteDigit);
+bool FTX_GetPriceBest(string sym, int quoteDigit);
+bool FTX_Balance(string sym, string quotebase);
+bool FTX_Positions(string sym, int quoteDigit);
+bool FTX_Open_Trade(string sym, string side, string orderType, string orderSize, string orderPrice, int quoteDigit, int lotDigit, string newClientOrderId);
+bool FTX_Open_Trade_Stop(string sym, string side, string orderType, string orderSize, string stopPrice, int quoteDigit, int lotDigit, string newClientOrderId);
+bool FTX_Open_Trade_StopLimit(string sym, string side, string orderType, string orderSize,string orderPrice, string stopPrice, int quoteDigit, int lotDigit, string newClientOrderId);
+bool FTX_Cancel_Trade(string sym, string orderId, string clientOrderId);
+bool FTX_Cancel_Trade_All(string sym);
+bool FTX_Modify_Trade(string sym, string orderId,string clientOrderId, string price, int quoteDigit, int lotDigit);
+bool FTX_Modify_Trade_Conditional(string sym, string orderId, string price, int quoteDigit, int lotDigit);
+bool FTX_GetOpenOrders(string sym, int quoteDigit);
+bool FTX_Set_Leverage(string sym, double leverage);
+#import
+
 /*
 #import "Kucoin_api.ex5"
 bool Kucoin_Cancel_Trade(string sym, int orderId);
@@ -217,6 +259,9 @@ input string Bybit_Api_Key = "";
 input string Bybit_Api_Secret = "";
 input string Bybit_LiveDemo = "live";
 
+input string FTX_Api_Key = "";
+input string FTX_Api_Secret = "";
+
 /*
 input string Deribit_Api_Key = "";
 input string Deribit_Api_Secret = "";
@@ -249,6 +294,7 @@ input ENUM_LINE_STYLE OrderlineStyle = STYLE_SOLID;
 input int OrderlineThickness = 1;
 input color Order_Color_Buy = clrBlueViolet;
 input color Order_Color_Sell = clrRosyBrown;
+input color Order_Color_StopLimit = clrGoldenrod;
 /*
  Create an ENUM to have a droplist of the available exchanges within your robot's expert properties
 */
@@ -259,11 +305,12 @@ enum ENUM_AVAILABLE_EXCHANGE
    BINANCE_US = 6,
    BINANCE_FUTURES = 5,
    BITMEX = 3,
-   BYBIT = 2
+   BYBIT = 2,
 // KUCOIN = 4,
 //  DERIBIT = 7,
 //  OKEX = 8
-
+   FTX = 12,
+   BINANCE_FUTURES_COIN = 21
   };
 
 
@@ -316,7 +363,7 @@ public:
 //+------------------------------------------------------------------+
 bool CryptoBridge::Init_Api_Keys(int exchange)
   {
-
+   Print("CBP InitAPIKEYS");
    add_chart_indicator();
 
    add_unique_id();
@@ -368,6 +415,18 @@ bool CryptoBridge::Init_Api_Keys(int exchange)
       return (Okex_Get_API_Key(Okex_Api_Key, Okex_Api_Secret, Okex_LiveDemo, Okex_Market_Type));
      }
    */
+   if(exchange == 12)
+     {
+      return (FTX_Get_API_Key(FTX_Api_Key, FTX_Api_Secret));
+     }
+
+   if(exchange == 21)
+     {
+
+      return (BinanceFuturesC_Get_API_Key(BinanceFutures_Api_Key, BinanceFutures_Api_Secret, BinanceFutures_LiveDemo));
+     }
+
+
    return (false);
   }
 
@@ -403,7 +462,7 @@ bool CryptoBridge::Deinit_Api_Keys(int exchange)
 //+------------------------------------------------------------------+
 string CryptoBridge::Get_Exchange_Name(int exchange_number)
   {
-
+   Print("CBP GetExchangeName");
    if(exchange_number == 0)
      {
       return ("BinanceDex");
@@ -440,6 +499,14 @@ string CryptoBridge::Get_Exchange_Name(int exchange_number)
      {
       return ("Okex");
      }
+   if(exchange_number == 12)
+     {
+      return ("FTX");
+     }
+   if(exchange_number == 21)
+     {
+      return ("BinanceFuturesC");
+     }
    return ("");
   }
 
@@ -458,6 +525,17 @@ bool CryptoBridge::Hedge_Mode(bool on_true_off_false, int exchangeNumber)
       else
         {
          return (BinanceFutures_HedgeMode("false"));
+        }
+     }
+   if(exchangeNumber == 21)
+     {
+      if(on_true_off_false)
+        {
+         return (BinanceFuturesC_HedgeMode("true"));
+        }
+      else
+        {
+         return (BinanceFuturesC_HedgeMode("false"));
         }
      }
 
@@ -481,7 +559,14 @@ bool CryptoBridge::Modify_Trade(string sym, string side, string orderType, strin
      }
    if(exchangeNumber == 2)
      {
-      return (Bybit_Modify_Trade(sym, id,clientId, orderPrice,quoteDigit,lotDigit));
+      if(orderType=="LIMIT")
+        {
+         return (Bybit_Modify_Trade(sym, id,clientId, orderPrice,quoteDigit,lotDigit));
+        }
+      if(orderType=="STOPMARKET")       //CBP returns on line drag/drop function
+        {
+         return(Bybit_Modify_Trade_Conditional(sym,id,clientId,orderPrice,quoteDigit,lotDigit));
+        }
      }
 
    if(exchangeNumber == 3)
@@ -521,6 +606,7 @@ bool CryptoBridge::Modify_Trade(string sym, string side, string orderType, strin
         }
 
      }
+
    if(exchangeNumber == 6)
      {
       CryptoBridge::Cancel_Trade(sym,id,exchangeNumber,0,clientId);
@@ -529,10 +615,53 @@ bool CryptoBridge::Modify_Trade(string sym, string side, string orderType, strin
          return (Binance_US_Open_Trade(sym, side, orderType, orderSize, orderPrice,quoteDigit,lotDigit,id));
         }
      }
+
    if(exchangeNumber == 7)
      {
       //  return (Deribit_Open_Trade(sym, side, orderType, orderSize, orderPrice));
      }
+
+   if(exchangeNumber == 12)
+     {
+      if(orderType=="LIMIT")
+        {
+         return (FTX_Modify_Trade(sym, id,clientId, orderPrice,quoteDigit,lotDigit));
+        }
+      if(orderType=="STOPMARKET")
+        {
+         return(FTX_Modify_Trade_Conditional(sym,id,orderPrice,quoteDigit,lotDigit));
+        }
+
+     }
+
+   if(exchangeNumber == 21)
+     {
+
+      if(orderType=="STOPMARKET")       //CBP returns on line drag/drop function
+        {
+         orderType="STOP_LOSS";           // Bug fixed Nov 11 - 2020
+        }
+
+      /*
+      Cancel the order
+      */
+      CryptoBridge::Cancel_Trade(sym,id,exchangeNumber,0,clientId); // Bug fixed Nov 11 - 2020
+
+      /*
+      Place a new order
+      */
+
+      if(orderType=="LIMIT")
+        {
+         return (BinanceFuturesC_Open_Trade(sym, side, orderType, orderSize, orderPrice,quoteDigit,lotDigit,id));
+        }
+      if(orderType=="STOP_LOSS")
+        {
+         return (BinanceFuturesC_Open_Trade_Stop(sym, side, orderType, orderSize, orderPrice,quoteDigit,lotDigit,id));
+        }
+
+     }
+
    return (false);
   }
 //+------------------------------------------------------------------+
@@ -541,6 +670,7 @@ bool CryptoBridge::Modify_Trade(string sym, string side, string orderType, strin
 bool CryptoBridge::Open_Trade(string sym, string side, string orderType, string orderSize, string orderPrice, int quoteDigit, int lotDigit, int exchangeNumber, string orderId)
   {
    Print("CBP OpenTrade " + sym + " | " + side + " | " + orderType + " | " + orderSize + " | " + orderPrice+ " | " + IntegerToString(quoteDigit) + " | " + IntegerToString(lotDigit) + " | " + IntegerToString(exchangeNumber) + " | " + orderId);
+
    if(exchangeNumber == 1)
      {
       return (Binance_Open_Trade(sym, side, orderType, orderSize, orderPrice,quoteDigit,lotDigit,orderId));
@@ -573,6 +703,14 @@ bool CryptoBridge::Open_Trade(string sym, string side, string orderType, string 
       return (Deribit_Open_Trade(sym, side, orderType, orderSize, orderPrice,quoteDigit,lotDigit));
      }
    */
+   if(exchangeNumber == 12)
+     {
+      return (FTX_Open_Trade(sym, side, orderType, orderSize, orderPrice,quoteDigit,lotDigit,orderId));
+     }
+   if(exchangeNumber == 21)
+     {
+      return (BinanceFuturesC_Open_Trade(sym, side, orderType, orderSize, orderPrice,quoteDigit,lotDigit,orderId));
+     }
    return (false);
   }
 //+------------------------------------------------------------------+
@@ -581,6 +719,7 @@ bool CryptoBridge::Open_Trade(string sym, string side, string orderType, string 
 bool CryptoBridge::Open_Trade_Stop(string sym, string side, string orderType, string orderSize, string stopPrice, int quoteDigit, int lotDigit, int exchangeNumber, string orderId)
   {
    Print("CBP OpenTradeStop " + sym + " | " + side + " | " + orderType + " | " + orderSize + " | " + stopPrice + " | " + IntegerToString(quoteDigit) + " | " + IntegerToString(lotDigit) + " | " + IntegerToString(exchangeNumber) + " | " + orderId);
+
    if(exchangeNumber == 1)
      {
       return (Binance_Open_Trade_Stop(sym, side, orderType, orderSize,stopPrice,quoteDigit,lotDigit,orderId));
@@ -601,6 +740,14 @@ bool CryptoBridge::Open_Trade_Stop(string sym, string side, string orderType, st
      {
       return (Binance_US_Open_Trade_Stop(sym, side, orderType, orderSize,stopPrice,quoteDigit,lotDigit,orderId));
      }
+   if(exchangeNumber == 12)
+     {
+      return (FTX_Open_Trade_Stop(sym, side, orderType, orderSize,stopPrice,quoteDigit,lotDigit,orderId));
+     }
+   if(exchangeNumber == 21)
+     {
+      return (BinanceFuturesC_Open_Trade_Stop(sym, side, orderType, orderSize, stopPrice,quoteDigit,lotDigit,orderId));
+     }
    return (false);
   }
 //+------------------------------------------------------------------+
@@ -609,6 +756,7 @@ bool CryptoBridge::Open_Trade_Stop(string sym, string side, string orderType, st
 bool CryptoBridge::Open_Trade_StopLimit(string sym, string side, string orderType, string orderSize, string orderPrice, string stopPrice, int quoteDigit, int lotDigit, int exchangeNumber, string orderId)
   {
    Print("CBP OpenTradeStopLimit " + sym + " | " + side + " | " + orderType + " | " + orderSize +" | " + orderPrice +  " | " + stopPrice + " | " + IntegerToString(quoteDigit) + " | " + IntegerToString(lotDigit) + " | " + IntegerToString(exchangeNumber) + " | " + orderId);
+
    if(exchangeNumber == 1)
      {
       return (Binance_Open_Trade_StopLimit(sym, side, orderType, orderSize, orderPrice, stopPrice,quoteDigit,lotDigit,orderId));
@@ -629,6 +777,14 @@ bool CryptoBridge::Open_Trade_StopLimit(string sym, string side, string orderTyp
      {
       return (Binance_US_Open_Trade_StopLimit(sym, side, orderType, orderSize, orderPrice, stopPrice,quoteDigit,lotDigit,orderId));
      }
+   if(exchangeNumber == 12)
+     {
+      return (FTX_Open_Trade_StopLimit(sym, side, orderType, orderSize, orderPrice, stopPrice,quoteDigit,lotDigit,orderId));
+     }
+   if(exchangeNumber == 21)
+     {
+      return (BinanceFuturesC_Open_Trade_StopLimit(sym, side, orderType, orderSize, orderPrice, stopPrice,quoteDigit,lotDigit,orderId));
+     }
    return (false);
   }
 //+------------------------------------------------------------------+
@@ -637,6 +793,7 @@ bool CryptoBridge::Open_Trade_StopLimit(string sym, string side, string orderTyp
 bool CryptoBridge::Cancel_Trade(string sym, string orderId, int exchangeNumber, int order_number, string clientOrderId)
   {
    Print("CBP Cancel Trade" + " | orderID " + orderId + " | clientID " + clientOrderId);
+
    string name = CryptoBridge::Get_Exchange_Name(exchangeNumber);
 
    if(order_number != 0)
@@ -651,7 +808,6 @@ bool CryptoBridge::Cancel_Trade(string sym, string orderId, int exchangeNumber, 
      {
       DeleteOjectLinesByDesc(orderId);
      }
-
 
    if(exchangeNumber == 1)
      {
@@ -679,6 +835,14 @@ bool CryptoBridge::Cancel_Trade(string sym, string orderId, int exchangeNumber, 
       return (Deribit_Cancel_Trade(sym, orderId));
      }
    */
+   if(exchangeNumber == 12)
+     {
+      return (FTX_Cancel_Trade(sym, orderId,clientOrderId));
+     }
+   if(exchangeNumber == 21)
+     {
+      return (BinanceFuturesC_Cancel_Trade(sym, StringToInteger(orderId),clientOrderId));
+     }
    return (false);
   }
 //+------------------------------------------------------------------+
@@ -687,6 +851,7 @@ bool CryptoBridge::Cancel_Trade(string sym, string orderId, int exchangeNumber, 
 bool CryptoBridge::Cancel_Trade_All(string sym, int exchangeNumber)
   {
    Print("CBP CancelAllTrades");
+
    string prefix = CryptoBridge::Get_Exchange_Name(exchangeNumber);
 
    DeleteGlobalPrefix(prefix + "_Order_" + sym); //- this is the global assigned to the orders
@@ -714,6 +879,14 @@ bool CryptoBridge::Cancel_Trade_All(string sym, int exchangeNumber)
    if(exchangeNumber == 6)
      {
       return (Binance_US_Cancel_Trade_All(sym));
+     }
+   if(exchangeNumber == 12)
+     {
+      return (FTX_Cancel_Trade_All(sym));
+     }
+   if(exchangeNumber == 21)
+     {
+      return (BinanceFuturesC_Cancel_Trade_ALL(sym));
      }
    return (false);
   }
@@ -765,6 +938,14 @@ bool CryptoBridge::Get_Exchange_Server_Time(int exchangeNumber)
       return (Okex_GetServerTime());
      }
    */
+   if(exchangeNumber == 12)
+     {
+      return (FTX_GetServerTime());
+     }
+   if(exchangeNumber == 21)
+     {
+      return (BinanceFuturesC_GetServerTime());
+     }
    return (false);
   }
 //+------------------------------------------------------------------+
@@ -815,6 +996,14 @@ bool CryptoBridge::Get_PriceBest(string sym, int exchangeNumber, int quote_preci
       return (Okex_GetPriceBest(sym, quote_precision));
      }
    */
+   if(exchangeNumber == 12)
+     {
+      return (FTX_GetPriceBest(sym, quote_precision));
+     }
+   if(exchangeNumber == 21)
+     {
+      return (BinanceFuturesC_GetPriceBest(sym, quote_precision));
+     }
    return (false);
   }
 //+------------------------------------------------------------------+
@@ -865,6 +1054,14 @@ bool CryptoBridge::Get_Price(string sym, int exchangeNumber, int quote_precision
       return (Okex_GetPrice(sym, quote_precision));
      }
    */
+   if(exchangeNumber == 12)
+     {
+      return (FTX_GetPrice(sym, quote_precision));
+     }
+   if(exchangeNumber == 21)
+     {
+      return (BinanceFuturesC_GetPrice(sym, quote_precision));
+     }
    return (false);
   }
 //+------------------------------------------------------------------+
@@ -909,6 +1106,14 @@ bool CryptoBridge::Get_OpenInterest(string sym, int exchangeNumber, int quote_pr
      {
       // return (Okex_GetPrice(sym,quote_precision));
      }
+   if(exchangeNumber == 12)
+     {
+      return (FTX_GetOpenInterest(sym, quote_precision));
+     }
+   if(exchangeNumber == 21)
+     {
+      return (BinanceFuturesC_GetOpenInterest(sym, quote_precision));
+     }
    return (false);
   }
 //+------------------------------------------------------------------+
@@ -952,6 +1157,14 @@ bool CryptoBridge::Get_FundRate(string sym, int exchangeNumber, int quote_precis
    if(exchangeNumber == 8)
      {
       //  return (Okex_GetPrice(sym,quote_precision));
+     }
+   if(exchangeNumber == 12)
+     {
+      return (FTX_GetFundRate(sym, quote_precision));
+     }
+   if(exchangeNumber == 21)
+     {
+      return (BinanceFuturesC_GetFundRate(sym, quote_precision));
      }
    return (false);
   }
@@ -999,12 +1212,10 @@ bool CryptoBridge::Get_Position(string sym, int exchangeNumber, int quote_precis
      {
       return (Bybit_Positions(sym, quote_precision));
      }
-
    if(exchangeNumber == 3)
      {
       return (Bitmex_Positions(sym, quote_precision));
      }
-
    if(exchangeNumber == 5)
      {
       return (BinanceFutures_Positions(sym, quote_precision));
@@ -1015,6 +1226,14 @@ bool CryptoBridge::Get_Position(string sym, int exchangeNumber, int quote_precis
       return (Deribit_Positions(sym, quote_precision));
      }
    */
+   if(exchangeNumber == 12)
+     {
+      return (FTX_Positions(sym, quote_precision));
+     }
+   if(exchangeNumber == 21)
+     {
+      return (BinanceFuturesC_Positions(sym, quote_precision));
+     }
    return (false);
   }
 //+------------------------------------------------------------------+
@@ -1024,7 +1243,6 @@ bool CryptoBridge::Get_OpenOrders(string sym, int exchangeNumber, int quote_prec
   {
    Print("CBP GetOpenOrders " + sym);
    string prefix = CryptoBridge::Get_Exchange_Name(exchangeNumber);
-
    DeleteGlobalPrefix(prefix + "_Order_" + sym + "_MARKET");
    DeleteGlobalPrefix(prefix + "_Order_" + sym + "_LIMIT");
    DeleteGlobalPrefix(prefix + "_Order_" + sym + "_STOP");
@@ -1032,11 +1250,9 @@ bool CryptoBridge::Get_OpenOrders(string sym, int exchangeNumber, int quote_prec
    DeleteGlobalPrefix(prefix + "_Order_" + sym + "_STOP_MARKET");
    DeleteGlobalPrefix(prefix + "_Order_" + sym + "_STOPLIMIT");
    DeleteGlobalPrefix(prefix + "_Order_" + sym + "_STOP_LIMIT");
-
    DeleteSubWindowObjectAll(0, "sub_order_"); // - this is the order string
    DeleteSubWindowObjectAll(0, "order_id");   //   - this is the order id string
    DeleteSubWindowObjectAll(0, "orderid");    //    - this is the order edit button "X" to cancel individual orders
-
    DeleteOjectLines(sym);
 
    if(exchangeNumber == 1)
@@ -1065,6 +1281,14 @@ bool CryptoBridge::Get_OpenOrders(string sym, int exchangeNumber, int quote_prec
       return (Deribit_GetOpenOrders(sym));
      }
    */
+   if(exchangeNumber == 12)
+     {
+      return (FTX_GetOpenOrders(sym, quote_precision));
+     }
+   if(exchangeNumber == 21)
+     {
+      return (BinanceFuturesC_GetOpenOrders(sym, quote_precision));
+     }
    return (false);
   }
 
@@ -1086,6 +1310,10 @@ bool CryptoBridge::Margin_Close_Position(string sym, string side, string orderTy
      {
       return (BinanceFutures_Close_Trade(sym, side, orderType, orderSize, orderPrice,quoteDigit, lotDigit));
      }
+   if(exchangeNumber == 21)
+     {
+      return (BinanceFuturesC_Close_Trade(sym, side, orderType, orderSize, orderPrice,quoteDigit, lotDigit));
+     }
    return (false);
   }
 //+------------------------------------------------------------------+
@@ -1105,6 +1333,14 @@ bool CryptoBridge::Margin_Set_Leverage(string sym, double leverage, int exchange
    if(exchangeNumber == 5)
      {
       return (BinanceFutures_Set_Leverage(sym, leverage));
+     }
+   if(exchangeNumber == 12)
+     {
+      return (FTX_Set_Leverage("",leverage));
+     }
+   if(exchangeNumber == 21)
+     {
+      return (BinanceFuturesC_Set_Leverage(sym, leverage));
      }
    return (false);
   }
@@ -1149,6 +1385,14 @@ bool CryptoBridge::Get_Balance(string sym, string quote_base, int exchangeNumber
       return (Deribit_Balance(sym, quote_base));
      }
    */
+   if(exchangeNumber == 12)
+     {
+      return (FTX_Balance(sym, quote_base));
+     }
+   if(exchangeNumber == 21)
+     {
+      return (BinanceFuturesC_Balance(sym, quote_base));
+     }
    return (false);
   }
 
@@ -1164,7 +1408,6 @@ double exchange_ordersize[];
 int exchange_orderindex[];
 void CryptoBridge::Parse_Orders(string exchangeName, int order_location, int id_location)
   {
-
    Print(" CBP Parse Orders " + exchangeName);
 
    int dash0 = 0;
@@ -1262,13 +1505,25 @@ void CryptoBridge::Parse_Orders(string exchangeName, int order_location, int id_
       // for(int i =0; i < loop_main; i++) // working for bitmex oct25 - 2020 ( does this break other exchanges?)
       for(int i = loop_main - 1; i > -1; i--) // Testing binance futures ( this was the default) Nov 15 (working - bug fixed)
         {
-         if(exchange_orderside[i] == "BUY")
+         if(exchange_orderside[i] == "BUY" && exchange_ordertype[i] != "STOPLIMIT")
            {
             CreateOrderEntryLine(exchange_symbol[i] +"_"+exchange_ordertype[i]+ "_BUY_"  +exchange_ordersize[i] + "_" + IntegerToString(i), GetObjectDesc(exchange_orderindex[i]-1), bar_close - 6000, exchange_orderprice[i], bar_close, exchange_orderprice[i], Order_Color_Buy, OrderlineThickness, OrderlineStyle);
            }
-         if(exchange_orderside[i] == "SELL")
+         if(exchange_orderside[i] == "SELL" && exchange_ordertype[i] != "STOPLIMIT")
            {
             CreateOrderEntryLine(exchange_symbol[i] +"_"+exchange_ordertype[i]+ "_SELL_" +exchange_ordersize[i] + "_" + IntegerToString(i), GetObjectDesc(exchange_orderindex[i]-1), bar_close - 6000, exchange_orderprice[i], bar_close, exchange_orderprice[i], Order_Color_Sell, OrderlineThickness, OrderlineStyle);
+           }
+         /*
+         stop limit orders need to be a different color because these orders require two prices and drag to modify will be disabled
+         Order_Color_StopLimit
+         */
+         if(exchange_orderside[i] == "BUY" && exchange_ordertype[i] == "STOPLIMIT")
+           {
+            CreateOrderEntryLine(exchange_symbol[i] +"_"+exchange_ordertype[i]+ "_BUY_"  +exchange_ordersize[i] + "_" + IntegerToString(i), GetObjectDesc(exchange_orderindex[i]-1), bar_close - 6000, exchange_orderprice[i], bar_close, exchange_orderprice[i], Order_Color_StopLimit, OrderlineThickness, OrderlineStyle);
+           }
+         if(exchange_orderside[i] == "SELL" && exchange_ordertype[i] == "STOPLIMIT")
+           {
+            CreateOrderEntryLine(exchange_symbol[i] +"_"+exchange_ordertype[i]+ "_SELL_" +exchange_ordersize[i] + "_" + IntegerToString(i), GetObjectDesc(exchange_orderindex[i]-1), bar_close - 6000, exchange_orderprice[i], bar_close, exchange_orderprice[i], Order_Color_StopLimit, OrderlineThickness, OrderlineStyle);
            }
         }
      }
@@ -1544,13 +1799,8 @@ double CryptoBridge::Get_Wallet_Info(int robotInstance, string exchangeName, str
                  {
                   return(GlobalVariableGet(name));
                  }
-
-
               }
-
            }
-
-
         }
      }
    return(0);
@@ -1614,7 +1864,6 @@ void add_unique_id()
      {
       GlobalVariableSet(id,value+1);
      }
-
   }
 
 //+------------------------------------------------------------------+
