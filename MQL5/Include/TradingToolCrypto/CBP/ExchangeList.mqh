@@ -55,12 +55,12 @@ string get_suffix_exchange_name(string suffix, int id)
         }
       if(id == 5)
         {
-        GLOBAL_exchange = "BinanceFutures";
+         GLOBAL_exchange = "BinanceFutures";
          return(".bnf");
         }
       if(id == 6)
         {
-        GLOBAL_exchange = "BinanceUS";
+         GLOBAL_exchange = "BinanceUS";
          return(".bnu");
         }
       if(id == 7)
@@ -112,7 +112,7 @@ string get_suffix_exchange_name(string suffix, int id)
         }
       if(id == 16)
         {
-        GLOBAL_exchange = "Phemex";
+         GLOBAL_exchange = "Phemex";
          return(".phe");
         }
       if(id == 17)
@@ -158,9 +158,117 @@ string get_suffix_exchange_name(string suffix, int id)
          GLOBAL_exchange = "BybitU";
          return(".bytt");
         }
-
      }
    return(suffix);
-
   }
- 
+
+/*
+ suffix is unqiue for each exchange api 
+ - input the suffix and get the exchange_number for the cryptobridgeproClass
+*/
+int suffix_exchange_number(string id)
+  {
+   if(id == ".bnx")
+     {
+      return(0);
+     }
+   if(id == ".bnc")
+     {
+      return(1);
+     }
+   if(id == ".byb")
+     {
+      return(2);
+     }
+   if(id == ".mex")
+     {
+      return(3);
+     }
+   if(id == ".kuc")
+     {
+      return(4);
+     }
+   if(id == ".bnf")
+     {
+      return(5);
+     }
+   if(id == ".bnu")
+     {
+      return(6);
+     }
+   if(id == ".der")
+     {
+      return(7);
+     }
+   if(id == ".okx")
+     {
+      return(8);
+     }
+   if(id == ".cbs")
+     {
+      return(9);
+     }
+   if(id == ".btf")
+     {
+      return(10);
+     }
+   if(id == ".bsp")
+     {
+      return(11);
+     }
+   if(id == ".ftx")
+     {
+      return(12);
+     }
+   if(id == ".sat")
+     {
+      return(13);
+     }
+   if(id == ".dig")
+     {
+      return(14);
+     }
+   if(id == ".huo")
+     {
+      return(15);
+     }
+   if(id == ".phe")
+     {
+      return(16);
+     }
+   if(id == ".zbg")
+     {
+      return(17);
+     }
+   if(id == ".kra")
+     {
+      return(18);
+     }
+   if(id == ".kuf")
+     {
+      return(19);
+     }
+   if(id == ".bts")
+     {
+      return(20);
+     }
+   if(id == ".bnd")//binance futures coin
+     {
+      return(21);
+     }
+   if(id == ".byt")// bybit usdt
+     {
+      return(22);
+     }
+   if(id == ".bybt")// bybit coin testnet
+     {
+      return(2);
+     }
+   if(id == ".bytt") // bybit usdt testnet
+     {
+      return(22);
+     }
+   return(-1);
+  }
+//+------------------------------------------------------------------+
+//+------------------------------------------------------------------+
