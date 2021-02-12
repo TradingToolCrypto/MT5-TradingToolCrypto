@@ -8,6 +8,7 @@
 #define EXCHANGE_BITMEX ".mex"
 #define EXCHANGE_KUCOIN ".kuc"
 #define EXCHANGE_BINANCE_FUTURES ".bnf"
+#define EXCHANGE_BINANCE_FUTURES_COIN ".bnd"
 #define EXCHANGE_BINANCE_US ".bnu"
 #define EXCHANGE_DERIBIT ".der"
 #define EXCHANGE_OKEX ".okx"
@@ -270,5 +271,39 @@ int suffix_exchange_number(string id)
      }
    return(-1);
   }
-//+------------------------------------------------------------------+
-//+------------------------------------------------------------------+
+/*
+         BTCUSDT.binance
+    
+         returns .binance
+*/
+string get_suffix_from_symbol(string symbol){
+      string sep=".";              // A separator as a character
+      ushort u_sep;                  // The code of the separator character
+      string result[];               // An array to get strings
+      u_sep=StringGetCharacter(sep,0);
+      int k=StringSplit(symbol,u_sep,result);
+      string value ="";
+      if(k==2){
+         value = sep + result[1];
+         return(value);
+      }
+      return(value);
+}
+/*
+         BTCUSDT.binance
+        
+         returns BTCUSDT
+*/
+string remove_suffix_from_symbol(string symbol){
+      string sep=".";              // A separator as a character
+      ushort u_sep;                  // The code of the separator character
+      string result[];               // An array to get strings
+      u_sep=StringGetCharacter(sep,0);
+      int k=StringSplit(symbol,u_sep,result);
+      string value ="";
+      if(k==2){
+         value = result[0];
+         return(value);
+      }
+      return(value);
+}
