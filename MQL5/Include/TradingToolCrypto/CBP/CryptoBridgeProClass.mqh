@@ -5,7 +5,7 @@
 //+------------------------------------------------------------------+
 #property copyright "Copyright 2020, TradingToolCrypto Corp."
 #property link      "https://github.com/tradingtoolcrypto"
-#define VERSION 1.37
+#define VERSION 1.38
 /*FF
    https://github.com/tradingtoolcrypto
    - v1.34
@@ -27,8 +27,13 @@
       - delete all the globals that belong to this exchange configuration
       - maintain the GV "CBP" when switching the exchanges. Only change the CBP value when the robot is removed.
       - stoplimit orders send back the stopPrice aka Trigger price
+      
+    - v1.38
+      - bug in cancel order 
+         if(order_number != -1) fixed 
 */
 #import "CBP_Functions.ex5"
+string RemoveSymbolSeperator(string symbolname, string seperator);
 int GetOrderNumberFromLineName(string linename);
 string GetVolumeFromLineName(string linename);
 string GetSideFromLineName(string linename);
@@ -462,7 +467,6 @@ bool CryptoBridge::Deinit_Api_Keys(int exchange)
 //+------------------------------------------------------------------+
 string CryptoBridge::Get_Exchange_Name(int exchange_number)
   {
-   Print("CBP GetExchangeName");
    if(exchange_number == 0)
      {
       return ("BinanceDex");
@@ -792,13 +796,14 @@ bool CryptoBridge::Open_Trade_StopLimit(string sym, string side, string orderTyp
 //+------------------------------------------------------------------+
 bool CryptoBridge::Cancel_Trade(string sym, string orderId, int exchangeNumber, int order_number, string clientOrderId)
   {
-   Print("CBP Cancel Trade" + " | orderID " + orderId + " | clientID " + clientOrderId);
+   Print("CBP CancelTrade" + " | orderID " + orderId + " | clientID " + clientOrderId + " UI orderNumber " + order_number);
 
+   string customsymbol = RemoveSymbolSeperator(sym,"_");
    string name = CryptoBridge::Get_Exchange_Name(exchangeNumber);
 
-   if(order_number != 0)
+   if(order_number != -1)
      {
-      DeleteGlobalOrderName(name, sym, order_number + 1); // Globals start at a value of 1
+      DeleteGlobalOrderName(name, customsymbol , order_number + 1); // Globals start at a value of 1
       DeleteSubWindowObjectName(0, "order_id" + IntegerToString(order_number));
       DeleteSubWindowObjectName(0, "orderid" + IntegerToString(order_number));
       DeleteSubWindowObjectName(0, "sub_order_" + IntegerToString(order_number));
@@ -851,14 +856,14 @@ bool CryptoBridge::Cancel_Trade(string sym, string orderId, int exchangeNumber, 
 bool CryptoBridge::Cancel_Trade_All(string sym, int exchangeNumber)
   {
    Print("CBP CancelAllTrades");
-
+   string customsymbol = RemoveSymbolSeperator(sym,"_");
    string prefix = CryptoBridge::Get_Exchange_Name(exchangeNumber);
 
-   DeleteGlobalPrefix(prefix + "_Order_" + sym); //- this is the global assigned to the orders
+   DeleteGlobalPrefix(prefix + "_Order_" + customsymbol); //- this is the global assigned to the orders
    DeleteSubWindowObjectAll(0, "sub_order_");   //  - this is the order string
    DeleteSubWindowObjectAll(0, "order_id");     //    - this is the order id string
    DeleteSubWindowObjectAll(0, "orderid");      //     - this is the order edit button "X" to cancel individual orders
-   DeleteOjectLines(sym);                                        // - deletes the lines on the chart
+   DeleteOjectLines(customsymbol);                                        // - deletes the lines on the chart
 
    if(exchangeNumber == 1)
      {
@@ -1174,7 +1179,11 @@ bool CryptoBridge::Get_FundRate(string sym, int exchangeNumber, int quote_precis
 bool CryptoBridge::Get_Position(string sym, int exchangeNumber, int quote_precision)
   {
    Print("CBP GetPosition on Symbol(" + sym + ")");
-   ObjectDelete(0, sym + "_ENTRY");
+   
+    DeleteOjectLinesByDesc("ENTRY_BUY");
+    DeleteOjectLinesByDesc("ENTRY_SELL");
+   
+   
    string prefix = CryptoBridge::Get_Exchange_Name(exchangeNumber);
    DeleteGlobalPrefix(prefix + "_POS_");     // - this is the position global variable
    DeleteGlobalPrefix(prefix + "_LIQ_");     // - this is the pos  liq global variable
@@ -1241,19 +1250,17 @@ bool CryptoBridge::Get_Position(string sym, int exchangeNumber, int quote_precis
 //+------------------------------------------------------------------+
 bool CryptoBridge::Get_OpenOrders(string sym, int exchangeNumber, int quote_precision)
   {
-   Print("CBP GetOpenOrders " + sym);
+   string customsymbol = RemoveSymbolSeperator(sym,"_");
    string prefix = CryptoBridge::Get_Exchange_Name(exchangeNumber);
-   DeleteGlobalPrefix(prefix + "_Order_" + sym + "_MARKET");
-   DeleteGlobalPrefix(prefix + "_Order_" + sym + "_LIMIT");
-   DeleteGlobalPrefix(prefix + "_Order_" + sym + "_STOP");
-   DeleteGlobalPrefix(prefix + "_Order_" + sym + "_STOPMARKET");
-   DeleteGlobalPrefix(prefix + "_Order_" + sym + "_STOP_MARKET");
-   DeleteGlobalPrefix(prefix + "_Order_" + sym + "_STOPLIMIT");
-   DeleteGlobalPrefix(prefix + "_Order_" + sym + "_STOP_LIMIT");
+   Print("CBP GetOpenOrders " + sym + " ExchangeName " + prefix);
+   
+   Print(" Debug symbol |" + customsymbol +"|");
+   
+   DeleteGlobalPrefix(prefix + "_Order_" + customsymbol);
    DeleteSubWindowObjectAll(0, "sub_order_"); // - this is the order string
    DeleteSubWindowObjectAll(0, "order_id");   //   - this is the order id string
    DeleteSubWindowObjectAll(0, "orderid");    //    - this is the order edit button "X" to cancel individual orders
-   DeleteOjectLines(sym);
+   DeleteOjectLines(customsymbol);
 
    if(exchangeNumber == 1)
      {
@@ -1408,7 +1415,7 @@ double exchange_ordersize[];
 int exchange_orderindex[];
 void CryptoBridge::Parse_Orders(string exchangeName, int order_location, int id_location)
   {
-   Print(" CBP Parse Orders " + exchangeName);
+   Print(" CBP ParseOrders " + exchangeName);
 
    int dash0 = 0;
    string name = "";
@@ -1540,7 +1547,7 @@ double exchange_ordersize_p[];
 double exchange_orderliquidation_p[];
 void CryptoBridge::Parse_Positions(string exchangeName, int pos_location, int liq_location, int quoteDigit)
   {
-   Print(" CBP Parse Positions " + exchangeName);
+   Print(" CBP ParsePositions " + exchangeName);
 // Empty previous data
    ArrayFree(exchange_name_p);
    ArrayFree(exchange_symbol_p);
@@ -1642,7 +1649,7 @@ void CryptoBridge::Parse_Positions(string exchangeName, int pos_location, int li
          if(exchange_ordersize_p[i] != 0)
            {
             SetSubWindowText("sub_pos_" + IntegerToString(i), positionarray[i], pos_location, 20 + (25 * i), Gray, 10);
-            CreateEntryLine(exchange_symbol_p[i] + "_ENTRY", "desc", bar_close - 6000, exchange_orderprice_p[i], bar_close, exchange_orderprice_p[i], Entry_Color, EntrylineThickness, EntrylineStyle);
+            CreateEntryLine(exchange_symbol_p[i] + "_ENTRY", "ENTRY_"+exchange_orderside_p[i], bar_close - 6000, exchange_orderprice_p[i], bar_close, exchange_orderprice_p[i], Entry_Color, EntrylineThickness, EntrylineStyle);
            }
         }
      }
