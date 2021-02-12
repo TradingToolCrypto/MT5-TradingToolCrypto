@@ -556,3 +556,26 @@ void ObjCreateButton(
    ObjectSetInteger(aChartID, aObjName, OBJPROP_TIMEFRAMES, aTimeFrames);
   }
 
+/*
+
+ take the market name BTCUSD_PERP and return BTCUSDPERP
+ 
+ NormalizeSymbol("BTCUSD_PERP", "_");
+
+*/
+string NormalizeSymbol(string symbolname, string seperator){
+   string sep=seperator;
+   ushort u_sep;
+   string result[];
+   u_sep=StringGetCharacter(sep,0);
+   int k=StringSplit(symbolname,u_sep,result);
+   /*
+   found the sep
+   */
+   string merge = "";
+   if(k==2){
+      merge = result[0]+result[1];
+      return(merge);
+   }
+  return(symbolname);
+}
