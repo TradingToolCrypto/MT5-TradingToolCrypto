@@ -307,3 +307,38 @@ string remove_suffix_from_symbol(string symbol){
       }
       return(value);
 }
+/*
+
+- binance futures coin perps/futures 
+   - account balance is in coins
+   - 1 contract == 10 usd
+   - every market is based in USD (Feb 2021)
+   
+   - wallets are in coins 
+      - take the market name and return the coin name 
+         - parse out USD
+
+*/
+string get_quote_coin(string symbol){
+
+   int index = StringFind(symbol,"USD",0);
+   //string remove = StringSubstr(symbol,index,-1);
+   string quote = StringSubstr(symbol,0,index);
+   return(quote);
+}
+
+/*
+
+    get_quote_coin("BTCUSDT", "USDT")
+    
+    returns BTC
+
+*/
+
+string get_quote_coin(string symbol, string base){
+
+   int index = StringFind(symbol,base,0);
+   //string remove = StringSubstr(symbol,index,-1);
+   string quote = StringSubstr(symbol,0,index);
+   return(quote);
+}
