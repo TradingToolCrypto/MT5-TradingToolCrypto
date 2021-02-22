@@ -1,3 +1,5 @@
+#include <TradingToolCrypto\MQL\Jason.mqh>
+CJAVal jasonClass(NULL, jtUNDEF);
 //+------------------------------------------------------------------+
 //| defines                                                          |
 //+------------------------------------------------------------------+
@@ -24,6 +26,35 @@
 #define EXCHANGE_KRAKEN ".kra"
 #define EXCHANGE_KUCOIN_FUTURES ".kuf"
 #define EXCHANGE_BTSE ".bts"
+
+
+
+string BinanceSymbols[];
+string BinanceUSSymbols[];
+string BinanceFuturesSymbols[];
+string BinanceFuturesCSymbols[];
+string BybitSymbols[];
+string BitmexSymbols[];
+string FTXSymbols[];
+
+int BinanceSymbolsQuoteDigit[];
+int BinanceUSSymbolsQuoteDigit[];
+int BinanceFuturesSymbolsQuoteDigit[];
+int BinanceFuturesCSymbolsQuoteDigit[];
+int BybitSymbolsQuoteDigit[];
+int BitmexSymbolsQuoteDigit[];
+int FTXSymbolsQuoteDigit[];
+
+int BinanceSymbolsVolumeDigit[];
+int BinanceUSSymbolsVolumeDigit[];
+int BinanceFuturesSymbolsVolumeDigit[];
+int BinanceFuturesCSymbolsVolumeDigit[];
+int BybitSymbolsVolumeDigit[];
+int BitmexSymbolsVolumeDigit[];
+int FTXSymbolsVolumeDigit[];
+
+
+
 
 string GLOBAL_exchange = "";
 string get_suffix_exchange_name(string suffix, int id)
