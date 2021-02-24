@@ -27,10 +27,11 @@
       - delete all the globals that belong to this exchange configuration
       - maintain the GV "CBP" when switching the exchanges. Only change the CBP value when the robot is removed.
       - stoplimit orders send back the stopPrice aka Trigger price
-      
+
     - v1.38
-      - bug in cancel order 
-         if(order_number != -1) fixed 
+      - bug in cancel order
+         if(order_number != -1) - fixed
+      - BinanceFutures Coin Symbols include a lower _ which causes issues when parsingOrders and parsingPositions - fixed
 */
 #import "CBP_Functions.ex5"
 string RemoveSymbolSeperator(string symbolname, string seperator);
@@ -45,7 +46,7 @@ void DeleteOjectLines(string sym);
 bool CreateOrderEntryLine(string name, string text, datetime time1, double price1, datetime time2, double price2, color col, int lineWidth, int lineStyle);
 bool CreateTPLine(string name, string text, datetime time1, double price1, datetime time2, double price2, color col, int lineWidth, int lineStyle);
 bool CreateEntryLine(string name, string text, datetime time1, double price1, datetime time2, double price2, color col, int lineWidth, int lineStyle);
-void DeleteSubWindowObjectAll(long id_order, string objectname);
+void DeleteSubWindowObjectAll(long chart_id, string objectname);
 void DeleteSubWindowObjectName(long id_order, string objectname);
 double GetGlobal(string ExchangeName, string body);
 void DeleteGlobalOrderName(string exchangeName, string sym, double value);
@@ -56,6 +57,7 @@ string NormalizeString(string value, int digit);
 #import
 
 #import "Binance_api.ex5"
+string Binance_ExchangeInfo();
 bool Binance_Cancel_Trade(string sym, long orderId,string clientOrderId);
 bool Binance_Cancel_Trade_All(string sym);
 bool Binance_Open_Trade(string sym, string side, string orderType, string orderSize, string orderPrice, int quoteDigit, int lotDigit, string newClientOrderId);
@@ -84,6 +86,7 @@ bool Binance_US_GetOpenOrders(string sym, int quote_precision);
 #import
 
 #import "BinanceFutures_api.ex5"
+string BinanceFutures_ExchangeInfo();
 bool BinanceFutures_HedgeMode(string hedgeOn_true_else_false);
 bool BinanceFutures_Get_API_Key(string key, string secret, string livedemo);
 bool BinanceFutures_Cancel_Trade(string sym, long orderId,string clientOrderId);
@@ -97,13 +100,16 @@ bool BinanceFutures_GetPriceBest(string sym, int quote_digit);
 bool BinanceFutures_GetPrice(string sym, int quoteDigit);
 bool BinanceFutures_GetOpenInterest(string sym, int quoteDigit);
 bool BinanceFutures_GetFundRate(string sym, int quoteDigit);
+bool BinanceFutures_GetFundRate_All(double min_funding_rate);
 bool BinanceFutures_GetOpenOrders(string sym, int quote_precision);
 bool BinanceFutures_GetServerTime();
 bool BinanceFutures_Set_Leverage(string sym, double leverage);
 bool BinanceFutures_Positions(string sym, int quoteDigit); // returns the users open positions
+string BinanceFutures_Transactions(string sym, string transactionType, long startTime, long endTime);
 #import
 
 #import "BinanceFuturesCoin_api.ex5"
+string BinanceFuturesC_ExchangeInfo();
 bool BinanceFuturesC_HedgeMode(string hedgeOn_true_else_false);
 bool BinanceFuturesC_Get_API_Key(string key, string secret, string livedemo);
 bool BinanceFuturesC_Cancel_Trade(string sym, long orderId,string clientOrderId);
@@ -139,6 +145,7 @@ bool Binance_Dex_Time_Sales(string symbol, int limit);
 #import
 */
 #import "Bybit_api.ex5"
+string Bybit_ExchangeInfo();
 bool Bybit_Modify_Trade(string sym, string orderId, string clientOrderId, string price, int quoteDigit, int lotDigit);
 bool Bybit_Modify_Trade_Conditional(string sym, string orderId,string clientOrderId, string price, int quoteDigit, int lotDigit);
 bool Bybit_Cancel_Trade(string sym, string orderId, string clientOrderId);
@@ -246,6 +253,13 @@ bool Okex_ClosePosition(string sym, string ordertype);
 bool Okex_Set_Leverage(string sym, double leverage);
 #import
 */
+
+/*
+   include header files
+*/
+#include <TradingToolCrypto\CBP\ExchangeList.mqh>
+
+
 input group "---------------CRYPTO BRIDGE API SETUP---------------"
 input string Binance_Api_Key = "";
 input string Binance_Api_Secret = "";
@@ -328,7 +342,10 @@ input int Exchange_Quote_Precision = 8;
 input double Exchange_Leverage = 35;
 input int Exchange_Millisecond_RateLimiter = 1000;
 input group "---------------CRYPTO BRIDGE END SETUP---------------"
-
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+string GLOBAL_Parse_Separator = "#";
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
@@ -346,6 +363,7 @@ public:
    string            Get_Exchange_Name(int exchangeNumber);
    bool              Get_Exchange_Server_Time(int exchangeNumber);
    bool              Get_FundRate(string sym, int exchangeNumber, int quote_precision);
+   bool              Get_FundRateAll(int exchangeNumber,double minimum);
    bool              Get_OpenInterest(string sym, int exchangeNumber, int quote_precision);
    bool              Get_OpenOrders(string sym, int exchangeNumber, int quote_precision);
    bool              Get_PriceBest(string sym, int exchangeNumber, int quote_precision);
@@ -359,9 +377,18 @@ public:
    bool              Open_Trade(string sym, string side, string orderType, string orderSize, string orderPrice, int quoteDigit, int lotDigit, int exchangeNumber,string orderId);
    bool              Open_Trade_Stop(string sym, string side, string orderType, string orderSize, string stopPrice, int quoteDigit, int lotDigit, int exchangeNumber,string orderId);
    bool              Open_Trade_StopLimit(string sym, string side, string orderType, string orderSize, string orderPrice, string stopPrice, int quoteDigit, int lotDigit, int exchangeNumber,string orderId);
-   void              Parse_Orders(string exchangeName, int order_location, int id_location);
+
    void              Parse_Positions(string exchangeName, int pos_location, int liq_location, int quoteDigit);
    void              Parse_Wallets(string exchangeName, int x, int y);
+
+   void              Parse_Orders(string exchangeName, int order_location, int id_location);
+   void              Parse_OrdersY(string exchangeName, int order_location_x,int order_location_y, int id_location_x, int id_location_y);
+   void              Parse_Orders_v2(string exchangeName, int order_location, int id_location);
+
+   string            Get_Transactions(int exchangeNumber, string sym, string transactionType, long startTime, long endTime);
+
+   int               Get_SymbolVolumeDigit(int exchangeNumber, string sym);
+   int               Get_SymbolQuoteDigit(int exchangeNumber, string sym);
   };
 //+------------------------------------------------------------------+
 //|               Run this function any time you switch exchanges.   |
@@ -369,9 +396,10 @@ public:
 bool CryptoBridge::Init_Api_Keys(int exchange)
   {
    Print("CBP InitAPIKEYS");
+   bool checked = false;
    add_chart_indicator();
-
    add_unique_id();
+
    /*
    if(exchange == 0)
      {
@@ -380,15 +408,21 @@ bool CryptoBridge::Init_Api_Keys(int exchange)
     */
    if(exchange == 1)
      {
-      return (Binance_Get_API_Key(Binance_Api_Key, Binance_Api_Secret));
+      checked = Binance_Get_API_Key(Binance_Api_Key, Binance_Api_Secret);
+      add_exchange_info(exchange);
+      return (checked);
      }
    if(exchange == 2)
      {
-      return (Bybit_Get_API_Key(Bybit_Api_Key, Bybit_Api_Secret, Bybit_LiveDemo));
+      checked = Bybit_Get_API_Key(Bybit_Api_Key, Bybit_Api_Secret, Bybit_LiveDemo);
+      add_exchange_info(exchange);
+      return (checked);
      }
    if(exchange == 3)
      {
-      return (Bitmex_Get_API_Key(Bitmex_Api_Key, Bitmex_Api_Secret));
+      checked = Bitmex_Get_API_Key(Bitmex_Api_Key, Bitmex_Api_Secret);
+      add_exchange_info(exchange);
+      return (checked);
      }
    /*
    if(exchange == 4)
@@ -399,14 +433,16 @@ bool CryptoBridge::Init_Api_Keys(int exchange)
    */
    if(exchange == 5)
      {
-
-      return (BinanceFutures_Get_API_Key(BinanceFutures_Api_Key, BinanceFutures_Api_Secret, BinanceFutures_LiveDemo));
+      checked = BinanceFutures_Get_API_Key(BinanceFutures_Api_Key, BinanceFutures_Api_Secret, BinanceFutures_LiveDemo);
+      add_exchange_info(exchange);
+      return (checked);
      }
 
    if(exchange == 6)
      {
-
-      return (Binance_US_Get_API_Key(Binance_US_Api_Key, Binance_US_Api_Secret));
+      checked = Binance_US_Get_API_Key(Binance_US_Api_Key, Binance_US_Api_Secret);
+      add_exchange_info(exchange);
+      return (checked);
      }
    /*
    if(exchange == 7)
@@ -422,13 +458,16 @@ bool CryptoBridge::Init_Api_Keys(int exchange)
    */
    if(exchange == 12)
      {
-      return (FTX_Get_API_Key(FTX_Api_Key, FTX_Api_Secret));
+      checked =  FTX_Get_API_Key(FTX_Api_Key, FTX_Api_Secret);
+      add_exchange_info(exchange);
+      return (checked);
      }
 
    if(exchange == 21)
      {
-
-      return (BinanceFuturesC_Get_API_Key(BinanceFutures_Api_Key, BinanceFutures_Api_Secret, BinanceFutures_LiveDemo));
+      checked = BinanceFuturesC_Get_API_Key(BinanceFutures_Api_Key, BinanceFutures_Api_Secret, BinanceFutures_LiveDemo);
+      add_exchange_info(exchange);
+      return (checked);
      }
 
 
@@ -449,6 +488,17 @@ bool CryptoBridge::Deinit_Api_Keys(int exchange)
       return(false);
      }
    string ex_name = Get_Exchange_Name(exchange);
+   /*
+
+   Delete any objects that exist for this exchange
+   - Wallet information
+
+   */
+   DeleteSubWindowObjectAll(0, "sub_wallet_"+ex_name+"_");
+   ObjectDelete(0,"sub_wallet_"+ex_name);
+
+
+
    int id = delete_unique_id();                                                     // Get the CBP unique ID number
    Print("CBP DEINIT()" + IntegerToString(id) + " Exchange Name " + ex_name);
    if(ex_name != "")
@@ -803,7 +853,7 @@ bool CryptoBridge::Cancel_Trade(string sym, string orderId, int exchangeNumber, 
 
    if(order_number != -1)
      {
-      DeleteGlobalOrderName(name, customsymbol , order_number + 1); // Globals start at a value of 1
+      DeleteGlobalOrderName(name, customsymbol, order_number + 1);  // Globals start at a value of 1
       DeleteSubWindowObjectName(0, "order_id" + IntegerToString(order_number));
       DeleteSubWindowObjectName(0, "orderid" + IntegerToString(order_number));
       DeleteSubWindowObjectName(0, "sub_order_" + IntegerToString(order_number));
@@ -856,14 +906,13 @@ bool CryptoBridge::Cancel_Trade(string sym, string orderId, int exchangeNumber, 
 bool CryptoBridge::Cancel_Trade_All(string sym, int exchangeNumber)
   {
    Print("CBP CancelAllTrades");
-   string customsymbol = RemoveSymbolSeperator(sym,"_");
    string prefix = CryptoBridge::Get_Exchange_Name(exchangeNumber);
 
-   DeleteGlobalPrefix(prefix + "_Order_" + customsymbol); //- this is the global assigned to the orders
+   DeleteGlobalPrefix(prefix +GLOBAL_Parse_Separator + "Order"+GLOBAL_Parse_Separator + sym); //- this is the global assigned to the orders
    DeleteSubWindowObjectAll(0, "sub_order_");   //  - this is the order string
    DeleteSubWindowObjectAll(0, "order_id");     //    - this is the order id string
    DeleteSubWindowObjectAll(0, "orderid");      //     - this is the order edit button "X" to cancel individual orders
-   DeleteOjectLines(customsymbol);                                        // - deletes the lines on the chart
+   DeleteOjectLines(sym);                                        // - deletes the lines on the chart
 
    if(exchangeNumber == 1)
      {
@@ -1179,14 +1228,16 @@ bool CryptoBridge::Get_FundRate(string sym, int exchangeNumber, int quote_precis
 bool CryptoBridge::Get_Position(string sym, int exchangeNumber, int quote_precision)
   {
    Print("CBP GetPosition on Symbol(" + sym + ")");
-   
-    DeleteOjectLinesByDesc("ENTRY_BUY");
-    DeleteOjectLinesByDesc("ENTRY_SELL");
-   
-   
+
+   DeleteOjectLinesByDesc("ENTRY_BUY");
+   DeleteOjectLinesByDesc("ENTRY_SELL");
+
+
+
+
    string prefix = CryptoBridge::Get_Exchange_Name(exchangeNumber);
-   DeleteGlobalPrefix(prefix + "_POS_");     // - this is the position global variable
-   DeleteGlobalPrefix(prefix + "_LIQ_");     // - this is the pos  liq global variable
+   DeleteGlobalPrefix(prefix +GLOBAL_Parse_Separator +"POS" + GLOBAL_Parse_Separator);     // - this is the position global variable
+   DeleteGlobalPrefix(prefix +GLOBAL_Parse_Separator +"LIQ"+ GLOBAL_Parse_Separator);     // - this is the pos  liq global variable
    DeleteSubWindowObjectAll(0, "sub_pos_"); // - this is the position string
    DeleteSubWindowObjectAll(0, "sub_liq_"); // - this is the liquidation string
 
@@ -1250,17 +1301,18 @@ bool CryptoBridge::Get_Position(string sym, int exchangeNumber, int quote_precis
 //+------------------------------------------------------------------+
 bool CryptoBridge::Get_OpenOrders(string sym, int exchangeNumber, int quote_precision)
   {
-   string customsymbol = RemoveSymbolSeperator(sym,"_");
+
    string prefix = CryptoBridge::Get_Exchange_Name(exchangeNumber);
    Print("CBP GetOpenOrders " + sym + " ExchangeName " + prefix);
-   
-   Print(" Debug symbol |" + customsymbol +"|");
-   
-   DeleteGlobalPrefix(prefix + "_Order_" + customsymbol);
+   string ok = prefix +GLOBAL_Parse_Separator +"Order"+GLOBAL_Parse_Separator + sym;
+   Print("debug OpenOrder " + ok);
+
+
+   DeleteGlobalPrefix(ok);
    DeleteSubWindowObjectAll(0, "sub_order_"); // - this is the order string
    DeleteSubWindowObjectAll(0, "order_id");   //   - this is the order id string
    DeleteSubWindowObjectAll(0, "orderid");    //    - this is the order edit button "X" to cancel individual orders
-   DeleteOjectLines(customsymbol);
+   DeleteOjectLines(sym);
 
    if(exchangeNumber == 1)
      {
@@ -1358,7 +1410,7 @@ bool CryptoBridge::Get_Balance(string sym, string quote_base, int exchangeNumber
   {
    Print("CBP GetBalance");
    string prefix = CryptoBridge::Get_Exchange_Name(exchangeNumber);
-   DeleteGlobalPrefix(prefix + "_Wallet_");
+   DeleteGlobalPrefix(prefix + GLOBAL_Parse_Separator+ "Wallet");
 
    if(exchangeNumber == 1)
      {
@@ -1416,6 +1468,7 @@ int exchange_orderindex[];
 void CryptoBridge::Parse_Orders(string exchangeName, int order_location, int id_location)
   {
    Print(" CBP ParseOrders " + exchangeName);
+   SetSubWindowText("sub_orders_text_", "Orders", order_location, 0, Gray, 10);
 
    int dash0 = 0;
    string name = "";
@@ -1434,7 +1487,133 @@ void CryptoBridge::Parse_Orders(string exchangeName, int order_location, int id_
    ArrayFree(exchange_ordersize);
    ArrayFree(exchange_orderindex);
 
-   SetSubWindowText("sub_orders_text_", "Orders", order_location, 0, Gray, 10);
+
+
+
+   datetime bar_close = iTime(NULL, PERIOD_CURRENT, 0);
+   int total = GlobalVariablesTotal();
+
+   for(int i = 0; i < total; i++)
+     {
+
+      name = GlobalVariableName(i);
+      dash0 = StringFind(name, GLOBAL_Parse_Separator, 0);
+      exchange = StringSubstr(name, 0, dash0);
+
+      if(exchange == exchangeName && dash0 != -1)
+        {
+         dash1 = StringFind(name, GLOBAL_Parse_Separator, dash0 + 1);   // SCAN AFTER THE PREVIOUS DASH
+         wal = StringSubstr(name, dash0 + 1, -1); //
+         dash2 = StringFind(wal, GLOBAL_Parse_Separator, 0);            // SCAN AFTER THE PREVIOUS DASH
+
+         named_order = StringSubstr(wal, 0, 5); // Binance_Order_
+
+         if("Order" == named_order && dash2 != -1)
+           {
+
+            order_info = StringSubstr(name, dash1 + 1, -1); // DONT INCLUDE THE DASH2
+
+            //GVTETH_LIMIT_SELL_0.00750000_8.00000000
+            dash3 = StringFind(order_info, GLOBAL_Parse_Separator, 0);
+            symbol = StringSubstr(order_info, 0, dash3);
+            //  Print("Dash3 (symbol) : " + symbol);
+
+            dash4 = StringFind(order_info, GLOBAL_Parse_Separator, dash3 + 1);
+            ordertype = StringSubstr(order_info, dash3 + 1, (dash4 - dash3) - 1);
+            //  Print("Dash4 (ordertype) : " + ordertype + " dash3 (length) " + dash3 + " dash4 (length) " + dash4 );
+
+            dash5 = StringFind(order_info, GLOBAL_Parse_Separator, dash4 + 1);
+            orderside = StringSubstr(order_info, dash4 + 1, (dash5 - dash4) - 1);
+            //   Print("Dash5 (orderside) : " + orderside + " dash4 (length) " + dash4 + " dash5 (length) " + dash5 );
+
+            dash6 = StringFind(order_info, GLOBAL_Parse_Separator, dash5 + 1);
+            orderprice = StringSubstr(order_info, dash5 + 1, (dash6 - dash5) - 1);
+            // Print("Dash6 (orderprice) : " + orderprice + " dash5 (length) " + dash5 + " dash6 (length) " + dash6 );
+
+            dash7 = StringFind(order_info, GLOBAL_Parse_Separator, dash6 + 1);
+            ordersize = StringSubstr(order_info, dash6 + 1, (dash7 - dash6) - 1);
+            //  Print("Dash7 (ordersize) : " + ordersize + " dash6 (length) " + dash6 + " dash7 (length) " + dash7 );
+
+            // COUNTER STARTS AT ZERO SO WE ADD ONE
+            ArrayResize(exchange_name, counterD + 1, 0);
+            ArrayResize(exchange_symbol, counterD + 1, 0);
+            ArrayResize(exchange_ordertype, counterD + 1, 0);
+            ArrayResize(exchange_orderside, counterD + 1, 0);
+            ArrayResize(exchange_orderprice, counterD + 1, 0);
+            ArrayResize(exchange_ordersize, counterD + 1, 0);
+            ArrayResize(exchange_orderindex, counterD + 1, 0);
+
+            // COUNTER STARTS AT ZERO for array[0] =
+            exchange_name[counterD] = exchange;
+            exchange_symbol[counterD] = symbol;
+            exchange_ordertype[counterD] = ordertype;
+            exchange_orderside[counterD] = orderside;
+            exchange_orderprice[counterD] = StringToDouble(orderprice);
+            exchange_ordersize[counterD] = StringToDouble(ordersize);
+            exchange_orderindex[counterD] = (int) GlobalVariableGet(name);
+            counterD++;
+           }
+        }
+     }
+   /*
+          Create order object on the chart
+   */
+
+   int loop_main = ArraySize(exchange_name);
+   if(loop_main > 0)
+     {
+      // for(int i =0; i < loop_main; i++) // working for bitmex oct25 - 2020 ( does this break other exchanges?)
+      for(int i = loop_main - 1; i > -1; i--) // Testing binance futures ( this was the default) Nov 15 (working - bug fixed)
+        {
+         if(exchange_orderside[i] == "BUY" && exchange_ordertype[i] != "STOPLIMIT")
+           {
+            CreateOrderEntryLine(exchange_symbol[i] +"_"+exchange_ordertype[i]+ "_BUY_"  +exchange_ordersize[i] + "_" + IntegerToString(i), GetObjectDesc(exchange_orderindex[i]-1), bar_close - 6000, exchange_orderprice[i], bar_close, exchange_orderprice[i], Order_Color_Buy, OrderlineThickness, OrderlineStyle);
+           }
+         if(exchange_orderside[i] == "SELL" && exchange_ordertype[i] != "STOPLIMIT")
+           {
+            CreateOrderEntryLine(exchange_symbol[i] +"_"+exchange_ordertype[i]+ "_SELL_" +exchange_ordersize[i] + "_" + IntegerToString(i), GetObjectDesc(exchange_orderindex[i]-1), bar_close - 6000, exchange_orderprice[i], bar_close, exchange_orderprice[i], Order_Color_Sell, OrderlineThickness, OrderlineStyle);
+           }
+         /*
+         stop limit orders need to be a different color because these orders require two prices and drag to modify will be disabled
+         Order_Color_StopLimit
+         */
+         if(exchange_orderside[i] == "BUY" && exchange_ordertype[i] == "STOPLIMIT")
+           {
+            CreateOrderEntryLine(exchange_symbol[i] +"_"+exchange_ordertype[i]+ "_BUY_"  +exchange_ordersize[i] + "_" + IntegerToString(i), GetObjectDesc(exchange_orderindex[i]-1), bar_close - 6000, exchange_orderprice[i], bar_close, exchange_orderprice[i], Order_Color_StopLimit, OrderlineThickness, OrderlineStyle);
+           }
+         if(exchange_orderside[i] == "SELL" && exchange_ordertype[i] == "STOPLIMIT")
+           {
+            CreateOrderEntryLine(exchange_symbol[i] +"_"+exchange_ordertype[i]+ "_SELL_" +exchange_ordersize[i] + "_" + IntegerToString(i), GetObjectDesc(exchange_orderindex[i]-1), bar_close - 6000, exchange_orderprice[i], bar_close, exchange_orderprice[i], Order_Color_StopLimit, OrderlineThickness, OrderlineStyle);
+           }
+        }
+     }
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+void CryptoBridge::Parse_OrdersY(string exchangeName, int order_location_x,int order_location_y, int id_location_x, int id_location_y)
+  {
+   Print(" CBP ParseOrders " + exchangeName);
+   SetSubWindowText("sub_orders_text_", "Orders", order_location_x, order_location_y, Gray, 10);
+
+   int dash0 = 0;
+   string name = "";
+   string order_info = "";
+   int counterD = 0;
+   string orderstring = "";
+   string exchange ="";
+   int dash1,dash2,dash3,dash4,dash5,dash6,dash7;
+   string wal,named_order,symbol,ordertype,ordersize,orderprice,orderside;
+//--  Empty previous data
+   ArrayFree(exchange_name);
+   ArrayFree(exchange_symbol);
+   ArrayFree(exchange_ordertype);
+   ArrayFree(exchange_orderside);
+   ArrayFree(exchange_orderprice);
+   ArrayFree(exchange_ordersize);
+   ArrayFree(exchange_orderindex);
+
+
 
 
    datetime bar_close = iTime(NULL, PERIOD_CURRENT, 0);
@@ -1535,7 +1714,6 @@ void CryptoBridge::Parse_Orders(string exchangeName, int order_location, int id_
         }
      }
   }
-
 //+------------------------------------------------------------------+
 //| Binance_Pos_GVTETH_MARKET_SELL_0.00750000_8.00000000            |
 //+------------------------------------------------------------------+
@@ -1556,6 +1734,8 @@ void CryptoBridge::Parse_Positions(string exchangeName, int pos_location, int li
    ArrayFree(exchange_ordersize_p);
    ArrayFree(exchange_orderliquidation_p);
 
+
+
 // Positions Lable on the chart
    SetSubWindowText("sub_position_text_", "Positions", pos_location, 0, Gray, 10);
    SetSubWindowText("sub_liq_text_", "LIQ", 210, 0, Gray, 10);
@@ -1571,16 +1751,16 @@ void CryptoBridge::Parse_Positions(string exchangeName, int pos_location, int li
    for(int i = 0; i < total; i++)
      {
       name = GlobalVariableName(i);
-      int dash1 = StringFind(name, "_", 0);
+      int dash1 = StringFind(name, GLOBAL_Parse_Separator, 0);
 
       string exchange = StringSubstr(name, 0, dash1);
       if(exchange == exchangeName && dash1 != -1)
         {
 
-         int dash2 = StringFind(name, "_", dash1 + 1);
+         int dash2 = StringFind(name, GLOBAL_Parse_Separator, dash1 + 1);
          string wal = StringSubstr(name, dash1 + 1, -1);
 
-         int dash3 = StringFind(wal, "_", 0);
+         int dash3 = StringFind(wal, GLOBAL_Parse_Separator, 0);
 
          string wall = StringSubstr(wal, 0, 3); // POS"
 
@@ -1591,27 +1771,27 @@ void CryptoBridge::Parse_Positions(string exchangeName, int pos_location, int li
             position_info = StringSubstr(name, dash2 + 1, -1); // DONT INCLUDE THE DASH2
 
             //GVTETH
-            int dash4 = StringFind(position_info, "_", 0);
+            int dash4 = StringFind(position_info, GLOBAL_Parse_Separator, 0);
             string symbol = StringSubstr(position_info, 0, dash4);
             //  Print("Dash4 (symbol) : " + symbol);
 
             //MARKET
-            int dash5 = StringFind(position_info, "_", dash4 + 1);
+            int dash5 = StringFind(position_info, GLOBAL_Parse_Separator, dash4 + 1);
             string ordertype = StringSubstr(position_info, dash4 + 1, (dash5 - dash4) - 1);
             //  Print("Dash5 (ordertype) : " + ordertype  );//+ " dash4 (length) " + dash4 + " dash5 (length) " + dash5
 
             //Buy or Sell or None(bybit) or BOTH for binanceFutures
-            int dash6 = StringFind(position_info, "_", dash5 + 1);
+            int dash6 = StringFind(position_info, GLOBAL_Parse_Separator, dash5 + 1);
             string orderside = StringSubstr(position_info, dash5 + 1, (dash6 - dash5) - 1);
             //  Print("Dash6 (orderside) : " + orderside  );//+ " dash4 (length) " + dash4 + " dash5 (length) " + dash5
 
             // Price
-            int dash7 = StringFind(position_info, "_", dash6 + 1);
+            int dash7 = StringFind(position_info, GLOBAL_Parse_Separator, dash6 + 1);
             string orderprice = StringSubstr(position_info, dash6 + 1, (dash7 - dash6) - 1);
             //  Print("Dash7 (orderprice) : " + orderprice  );//+ " dash5 (length) " + dash5 + " dash6 (length) " + dash6
 
             // volume
-            int dash8 = StringFind(position_info, "_", dash7 + 1);
+            int dash8 = StringFind(position_info, GLOBAL_Parse_Separator, dash7 + 1);
             string ordersize = StringSubstr(position_info, dash7 + 1, (dash8 - dash7) - 1);
             //  Print("Dash8 (ordersize) : " + ordersize );// + " dash6 (length) " + dash6 + " dash7 (length) " + dash7
 
@@ -1663,16 +1843,16 @@ void CryptoBridge::Parse_Positions(string exchangeName, int pos_location, int li
    for(int i = 0; i < total; i++)
      {
       name = GlobalVariableName(i);
-      int dash1 = StringFind(name, "_", 0);
+      int dash1 = StringFind(name, GLOBAL_Parse_Separator, 0);
 
       string exchange = StringSubstr(name, 0, dash1);
       if(exchange == exchangeName && dash1 != -1)
         {
 
-         int dash2 = StringFind(name, "_", dash1 + 1);
+         int dash2 = StringFind(name, GLOBAL_Parse_Separator, dash1 + 1);
          string wal = StringSubstr(name, dash1 + 1, -1);
 
-         int dash3 = StringFind(wal, "_", 0);
+         int dash3 = StringFind(wal, GLOBAL_Parse_Separator, 0);
 
          string wall = StringSubstr(wal, 0, 3); // LIQ"
 
@@ -1680,7 +1860,7 @@ void CryptoBridge::Parse_Positions(string exchangeName, int pos_location, int li
            {
 
             string liq_info = StringSubstr(name, dash2 + 1, -1); // DONT INCLUDE THE DASH2
-            int dash4 = StringFind(liq_info, "_", 0);
+            int dash4 = StringFind(liq_info, GLOBAL_Parse_Separator, 0);
             string symbol = StringSubstr(liq_info, 0, dash4);
             // Print("LIQ Dash4 (symbol) : " + symbol);
             double liq = GlobalVariableGet(name);
@@ -1713,12 +1893,22 @@ void CryptoBridge::Parse_Positions(string exchangeName, int pos_location, int li
      }
   }
 /*
- parse exchange_wallet_SYMBOL
+ parse exchange#Wallet#Symbol
+
+ Feb 20 - change the names to allow more than one exchange data within the indicator window
+
+ need to delete the values from the indicator window
+
+
 */
 void CryptoBridge::Parse_Wallets(string exchangeName, int x, int y)
   {
 
-   SetSubWindowText("sub_wallet_text_", "Wallets", x, y, Gray, 10);
+
+   DeleteSubWindowObjectAll(0, "sub_wallet_"+exchangeName+"_");
+
+   SetSubWindowText("sub_wallet_"+exchangeName, exchangeName + " Wallets", x, y, Gray, 10);
+
    string walletarray[];
    int total = GlobalVariablesTotal();
    string name = "";
@@ -1729,17 +1919,17 @@ void CryptoBridge::Parse_Wallets(string exchangeName, int x, int y)
    for(int i = 0; i < total; i++)
      {
       name = GlobalVariableName(i);
-      int dash1 = StringFind(name, "_", 0); // exchange_wallet_SYMBOL
+      int dash1 = StringFind(name, GLOBAL_Parse_Separator, 0); // exchange_wallet_SYMBOL
 
       string exchange = StringSubstr(name, 0, dash1);
       if(exchange == exchangeName && dash1 != -1)
         {
          // Print(" MATCH exchange name " + exchange);
 
-         int dash2 = StringFind(name, "_", dash1 + 1);   // SCAN AFTER THE PREVIOUS DASH
+         int dash2 = StringFind(name, GLOBAL_Parse_Separator, dash1 + 1);   // SCAN AFTER THE PREVIOUS DASH
          string wal = StringSubstr(name, dash1 + 1, -1); // FIND THE "Wallet_sym"
 
-         int dash3 = StringFind(wal, "_", 0); // SCAN AFTER THE PREVIOUS DASH
+         int dash3 = StringFind(wal, GLOBAL_Parse_Separator, 0); // SCAN AFTER THE PREVIOUS DASH
          //Wallet_GVT
 
          string wall = StringSubstr(wal, 0, 6); // Wallet"
@@ -1760,7 +1950,7 @@ void CryptoBridge::Parse_Wallets(string exchangeName, int x, int y)
       ArrayResize(walletarray, countD, 0);
       for(int i = 0; i < countD; i++)
         {
-         SetSubWindowText("sub_wallet_" + IntegerToString(i), walletarray[i] + "(" + DoubleToString(GetGlobal(exchangeName, "_Wallet_" + walletarray[i]), 8) + ")", x, (y+16) + (20 * i), Green, 12);
+         SetSubWindowText("sub_wallet_"+exchangeName+"_" + IntegerToString(i), walletarray[i] + "(" + DoubleToString(GetGlobal(exchangeName, GLOBAL_Parse_Separator + "Wallet" +GLOBAL_Parse_Separator + walletarray[i]), 8) + ")", x, (y+16) + (20 * i), Green, 12);
         }
      }
   }
@@ -1889,5 +2079,407 @@ double delete_unique_id()
       GlobalVariableSet(id,0);
      }
    return(value);
+  }
+//+------------------------------------------------------------------+
+
+
+
+
+
+
+
+
+
+
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+void CryptoBridge::Parse_Orders_v2(string exchangeName, int order_location, int id_location)
+  {
+   Print(" CBP ParseOrders " + exchangeName);
+
+   int dash0 = 0;
+   string name = "";
+   string order_info = "";
+   int counterD = 0;
+   string orderstring = "";
+   string exchange ="";
+   int dash1,dash2,dash3,dash4,dash5,dash6,dash7;
+   string wal,named_order,symbol,ordertype,ordersize,orderprice,orderside;
+//--  Empty previous data
+   ArrayFree(exchange_name);
+   ArrayFree(exchange_symbol);
+   ArrayFree(exchange_ordertype);
+   ArrayFree(exchange_orderside);
+   ArrayFree(exchange_orderprice);
+   ArrayFree(exchange_ordersize);
+   ArrayFree(exchange_orderindex);
+
+   SetSubWindowText("sub_orders_text_", "Orders", order_location, 0, Gray, 10);
+
+
+   datetime bar_close = iTime(NULL, PERIOD_CURRENT, 0);
+   int total = GlobalVariablesTotal();
+
+   for(int i = 0; i < total; i++)
+     {
+
+      name = GlobalVariableName(i);
+
+
+
+      string sep=GLOBAL_Parse_Separator;
+      ushort u_sep;
+      string result[];
+      u_sep=StringGetCharacter(sep,0);
+      int k=StringSplit(name,u_sep,result);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      dash0 = StringFind(name, "_", 0);
+      exchange = StringSubstr(name, 0, dash0);
+
+      if(exchange == exchangeName && dash0 != -1)
+        {
+         dash1 = StringFind(name, "_", dash0 + 1);   // SCAN AFTER THE PREVIOUS DASH
+         wal = StringSubstr(name, dash0 + 1, -1); //
+         dash2 = StringFind(wal, "_", 0);            // SCAN AFTER THE PREVIOUS DASH
+
+         named_order = StringSubstr(wal, 0, 5); // Binance_Order_
+
+         if("Order" == named_order && dash2 != -1)
+           {
+
+            order_info = StringSubstr(name, dash1 + 1, -1); // DONT INCLUDE THE DASH2
+
+            //GVTETH_LIMIT_SELL_0.00750000_8.00000000
+            dash3 = StringFind(order_info, "_", 0);
+            symbol = StringSubstr(order_info, 0, dash3);
+            //  Print("Dash3 (symbol) : " + symbol);
+
+            dash4 = StringFind(order_info, "_", dash3 + 1);
+            ordertype = StringSubstr(order_info, dash3 + 1, (dash4 - dash3) - 1);
+            //  Print("Dash4 (ordertype) : " + ordertype + " dash3 (length) " + dash3 + " dash4 (length) " + dash4 );
+
+            dash5 = StringFind(order_info, "_", dash4 + 1);
+            orderside = StringSubstr(order_info, dash4 + 1, (dash5 - dash4) - 1);
+            //   Print("Dash5 (orderside) : " + orderside + " dash4 (length) " + dash4 + " dash5 (length) " + dash5 );
+
+            dash6 = StringFind(order_info, "_", dash5 + 1);
+            orderprice = StringSubstr(order_info, dash5 + 1, (dash6 - dash5) - 1);
+            // Print("Dash6 (orderprice) : " + orderprice + " dash5 (length) " + dash5 + " dash6 (length) " + dash6 );
+
+            dash7 = StringFind(order_info, "_", dash6 + 1);
+            ordersize = StringSubstr(order_info, dash6 + 1, (dash7 - dash6) - 1);
+            //  Print("Dash7 (ordersize) : " + ordersize + " dash6 (length) " + dash6 + " dash7 (length) " + dash7 );
+
+            // COUNTER STARTS AT ZERO SO WE ADD ONE
+            ArrayResize(exchange_name, counterD + 1, 0);
+            ArrayResize(exchange_symbol, counterD + 1, 0);
+            ArrayResize(exchange_ordertype, counterD + 1, 0);
+            ArrayResize(exchange_orderside, counterD + 1, 0);
+            ArrayResize(exchange_orderprice, counterD + 1, 0);
+            ArrayResize(exchange_ordersize, counterD + 1, 0);
+            ArrayResize(exchange_orderindex, counterD + 1, 0);
+
+            // COUNTER STARTS AT ZERO for array[0] =
+            exchange_name[counterD] = exchange;
+            exchange_symbol[counterD] = symbol;
+            exchange_ordertype[counterD] = ordertype;
+            exchange_orderside[counterD] = orderside;
+            exchange_orderprice[counterD] = StringToDouble(orderprice);
+            exchange_ordersize[counterD] = StringToDouble(ordersize);
+            exchange_orderindex[counterD] = (int) GlobalVariableGet(name);
+            counterD++;
+           }
+        }
+     }
+   /*
+          Create order object on the chart
+   */
+
+   int loop_main = ArraySize(exchange_name);
+   if(loop_main > 0)
+     {
+      // for(int i =0; i < loop_main; i++) // working for bitmex oct25 - 2020 ( does this break other exchanges?)
+      for(int i = loop_main - 1; i > -1; i--) // Testing binance futures ( this was the default) Nov 15 (working - bug fixed)
+        {
+         if(exchange_orderside[i] == "BUY" && exchange_ordertype[i] != "STOPLIMIT")
+           {
+            CreateOrderEntryLine(exchange_symbol[i] +"_"+exchange_ordertype[i]+ "_BUY_"  +exchange_ordersize[i] + "_" + IntegerToString(i), GetObjectDesc(exchange_orderindex[i]-1), bar_close - 6000, exchange_orderprice[i], bar_close, exchange_orderprice[i], Order_Color_Buy, OrderlineThickness, OrderlineStyle);
+           }
+         if(exchange_orderside[i] == "SELL" && exchange_ordertype[i] != "STOPLIMIT")
+           {
+            CreateOrderEntryLine(exchange_symbol[i] +"_"+exchange_ordertype[i]+ "_SELL_" +exchange_ordersize[i] + "_" + IntegerToString(i), GetObjectDesc(exchange_orderindex[i]-1), bar_close - 6000, exchange_orderprice[i], bar_close, exchange_orderprice[i], Order_Color_Sell, OrderlineThickness, OrderlineStyle);
+           }
+         /*
+         stop limit orders need to be a different color because these orders require two prices and drag to modify will be disabled
+         Order_Color_StopLimit
+         */
+         if(exchange_orderside[i] == "BUY" && exchange_ordertype[i] == "STOPLIMIT")
+           {
+            CreateOrderEntryLine(exchange_symbol[i] +"_"+exchange_ordertype[i]+ "_BUY_"  +exchange_ordersize[i] + "_" + IntegerToString(i), GetObjectDesc(exchange_orderindex[i]-1), bar_close - 6000, exchange_orderprice[i], bar_close, exchange_orderprice[i], Order_Color_StopLimit, OrderlineThickness, OrderlineStyle);
+           }
+         if(exchange_orderside[i] == "SELL" && exchange_ordertype[i] == "STOPLIMIT")
+           {
+            CreateOrderEntryLine(exchange_symbol[i] +"_"+exchange_ordertype[i]+ "_SELL_" +exchange_ordersize[i] + "_" + IntegerToString(i), GetObjectDesc(exchange_orderindex[i]-1), bar_close - 6000, exchange_orderprice[i], bar_close, exchange_orderprice[i], Order_Color_StopLimit, OrderlineThickness, OrderlineStyle);
+           }
+        }
+     }
+  }
+
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+string CryptoBridge::Get_Transactions(int exchangeNumber, string sym,string transactionType,long startTime,long endTime)
+  {
+   Print("CBP GetTransactions");
+   if(exchangeNumber == 5)
+     {
+      return (BinanceFutures_Transactions(sym, transactionType,startTime,endTime));
+     }
+
+   return("");
+  }
+
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+bool CryptoBridge::Get_FundRateAll(int exchangeNumber, double minimum)
+  {
+   Print("CBP GetFundRateAll");
+   if(exchangeNumber == 5)
+     {
+      return (BinanceFutures_GetFundRate_All(minimum));
+     }
+   return(false);
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+int CryptoBridge::Get_SymbolQuoteDigit(int exchangeNumber, string sym)
+  {
+   Print("CBP SymbolQuoteDigit");
+   if(exchangeNumber == 2)
+     {
+      int loop = ArraySize(BybitSymbols);
+      for(int i = 0; i<loop; i++)
+        {
+         if(sym == BybitSymbols[i])
+           {
+            return(BybitSymbolsQuoteDigit[i]);
+           }
+        }
+     }
+
+
+   if(exchangeNumber == 5)
+     {
+      int loop = ArraySize(BinanceFuturesSymbols);
+      for(int i = 0; i<loop; i++)
+        {
+         if(sym == BinanceFuturesSymbols[i])
+           {
+            return(BinanceFuturesSymbolsQuoteDigit[i]);
+           }
+        }
+     }
+   if(exchangeNumber == 21)
+     {
+      int loop = ArraySize(BinanceFuturesCSymbols);
+      for(int i = 0; i<loop; i++)
+        {
+         if(sym == BinanceFuturesCSymbols[i])
+           {
+            return(BinanceFuturesCSymbolsQuoteDigit[i]);
+           }
+        }
+     }
+   return(0);
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+int CryptoBridge::Get_SymbolVolumeDigit(int exchangeNumber, string sym)
+  {
+   Print("CBP SymbolVolumeDigit");
+   if(exchangeNumber == 2)
+     {
+      int loop = ArraySize(BybitSymbols);
+      for(int i = 0; i<loop; i++)
+        {
+         if(sym == BybitSymbols[i])
+           {
+            return(BybitSymbolsVolumeDigit[i]);
+           }
+        }
+     }
+   if(exchangeNumber == 5)
+     {
+      int loop = ArraySize(BinanceFuturesSymbols);
+      for(int i = 0; i<loop; i++)
+        {
+         if(sym == BinanceFuturesSymbols[i])
+           {
+            return(BinanceFuturesSymbolsVolumeDigit[i]);
+           }
+        }
+     }
+   if(exchangeNumber == 21)
+     {
+      int loop = ArraySize(BinanceFuturesCSymbols);
+      for(int i = 0; i<loop; i++)
+        {
+         if(sym == BinanceFuturesCSymbols[i])
+           {
+            return(BinanceFuturesCSymbolsVolumeDigit[i]);
+           }
+        }
+     }
+   return(0);
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+void add_exchange_info(int exchangeNumber)
+  {
+   Print("CBP ExchangeInfo");
+   if(exchangeNumber == 1)
+     {
+      string info = Binance_ExchangeInfo();
+      jasonClass.Clear();
+      jasonClass.Deserialize(info);
+      ArrayFree(BinanceSymbols);
+      ArrayResize(BinanceSymbols,5000);
+      ArrayFree(BinanceSymbolsQuoteDigit);
+      ArrayResize(BinanceSymbolsQuoteDigit,5000);
+      ArrayFree(BinanceSymbolsVolumeDigit);
+      ArrayResize(BinanceSymbolsVolumeDigit,5000);
+      string sym = "";
+      int count_index=0;
+      for(int i =0; i<5000; i++)
+        {
+         sym = jasonClass["symbols"][i]["symbol"].ToStr();;
+         if(sym=="")
+            break;
+         BinanceSymbols[i] = jasonClass["symbols"][i]["symbol"].ToStr();
+         BinanceSymbolsQuoteDigit[i] = jasonClass["symbols"][i]["pricePrecision"].ToInt();
+         BinanceSymbolsVolumeDigit[i] = jasonClass["symbols"][i]["quantityPrecision"].ToInt();
+         count_index++;
+        }
+      ArrayResize(BinanceSymbols,count_index);
+      ArrayResize(BinanceSymbolsQuoteDigit,count_index);
+      ArrayResize(BinanceSymbolsVolumeDigit,count_index);
+     }
+   if(exchangeNumber ==2)
+     {
+      string info = Bybit_ExchangeInfo();
+      jasonClass.Clear();
+      jasonClass.Deserialize(info);
+      ArrayFree(BybitSymbols);
+      ArrayResize(BybitSymbols,100);
+      ArrayFree(BybitSymbolsQuoteDigit);
+      ArrayResize(BybitSymbolsQuoteDigit,100);
+      ArrayFree(BybitSymbolsVolumeDigit);
+      ArrayResize(BybitSymbolsVolumeDigit,100);
+      string sym = "";
+      int count_index=0;
+      for(int i =0; i<100; i++)
+        {
+         sym = jasonClass["result"][i]["name"].ToStr();
+         if(sym=="")
+            break;
+         BybitSymbols[i] = sym;
+         BybitSymbolsQuoteDigit[i]  =   jasonClass["result"][i]["price_scale"].ToStr();
+         BybitSymbolsVolumeDigit[i] = 0;
+         count_index++;
+        }
+      ArrayResize(BybitSymbols,count_index);
+      ArrayResize(BybitSymbolsQuoteDigit,count_index);
+      ArrayResize(BybitSymbolsVolumeDigit,count_index);
+     }
+   if(exchangeNumber == 5)
+     {
+      string info = BinanceFutures_ExchangeInfo();
+      jasonClass.Clear();
+      jasonClass.Deserialize(info);
+      ArrayFree(BinanceFuturesSymbols);
+      ArrayResize(BinanceFuturesSymbols,5000);
+      ArrayFree(BinanceFuturesSymbolsQuoteDigit);
+      ArrayResize(BinanceFuturesSymbolsQuoteDigit,5000);
+      ArrayFree(BinanceFuturesSymbolsVolumeDigit);
+      ArrayResize(BinanceFuturesSymbolsVolumeDigit,5000);
+      string sym = "";
+      int count_index=0;
+      for(int i =0; i<5000; i++)
+        {
+         sym = jasonClass["symbols"][i]["symbol"].ToStr();;
+         if(sym=="")
+            break;
+         BinanceFuturesSymbols[i] = jasonClass["symbols"][i]["symbol"].ToStr();
+         BinanceFuturesSymbolsQuoteDigit[i] = jasonClass["symbols"][i]["pricePrecision"].ToInt();
+         BinanceFuturesSymbolsVolumeDigit[i] = jasonClass["symbols"][i]["quantityPrecision"].ToInt();
+         count_index++;
+        }
+      ArrayResize(BinanceFuturesSymbols,count_index);
+      ArrayResize(BinanceFuturesSymbolsQuoteDigit,count_index);
+      ArrayResize(BinanceFuturesSymbolsVolumeDigit,count_index);
+     }
+   if(exchangeNumber == 21)
+     {
+      string info = BinanceFuturesC_ExchangeInfo();
+      jasonClass.Clear();
+      jasonClass.Deserialize(info);
+      ArrayFree(BinanceFuturesCSymbols);
+      ArrayResize(BinanceFuturesCSymbols,5000);
+      ArrayFree(BinanceFuturesCSymbolsQuoteDigit);
+      ArrayResize(BinanceFuturesCSymbolsQuoteDigit,5000);
+      ArrayFree(BinanceFuturesCSymbolsVolumeDigit);
+      ArrayResize(BinanceFuturesCSymbolsVolumeDigit,5000);
+      string sym = "";
+      int count_index=0;
+      for(int i =0; i<5000; i++)
+        {
+         sym = jasonClass["symbols"][i]["symbol"].ToStr();;
+         if(sym=="")
+            break;
+         BinanceFuturesCSymbols[i] = jasonClass["symbols"][i]["symbol"].ToStr();
+         BinanceFuturesCSymbolsQuoteDigit[i] = jasonClass["symbols"][i]["pricePrecision"].ToInt();
+         BinanceFuturesCSymbolsVolumeDigit[i] = jasonClass["symbols"][i]["quantityPrecision"].ToInt();
+         count_index++;
+        }
+      ArrayResize(BinanceFuturesCSymbols,count_index);
+      ArrayResize(BinanceFuturesCSymbolsQuoteDigit,count_index);
+      ArrayResize(BinanceFuturesCSymbolsVolumeDigit,count_index);
+     }
   }
 //+------------------------------------------------------------------+

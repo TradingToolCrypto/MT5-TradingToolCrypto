@@ -1,8 +1,6 @@
-//+------------------------------------------------------------------+
-//|                                                      ProjectName |
-//|                                      Copyright 2020, CompanyName |
-//|                                       http://www.companyname.net |
-//+------------------------------------------------------------------+
+/*
+   Functions for the Exchange Libraries
+*/
 #import "TTC_PRO.ex5"
 void ttc_g();
 string ttc_e();
@@ -14,6 +12,8 @@ string ttc_d(string hexData);
 #include <TradingToolCrypto\MQL\HEX.mqh>
 
 SHA256 hash256;
+
+string GLOBAL_Parse = "#";
 
 
 /*
@@ -76,10 +76,6 @@ string NormalizeString(string value, int digit)
 
    return(ok);
   }
-
-
-
-
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
@@ -95,13 +91,12 @@ string urlencode(string value)
      }
    return(concatenate);
   }
+/*
 
+    Convert string to double
+    remove all values after the decimal and return a new string as a whole number
 
-
-
-//+------------------------------------------------------------------+
-//|                                                                  |
-//+------------------------------------------------------------------+
+*/
 string in(string message)
   {
 
@@ -117,10 +112,6 @@ string in(string message)
      }
    return(result);
   }
-
-
-
-
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
@@ -211,9 +202,6 @@ int Get_Trailing_Zeros_digits(double has_zeros)
 
    return(0);
   }
-
-
-
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
@@ -474,7 +462,6 @@ void SetText_subWindow(string name, string text, int x, int y, color colour, int
 //|                                                                  |
 //+------------------------------------------------------------------+
 
-
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
@@ -515,6 +502,49 @@ void ObjCreateEdit(
    ObjectSetInteger(aChartID, aObjName, OBJPROP_YSIZE, aYSize);
    ObjectSetString(aChartID, aObjName, OBJPROP_FONT, aFont);
    ObjectSetString(aChartID, aObjName, OBJPROP_TEXT, aText);
+  }
+
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+void ObjCreateEditAlign(
+   string aObjName,
+   string aText,
+   int aX = 30,
+   int aY = 30,
+   int aXSize = 380,
+   int aYSize = 240,
+   int aWindow = 0,
+   int aAnchor = ANCHOR_LEFT_UPPER,
+   int aCorner = CORNER_LEFT_UPPER,
+   color aBgColor = LightYellow,
+   color aColor = Chocolate,
+   int aFontSize = 8,
+   string aFont = "Arial",
+   int aChartID = 0,
+   bool aBack = false,
+   double aAngle = 0,
+   long aTimeFrames = OBJ_ALL_PERIODS,
+   bool aSelectable = false,
+   bool aSelected = false)
+  {
+   ObjectCreate(aChartID, aObjName, OBJ_EDIT, aWindow, 0, 0);
+   ObjectSetInteger(aChartID, aObjName, OBJPROP_ANCHOR, aAnchor);
+   ObjectSetInteger(aChartID, aObjName, OBJPROP_BACK, aBack);
+   ObjectSetInteger(aChartID, aObjName, OBJPROP_COLOR, aColor);
+   ObjectSetInteger(aChartID, aObjName, OBJPROP_BGCOLOR, aBgColor);
+   ObjectSetInteger(aChartID, aObjName, OBJPROP_CORNER, aCorner);
+   ObjectSetInteger(aChartID, aObjName, OBJPROP_FONTSIZE, aFontSize);
+   ObjectSetInteger(aChartID, aObjName, OBJPROP_SELECTABLE, aSelectable);
+   ObjectSetInteger(aChartID, aObjName, OBJPROP_SELECTED, aSelected);
+   ObjectSetInteger(aChartID, aObjName, OBJPROP_TIMEFRAMES, aTimeFrames);
+   ObjectSetInteger(aChartID, aObjName, OBJPROP_XDISTANCE, aX);
+   ObjectSetInteger(aChartID, aObjName, OBJPROP_YDISTANCE, aY);
+   ObjectSetInteger(aChartID, aObjName, OBJPROP_XSIZE, aXSize);
+   ObjectSetInteger(aChartID, aObjName, OBJPROP_YSIZE, aYSize);
+   ObjectSetString(aChartID, aObjName, OBJPROP_FONT, aFont);
+   ObjectSetString(aChartID, aObjName, OBJPROP_TEXT, aText);
+   ObjectSetInteger(aChartID,aObjName,OBJPROP_ALIGN,ALIGN_CENTER);
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -559,11 +589,12 @@ void ObjCreateButton(
 /*
 
  take the market name BTCUSD_PERP and return BTCUSDPERP
- 
+
  NormalizeSymbol("BTCUSD_PERP", "_");
 
 */
-string NormalizeSymbol(string symbolname, string seperator){
+string NormalizeSymbol(string symbolname, string seperator)
+  {
    string sep=seperator;
    ushort u_sep;
    string result[];
@@ -573,9 +604,134 @@ string NormalizeSymbol(string symbolname, string seperator){
    found the sep
    */
    string merge = "";
-   if(k==2){
+   if(k==2)
+     {
       merge = result[0]+result[1];
       return(merge);
-   }
-  return(symbolname);
-}
+     }
+   return(symbolname);
+  }
+
+
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+string remove_zeros_from_string(string value)
+  {
+   bool debug = false;
+   string create = "";
+   string result = "";
+
+   int decimal = StringFind(value, ".",0);
+   string decimal_before = StringSubstr(value, 0,decimal);
+   string decimal_after = StringSubstr(value, decimal+1,-1);
+   int decimal_length = StringLen(decimal_after);
+   int try1 = StringFind(decimal_after, "0",decimal_length-1);
+
+
+   if(try1 != -1)
+     {
+      string found_zero_1 = StringSubstr(decimal_after,0,decimal_length-1);
+      if(debug)
+         Print(" Found then Edit ==> " +found_zero_1);
+      int try2 = StringFind(found_zero_1, "0",decimal_length-2);
+      if(try2 != -1)
+        {
+         string found_zero_2 = StringSubstr(found_zero_1,0,decimal_length-2);
+         if(debug)
+            Print(" Found then Edit ==> " +found_zero_2);
+         int try3 = StringFind(found_zero_2, "0",decimal_length-3);
+         if(try3 != -1)
+           {
+            string found_zero_3 = StringSubstr(found_zero_2,0,decimal_length-3);
+            if(debug)
+               Print(" Found then Edit ==> " +found_zero_3);
+            int try4 = StringFind(found_zero_3, "0",decimal_length-4);
+            if(try4 != -1)
+              {
+               string found_zero_4 = StringSubstr(found_zero_3,0,decimal_length-4);
+               if(debug)
+                  Print(" Found then Edit ==> " +found_zero_4);
+               int try5 = StringFind(found_zero_4, "0",decimal_length-5);
+               if(try5 != -1)
+                 {
+                  string found_zero_5 = StringSubstr(found_zero_4,0,decimal_length-5);
+                  if(debug)
+                     Print(" Found then Edit ==> " +found_zero_5);
+                  int try6 = StringFind(found_zero_5, "0",decimal_length-6);
+                  if(try6 != -1)
+                    {
+                     string found_zero_6 = StringSubstr(found_zero_5,0,decimal_length-6);
+                     if(debug)
+                        Print(" Found then Edit ==> " +found_zero_6);
+                     int try7 = StringFind(found_zero_6, "0",decimal_length-7);
+                     if(try7 != -1)
+                       {
+                        string found_zero_7 = StringSubstr(found_zero_6,0,decimal_length-7);
+                        if(debug)
+                           Print(" Found then Edit ==> " +found_zero_7);
+                        int try8 = StringFind(found_zero_7, "0",decimal_length-8);
+                        if(try8 != -1)
+                          {
+                           string found_zero_8 = StringSubstr(found_zero_7,0,decimal_length-8);
+                           if(debug)
+                              Print(" Found then Edit ==> " +found_zero_8);
+                           int try9 = StringFind(found_zero_8, "0",decimal_length-9);
+
+                          }
+                        else
+                          {
+                           create  = found_zero_7;
+                          }
+                       }
+                     else
+                       {
+                        create  = found_zero_6;
+                       }
+                    }
+                  else
+                    {
+                     create  = found_zero_5;
+                    }
+                 }
+               else
+                 {
+                  create  = found_zero_4;
+                 }
+              }
+            else
+              {
+               create  = found_zero_3;
+              }
+           }
+         else
+           {
+            create  = found_zero_2;
+           }
+        }
+      else
+        {
+         create  = found_zero_1;
+        }
+     }
+   else
+     {
+      create = decimal_after;
+     }
+
+
+   if(create != "")
+     {
+      result = decimal_before + "." + create;
+     }
+   else
+     {
+      result = decimal_before;
+     }
+
+   if(debug)
+      Print(" FINAL RESULT " + result);
+   return(result);
+  }
+//+------------------------------------------------------------------+
+//+------------------------------------------------------------------+
