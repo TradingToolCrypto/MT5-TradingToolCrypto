@@ -94,3 +94,125 @@ void CreateButton(
   ObjectSetInteger(aChartID, aObjName, OBJPROP_SELECTABLE, false);
   ObjectSetInteger(aChartID, aObjName, OBJPROP_SELECTED, false);
 }
+
+
+void ObjCreateEdit(
+   string aObjName,
+   string aText,
+   int aX = 30,
+   int aY = 30,
+   int aXSize = 380,
+   int aYSize = 240,
+   int aWindow = 0,
+   int aAnchor = ANCHOR_LEFT_UPPER,
+   int aCorner = CORNER_LEFT_UPPER,
+   color aBgColor = LightYellow,
+   color aColor = Chocolate,
+   int aFontSize = 8,
+   string aFont = "Arial",
+   int aChartID = 0,
+   bool aBack = false,
+   double aAngle = 0,
+   long aTimeFrames = OBJ_ALL_PERIODS,
+   bool aSelectable = false,
+   bool aSelected = false)
+  {
+   ObjectCreate(aChartID, aObjName, OBJ_EDIT, aWindow, 0, 0);
+   ObjectSetInteger(aChartID, aObjName, OBJPROP_ANCHOR, aAnchor);
+   ObjectSetInteger(aChartID, aObjName, OBJPROP_BACK, aBack);
+   ObjectSetInteger(aChartID, aObjName, OBJPROP_COLOR, aColor);
+   ObjectSetInteger(aChartID, aObjName, OBJPROP_BGCOLOR, aBgColor);
+   ObjectSetInteger(aChartID, aObjName, OBJPROP_CORNER, aCorner);
+   ObjectSetInteger(aChartID, aObjName, OBJPROP_FONTSIZE, aFontSize);
+   ObjectSetInteger(aChartID, aObjName, OBJPROP_SELECTABLE, aSelectable);
+   ObjectSetInteger(aChartID, aObjName, OBJPROP_SELECTED, aSelected);
+   ObjectSetInteger(aChartID, aObjName, OBJPROP_TIMEFRAMES, aTimeFrames);
+   ObjectSetInteger(aChartID, aObjName, OBJPROP_XDISTANCE, aX);
+   ObjectSetInteger(aChartID, aObjName, OBJPROP_YDISTANCE, aY);
+   ObjectSetInteger(aChartID, aObjName, OBJPROP_XSIZE, aXSize);
+   ObjectSetInteger(aChartID, aObjName, OBJPROP_YSIZE, aYSize);
+   ObjectSetString(aChartID, aObjName, OBJPROP_FONT, aFont);
+   ObjectSetString(aChartID, aObjName, OBJPROP_TEXT, aText);
+  }
+  
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+void ObjCreateEditAlign(
+   string aObjName,
+   string aText,
+   int aX = 30,
+   int aY = 30,
+   int aXSize = 380,
+   int aYSize = 240,
+   int aWindow = 0,
+   int aAnchor = ANCHOR_LEFT_UPPER,
+   int aCorner = CORNER_LEFT_UPPER,
+   color aBgColor = LightYellow,
+   color aColor = Chocolate,
+   int aFontSize = 8,
+   string aFont = "Arial",
+   int aChartID = 0,
+   bool aBack = false,
+   double aAngle = 0,
+   long aTimeFrames = OBJ_ALL_PERIODS,
+   bool aSelectable = false,
+   bool aSelected = false)
+  {
+   ObjectCreate(aChartID, aObjName, OBJ_EDIT, aWindow, 0, 0);
+   ObjectSetInteger(aChartID, aObjName, OBJPROP_ANCHOR, aAnchor);
+   ObjectSetInteger(aChartID, aObjName, OBJPROP_BACK, aBack);
+   ObjectSetInteger(aChartID, aObjName, OBJPROP_COLOR, aColor);
+   ObjectSetInteger(aChartID, aObjName, OBJPROP_BGCOLOR, aBgColor);
+   ObjectSetInteger(aChartID, aObjName, OBJPROP_CORNER, aCorner);
+   ObjectSetInteger(aChartID, aObjName, OBJPROP_FONTSIZE, aFontSize);
+   ObjectSetInteger(aChartID, aObjName, OBJPROP_SELECTABLE, aSelectable);
+   ObjectSetInteger(aChartID, aObjName, OBJPROP_SELECTED, aSelected);
+   ObjectSetInteger(aChartID, aObjName, OBJPROP_TIMEFRAMES, aTimeFrames);
+   ObjectSetInteger(aChartID, aObjName, OBJPROP_XDISTANCE, aX);
+   ObjectSetInteger(aChartID, aObjName, OBJPROP_YDISTANCE, aY);
+   ObjectSetInteger(aChartID, aObjName, OBJPROP_XSIZE, aXSize);
+   ObjectSetInteger(aChartID, aObjName, OBJPROP_YSIZE, aYSize);
+   ObjectSetString(aChartID, aObjName, OBJPROP_FONT, aFont);
+   ObjectSetString(aChartID, aObjName, OBJPROP_TEXT, aText);
+   ObjectSetInteger(aChartID,aObjName,OBJPROP_ALIGN,ALIGN_CENTER);
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+void ObjCreateButton(
+   string aObjName,
+   bool aState,
+   int aX = 30,
+   int aY = 30,
+   int aWidth = 100,
+   int aHeight = 30,
+   string aCaption = "Push Me",
+   color aBgColor = Silver,
+   color aTextColor = Red,
+   int aWindow = 0,
+   int aCorner = CORNER_LEFT_UPPER,
+   int aFontSize = 8,
+   string aFont = "Arial",
+   long aChartID = 0,
+   bool aBack = false,
+   long aTimeFrames = OBJ_ALL_PERIODS)
+  {
+   ObjectDelete(aChartID, aObjName);
+   ObjectCreate(aChartID, aObjName, OBJ_BUTTON, aWindow, 0, 0);
+   ObjectSetInteger(aChartID, aObjName, OBJPROP_SELECTABLE, false);
+   ObjectSetInteger(aChartID, aObjName, OBJPROP_SELECTED, false);
+   ObjectSetInteger(aChartID, aObjName, OBJPROP_STATE, aState);
+   ObjectSetInteger(aChartID, aObjName, OBJPROP_CORNER, aCorner);
+   ObjectSetInteger(aChartID, aObjName, OBJPROP_XDISTANCE, aX);
+   ObjectSetInteger(aChartID, aObjName, OBJPROP_YDISTANCE, aY);
+   ObjectSetInteger(aChartID, aObjName, OBJPROP_XSIZE, aWidth);
+   ObjectSetInteger(aChartID, aObjName, OBJPROP_YSIZE, aHeight);
+   ObjectSetInteger(aChartID, aObjName, OBJPROP_BGCOLOR, aBgColor);
+   ObjectSetInteger(aChartID, aObjName, OBJPROP_COLOR, aTextColor);
+   ObjectSetString(aChartID, aObjName, OBJPROP_FONT, aFont);
+   ObjectSetInteger(aChartID, aObjName, OBJPROP_FONTSIZE, aFontSize);
+   ObjectSetString(aChartID, aObjName, OBJPROP_TEXT, aCaption);
+   ObjectSetInteger(aChartID, aObjName, OBJPROP_BACK, aBack);
+   ObjectSetInteger(aChartID, aObjName, OBJPROP_TIMEFRAMES, aTimeFrames);
+  }
