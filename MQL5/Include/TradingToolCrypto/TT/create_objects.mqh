@@ -216,3 +216,27 @@ void ObjCreateButton(
    ObjectSetInteger(aChartID, aObjName, OBJPROP_BACK, aBack);
    ObjectSetInteger(aChartID, aObjName, OBJPROP_TIMEFRAMES, aTimeFrames);
   }
+
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+bool ObjCreateHLine(string name, string text, datetime time1, double price1, datetime time2, double price2, color col, int lineWidth, int lineStyle)export
+  {
+
+   price2 = price1;
+
+   if(ObjectCreate(0, name, OBJ_HLINE, 0, time1, price1))
+     {
+      // ObjectSetDouble(0,name,OBJPROP_PRICE,price1);
+      ObjectSetInteger(0, name, OBJPROP_COLOR, col);
+      ObjectSetInteger(0, name, OBJPROP_WIDTH, lineWidth);
+      ObjectSetInteger(0, name, OBJPROP_STYLE, lineStyle);
+      ObjectSetInteger(0, name, OBJPROP_BACK, true);
+      ObjectSetString(0, name, OBJPROP_TEXT, text);
+      ObjectSetInteger(0, name, OBJPROP_SELECTABLE, true);
+      ObjectSetInteger(0, name, OBJPROP_HIDDEN, false);
+      return (true);
+     }
+   return (false);
+  }
+  
