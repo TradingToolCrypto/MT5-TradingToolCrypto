@@ -26,6 +26,36 @@ CJAVal jasonClass(NULL, jtUNDEF);
 #define EXCHANGE_KRAKEN ".kra"
 #define EXCHANGE_KUCOIN_FUTURES ".kuf"
 #define EXCHANGE_BTSE ".bts"
+#define EXCHANGE_GEMINI ".gem"
+
+enum ENUM_AVAILABLE_EXCHANGE
+  {
+   BINANCE = 1,
+   BINANCE_US = 6,
+   BINANCE_FUTURES_USDT = 5,
+   BINANCE_FUTURES_COIN = 21,
+   BITFINEX = 10,
+   BITMEX = 3,
+   BITSTAMP =11,
+   BTSE = 20,
+   BYBIT_COIN = 2,
+   BYBIT_USDT = 22,
+   BYBIT_COIN_TEST = 23,
+   BYBIT_USDT_TEST = 24,
+   COINBASE = 9,
+   DERIBIT = 7,
+   DIGITEX = 14,
+   FTX = 12,
+   GEMINI = 25,
+   HUOBI_FUTURES = 15,
+   KRAKEN = 18,
+   KUCOIN = 4,
+   KUCOIN_FUTURES = 19,
+   PHEMEX = 16,
+   SATANG_PRO = 13,
+   ZBG = 17
+// OKEX = 8,
+  };
 
 
 
@@ -190,6 +220,11 @@ string get_suffix_exchange_name(string suffix, int id)
          GLOBAL_exchange = "BybitU";
          return(".bytt");
         }
+         if(id == 25)
+        {
+         GLOBAL_exchange = "Gemini";
+         return(".gem");
+        }
      }
    return(suffix);
   }
@@ -299,6 +334,10 @@ int suffix_exchange_number(string id)
    if(id == ".bytt") // bybit usdt testnet
      {
       return(22);
+     }
+    if(id == ".gem") // bybit usdt testnet
+     {
+      return(25);
      }
    return(-1);
   }

@@ -5,34 +5,8 @@
 //+------------------------------------------------------------------+
 #property copyright "Copyright 2020, TradingToolCrypto Corp."
 #property link      "https://github.com/tradingtoolcrypto"
-#define VERSION 1.38
-/*FF
-   https://github.com/tradingtoolcrypto
-   - v1.34
-      - Modify_Trade (fixed for binance futures stop_loss order types )
-      - added orderID for OpenTrade()
-   - v1.35
-      - bitmex cancel orderID or cancel All
-      - added ClientOrderID for ModifyTrade() and CancelTrade()
-      - bitmex NormalizeString on ModifyTrade
-      - bitmex drag and drop pending orders works
-      - fixed bug in lines desc with incorrect order_id #
+#define VERSION 1.40
 
-   - v1.36
-      - remove okex, kucoin, coinbase, binance dex,
-
-   - v1.37
-      - add bybit stoplimit order types
-      - binancefutures stop orders Globalvariable = STOPMARKET , GV missing price fixed by using the stopPrice
-      - delete all the globals that belong to this exchange configuration
-      - maintain the GV "CBP" when switching the exchanges. Only change the CBP value when the robot is removed.
-      - stoplimit orders send back the stopPrice aka Trigger price
-
-    - v1.38
-      - bug in cancel order
-         if(order_number != -1) - fixed
-      - BinanceFutures Coin Symbols include a lower _ which causes issues when parsingOrders and parsingPositions - fixed
-*/
 #import "CBP_Functions.ex5"
 string RemoveSymbolSeperator(string symbolname, string seperator);
 int GetOrderNumberFromLineName(string linename);
@@ -297,18 +271,21 @@ input string Okex_Market_Type = "swap";
 */
 
 input group "---------------CRYPTO BRIDGE VISUAL SETUP---------------"
-input string Partial_TakeProfit_1 = "TP/SL Line style only works with lineThickness == 1";
 input ENUM_LINE_STYLE TP_SL_lineStyle = STYLE_SOLID;
 input int TP_SL_lineThickness = 2;
 input color Takeprofit_Color = clrLightGreen;
 input color Stoploss_Color = clrLightPink;
 
-input string Entry_0 = "Entry Line style only works with lineThickness == 1";
+
 input ENUM_LINE_STYLE EntrylineStyle = STYLE_DASH;
 input int EntrylineThickness = 1;
 input color Entry_Color = clrLightGray;
 
-input string Order_0 = "Order Line style only works with lineThickness == 1";
+input ENUM_LINE_STYLE PriceMarkerLineStyle = STYLE_SOLID;
+input int PriceMarkerLineThickness = 2;
+input color PriceMarker_Color = clrGoldenrod;
+
+
 input ENUM_LINE_STYLE OrderlineStyle = STYLE_SOLID;
 input int OrderlineThickness = 1;
 input color Order_Color_Buy = clrBlueViolet;
@@ -317,7 +294,7 @@ input color Order_Color_StopLimit = clrGoldenrod;
 /*
  Create an ENUM to have a droplist of the available exchanges within your robot's expert properties
 */
-enum ENUM_AVAILABLE_EXCHANGE
+enum ENUM_TRADING_EXCHANGE
   {
 // BINANCE_DEX = 0,
    BINANCE = 1,
@@ -334,7 +311,7 @@ enum ENUM_AVAILABLE_EXCHANGE
 
 
 input group "-----ADJUSTMENTS BELOW ARE FOR CUSTOM ROBOTS------";
-input ENUM_AVAILABLE_EXCHANGE Exchange_Number;
+input ENUM_TRADING_EXCHANGE Exchange_Number;
 input string Exchange_Symbol_Name = "BTCUSDT";
 input double Exchange_Lotsize = 1.0;
 input int Exchange_Lot_Precision = 8;
@@ -353,6 +330,9 @@ class CryptoBridge
   {
 protected:
    string            my_name;
+   int               unique_id;
+   void              add_unique_id();
+   int               delete_unique_id();
 
 public:
    bool              Init_Api_Keys(int exchange);
@@ -437,7 +417,6 @@ bool CryptoBridge::Init_Api_Keys(int exchange)
       add_exchange_info(exchange);
       return (checked);
      }
-
    if(exchange == 6)
      {
       checked = Binance_US_Get_API_Key(Binance_US_Api_Key, Binance_US_Api_Secret);
@@ -462,18 +441,14 @@ bool CryptoBridge::Init_Api_Keys(int exchange)
       add_exchange_info(exchange);
       return (checked);
      }
-
    if(exchange == 21)
      {
       checked = BinanceFuturesC_Get_API_Key(BinanceFutures_Api_Key, BinanceFutures_Api_Secret, BinanceFutures_LiveDemo);
       add_exchange_info(exchange);
       return (checked);
      }
-
-
    return (false);
   }
-
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
@@ -592,7 +567,6 @@ bool CryptoBridge::Hedge_Mode(bool on_true_off_false, int exchangeNumber)
          return (BinanceFuturesC_HedgeMode("false"));
         }
      }
-
    return (false);
   }
 
@@ -1222,80 +1196,7 @@ bool CryptoBridge::Get_FundRate(string sym, int exchangeNumber, int quote_precis
      }
    return (false);
   }
-//+------------------------------------------------------------------+
-//|   fetch the open positions                                       |
-//+------------------------------------------------------------------+
-bool CryptoBridge::Get_Position(string sym, int exchangeNumber, int quote_precision)
-  {
-   Print("CBP GetPosition on Symbol(" + sym + ")");
 
-   DeleteOjectLinesByDesc("ENTRY_BUY");
-   DeleteOjectLinesByDesc("ENTRY_SELL");
-
-
-
-
-   string prefix = CryptoBridge::Get_Exchange_Name(exchangeNumber);
-   DeleteGlobalPrefix(prefix +GLOBAL_Parse_Separator +"POS" + GLOBAL_Parse_Separator);     // - this is the position global variable
-   DeleteGlobalPrefix(prefix +GLOBAL_Parse_Separator +"LIQ"+ GLOBAL_Parse_Separator);     // - this is the pos  liq global variable
-   DeleteSubWindowObjectAll(0, "sub_pos_"); // - this is the position string
-   DeleteSubWindowObjectAll(0, "sub_liq_"); // - this is the liquidation string
-
-//  Print("CBP Deleted POS + LIQ Globals and Subwindow");
-
-   /*
-   delete the TP and SL lines on the chart if exists
-   */
-   DeleteOjectLinesByName("TP1b");
-   DeleteOjectLinesByName("TP2b");
-   DeleteOjectLinesByName("TP3b");
-   DeleteOjectLinesByName("TP4b");
-   DeleteOjectLinesByName("SL1b");
-   DeleteOjectLinesByName("SL2b");
-   DeleteOjectLinesByName("SL3b");
-   DeleteOjectLinesByName("SL4b");
-
-//  Print("CBP Deleted Buy Lines");
-
-   DeleteOjectLinesByName("TP1s");
-   DeleteOjectLinesByName("TP2s");
-   DeleteOjectLinesByName("TP3s");
-   DeleteOjectLinesByName("TP4s");
-   DeleteOjectLinesByName("SL1s");
-   DeleteOjectLinesByName("SL2s");
-   DeleteOjectLinesByName("SL3s");
-   DeleteOjectLinesByName("SL4s");
-
-// Print("CBP Deleted Sell Lines");
-
-   if(exchangeNumber == 2)
-     {
-      return (Bybit_Positions(sym, quote_precision));
-     }
-   if(exchangeNumber == 3)
-     {
-      return (Bitmex_Positions(sym, quote_precision));
-     }
-   if(exchangeNumber == 5)
-     {
-      return (BinanceFutures_Positions(sym, quote_precision));
-     }
-   /*
-   if(exchangeNumber == 7)
-     {
-      return (Deribit_Positions(sym, quote_precision));
-     }
-   */
-   if(exchangeNumber == 12)
-     {
-      return (FTX_Positions(sym, quote_precision));
-     }
-   if(exchangeNumber == 21)
-     {
-      return (BinanceFuturesC_Positions(sym, quote_precision));
-     }
-   return (false);
-  }
 //+------------------------------------------------------------------+
 //| sets orders information within subwindow                         |
 //+------------------------------------------------------------------+
@@ -1305,9 +1206,6 @@ bool CryptoBridge::Get_OpenOrders(string sym, int exchangeNumber, int quote_prec
    string prefix = CryptoBridge::Get_Exchange_Name(exchangeNumber);
    Print("CBP GetOpenOrders " + sym + " ExchangeName " + prefix);
    string ok = prefix +GLOBAL_Parse_Separator +"Order"+GLOBAL_Parse_Separator + sym;
-   Print("debug OpenOrder " + ok);
-
-
    DeleteGlobalPrefix(ok);
    DeleteSubWindowObjectAll(0, "sub_order_"); // - this is the order string
    DeleteSubWindowObjectAll(0, "order_id");   //   - this is the order id string
@@ -1567,11 +1465,11 @@ void CryptoBridge::Parse_Orders(string exchangeName, int order_location, int id_
         {
          if(exchange_orderside[i] == "BUY" && exchange_ordertype[i] != "STOPLIMIT")
            {
-            CreateOrderEntryLine(exchange_symbol[i] +"_"+exchange_ordertype[i]+ "_BUY_"  +exchange_ordersize[i] + "_" + IntegerToString(i), GetObjectDesc(exchange_orderindex[i]-1), bar_close - 6000, exchange_orderprice[i], bar_close, exchange_orderprice[i], Order_Color_Buy, OrderlineThickness, OrderlineStyle);
+            CreateOrderEntryLine(exchange_symbol[i] +GLOBAL_Parse_Separator+exchange_ordertype[i]+ GLOBAL_Parse_Separator +"BUY" + GLOBAL_Parse_Separator  +exchange_ordersize[i] + GLOBAL_Parse_Separator + IntegerToString(i), GetObjectDesc(exchange_orderindex[i]-1), bar_close - 6000, exchange_orderprice[i], bar_close, exchange_orderprice[i], Order_Color_Buy, OrderlineThickness, OrderlineStyle);
            }
          if(exchange_orderside[i] == "SELL" && exchange_ordertype[i] != "STOPLIMIT")
            {
-            CreateOrderEntryLine(exchange_symbol[i] +"_"+exchange_ordertype[i]+ "_SELL_" +exchange_ordersize[i] + "_" + IntegerToString(i), GetObjectDesc(exchange_orderindex[i]-1), bar_close - 6000, exchange_orderprice[i], bar_close, exchange_orderprice[i], Order_Color_Sell, OrderlineThickness, OrderlineStyle);
+            CreateOrderEntryLine(exchange_symbol[i] +GLOBAL_Parse_Separator+exchange_ordertype[i]+ GLOBAL_Parse_Separator + "SELL"+ GLOBAL_Parse_Separator  +exchange_ordersize[i] + GLOBAL_Parse_Separator + IntegerToString(i), GetObjectDesc(exchange_orderindex[i]-1), bar_close - 6000, exchange_orderprice[i], bar_close, exchange_orderprice[i], Order_Color_Sell, OrderlineThickness, OrderlineStyle);
            }
          /*
          stop limit orders need to be a different color because these orders require two prices and drag to modify will be disabled
@@ -1579,11 +1477,11 @@ void CryptoBridge::Parse_Orders(string exchangeName, int order_location, int id_
          */
          if(exchange_orderside[i] == "BUY" && exchange_ordertype[i] == "STOPLIMIT")
            {
-            CreateOrderEntryLine(exchange_symbol[i] +"_"+exchange_ordertype[i]+ "_BUY_"  +exchange_ordersize[i] + "_" + IntegerToString(i), GetObjectDesc(exchange_orderindex[i]-1), bar_close - 6000, exchange_orderprice[i], bar_close, exchange_orderprice[i], Order_Color_StopLimit, OrderlineThickness, OrderlineStyle);
+            CreateOrderEntryLine(exchange_symbol[i] +GLOBAL_Parse_Separator+exchange_ordertype[i]+ GLOBAL_Parse_Separator + "BUY"+ GLOBAL_Parse_Separator   +exchange_ordersize[i] + GLOBAL_Parse_Separator + IntegerToString(i), GetObjectDesc(exchange_orderindex[i]-1), bar_close - 6000, exchange_orderprice[i], bar_close, exchange_orderprice[i], Order_Color_StopLimit, OrderlineThickness, OrderlineStyle);
            }
          if(exchange_orderside[i] == "SELL" && exchange_ordertype[i] == "STOPLIMIT")
            {
-            CreateOrderEntryLine(exchange_symbol[i] +"_"+exchange_ordertype[i]+ "_SELL_" +exchange_ordersize[i] + "_" + IntegerToString(i), GetObjectDesc(exchange_orderindex[i]-1), bar_close - 6000, exchange_orderprice[i], bar_close, exchange_orderprice[i], Order_Color_StopLimit, OrderlineThickness, OrderlineStyle);
+            CreateOrderEntryLine(exchange_symbol[i] +GLOBAL_Parse_Separator+exchange_ordertype[i]+ GLOBAL_Parse_Separator + "SELL"+ GLOBAL_Parse_Separator  +exchange_ordersize[i] + GLOBAL_Parse_Separator + IntegerToString(i), GetObjectDesc(exchange_orderindex[i]-1), bar_close - 6000, exchange_orderprice[i], bar_close, exchange_orderprice[i], Order_Color_StopLimit, OrderlineThickness, OrderlineStyle);
            }
         }
      }
@@ -1715,6 +1613,67 @@ void CryptoBridge::Parse_OrdersY(string exchangeName, int order_location_x,int o
      }
   }
 //+------------------------------------------------------------------+
+//|   fetch the open positions                                       |
+//+------------------------------------------------------------------+
+bool CryptoBridge::Get_Position(string sym, int exchangeNumber, int quote_precision)
+  {
+   Print("CBP GetPosition on Symbol(" + sym + ")");
+   DeleteOjectLinesByDesc("ENTRY_BUY");
+   DeleteOjectLinesByDesc("ENTRY_SELL");
+   string prefix = CryptoBridge::Get_Exchange_Name(exchangeNumber);
+   DeleteGlobalPrefix(prefix +GLOBAL_Parse_Separator +"POS" + GLOBAL_Parse_Separator);     // - this is the position global variable
+   DeleteGlobalPrefix(prefix +GLOBAL_Parse_Separator +"LIQ"+ GLOBAL_Parse_Separator);     // - this is the pos  liq global variable
+   DeleteSubWindowObjectAll(0, "sub_pos_"); // - this is the position string
+   DeleteSubWindowObjectAll(0, "sub_liq_"); // - this is the liquidation string
+   /*
+   delete the TP and SL lines on the chart if exists
+   */
+   DeleteOjectLinesByName("TP1b");
+   DeleteOjectLinesByName("TP2b");
+   DeleteOjectLinesByName("TP3b");
+   DeleteOjectLinesByName("TP4b");
+   DeleteOjectLinesByName("SL1b");
+   DeleteOjectLinesByName("SL2b");
+   DeleteOjectLinesByName("SL3b");
+   DeleteOjectLinesByName("SL4b");
+   DeleteOjectLinesByName("TP1s");
+   DeleteOjectLinesByName("TP2s");
+   DeleteOjectLinesByName("TP3s");
+   DeleteOjectLinesByName("TP4s");
+   DeleteOjectLinesByName("SL1s");
+   DeleteOjectLinesByName("SL2s");
+   DeleteOjectLinesByName("SL3s");
+   DeleteOjectLinesByName("SL4s");
+
+   if(exchangeNumber == 2)
+     {
+      return (Bybit_Positions(sym, quote_precision));
+     }
+   if(exchangeNumber == 3)
+     {
+      return (Bitmex_Positions(sym, quote_precision));
+     }
+   if(exchangeNumber == 5)
+     {
+      return (BinanceFutures_Positions(sym, quote_precision));
+     }
+   /*
+   if(exchangeNumber == 7)
+     {
+      return (Deribit_Positions(sym, quote_precision));
+     }
+   */
+   if(exchangeNumber == 12)
+     {
+      return (FTX_Positions(sym, quote_precision));
+     }
+   if(exchangeNumber == 21)
+     {
+      return (BinanceFuturesC_Positions(sym, quote_precision));
+     }
+   return (false);
+  }
+//+------------------------------------------------------------------+
 //| Binance_Pos_GVTETH_MARKET_SELL_0.00750000_8.00000000            |
 //+------------------------------------------------------------------+
 string exchange_name_p[];
@@ -1829,7 +1788,7 @@ void CryptoBridge::Parse_Positions(string exchangeName, int pos_location, int li
          if(exchange_ordersize_p[i] != 0)
            {
             SetSubWindowText("sub_pos_" + IntegerToString(i), positionarray[i], pos_location, 20 + (25 * i), Gray, 10);
-            CreateEntryLine(exchange_symbol_p[i] + "_ENTRY", "ENTRY_"+exchange_orderside_p[i], bar_close - 6000, exchange_orderprice_p[i], bar_close, exchange_orderprice_p[i], Entry_Color, EntrylineThickness, EntrylineStyle);
+            CreateEntryLine(exchange_symbol_p[i] +GLOBAL_Parse_Separator +  "ENTRY", "ENTRY_"+exchange_orderside_p[i], bar_close - 6000, exchange_orderprice_p[i], bar_close, exchange_orderprice_p[i], Entry_Color, EntrylineThickness, EntrylineStyle);
            }
         }
      }
@@ -1901,9 +1860,13 @@ void CryptoBridge::Parse_Positions(string exchangeName, int pos_location, int li
 
 
 */
+string exchange_wallets[];
+double exchange_wallets_balance[];
 void CryptoBridge::Parse_Wallets(string exchangeName, int x, int y)
   {
 
+   ArrayFree(exchange_wallets);
+   ArrayFree(exchange_wallets_balance);
 
    DeleteSubWindowObjectAll(0, "sub_wallet_"+exchangeName+"_");
 
@@ -1948,9 +1911,19 @@ void CryptoBridge::Parse_Wallets(string exchangeName, int x, int y)
    if(countD > 0)
      {
       ArrayResize(walletarray, countD, 0);
+      ArrayResize(exchange_wallets, countD, 0);
+      ArrayResize(exchange_wallets_balance, countD, 0);
+      
       for(int i = 0; i < countD; i++)
         {
-         SetSubWindowText("sub_wallet_"+exchangeName+"_" + IntegerToString(i), walletarray[i] + "(" + DoubleToString(GetGlobal(exchangeName, GLOBAL_Parse_Separator + "Wallet" +GLOBAL_Parse_Separator + walletarray[i]), 8) + ")", x, (y+16) + (20 * i), Green, 12);
+         exchange_wallets[i] = walletarray[i];
+         exchange_wallets_balance[i] = GetGlobal(exchangeName, GLOBAL_Parse_Separator + "Wallet" +GLOBAL_Parse_Separator + walletarray[i]);
+         SetSubWindowText("sub_wallet_"+exchangeName+"_" + IntegerToString(i), walletarray[i] + "(" + DoubleToString(exchange_wallets_balance[i], 8) + ")", x, (y+16) + (20 * i), Green, 12);
+         
+         RewriteGlobals(exchangeName + GLOBAL_Parse_Separator + "Wallet" + GLOBAL_Parse_Separator +walletarray[i], 
+            unique_id + exchangeName + GLOBAL_Parse_Separator + "Wallet" + GLOBAL_Parse_Separator + walletarray[i]);
+
+       
         }
      }
   }
@@ -2048,25 +2021,27 @@ void add_chart_indicator()
    ChartIndicatorAdd(0,subwindow,indicator_handle);
   }
 //+------------------------------------------------------------------+
-void add_unique_id()
+void CryptoBridge::add_unique_id()
   {
    const string id = "CBP";
    double value = GlobalVariableGet(id);
    if(value == 0)
      {
       GlobalVariableSet(id,1);
+      unique_id = 1;
      }
 
    if(value > 0)
      {
       GlobalVariableSet(id,value+1);
+      unique_id = value+1;
      }
   }
 
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-double delete_unique_id()
+int CryptoBridge::delete_unique_id()
   {
    const string id = "CBP";
    double value = GlobalVariableGet(id);
@@ -2080,15 +2055,6 @@ double delete_unique_id()
      }
    return(value);
   }
-//+------------------------------------------------------------------+
-
-
-
-
-
-
-
-
 
 
 //+------------------------------------------------------------------+
