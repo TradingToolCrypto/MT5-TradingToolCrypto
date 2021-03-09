@@ -353,12 +353,13 @@ string get_suffix_from_symbol(string symbol){
       u_sep=StringGetCharacter(sep,0);
       int k=StringSplit(symbol,u_sep,result);
       string value ="";
-      if(k==2){
+      if(k>=2){
          value = sep + result[1];
          return(value);
       }
       return(value);
 }
+
 /*
          BTCUSDT.binance
         
@@ -371,7 +372,7 @@ string remove_suffix_from_symbol(string symbol){
       u_sep=StringGetCharacter(sep,0);
       int k=StringSplit(symbol,u_sep,result);
       string value ="";
-      if(k==2){
+      if(k>=2){
          value = result[0];
          return(value);
       }
