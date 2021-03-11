@@ -1,2 +1,3 @@
 March 7th,2021 CBP 1.40
 March 9th,2021 CB_ChartAll_Historical Bars script and robot
+March 11th,2021 CB_ChartAll v1.11 , SpreadScanner v1.01
