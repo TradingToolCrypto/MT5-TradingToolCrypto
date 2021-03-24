@@ -3,3 +3,4 @@ March 9th,2021 CB_ChartAll_Historical Bars script and robot
 March 11th,2021 CB_ChartAll v1.11 , SpreadScanner v1.01
 March 15th,2021 CB_Charts v1.44 (Gemini Added)
 March 20th,2021 CB_ChartALLUpdates v1.00
+March 24th,2021 PaymentBot v2.70 - https://youtu.be/HA12LLvXEro 
