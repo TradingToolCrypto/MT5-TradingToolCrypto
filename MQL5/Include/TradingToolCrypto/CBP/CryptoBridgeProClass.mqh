@@ -1718,7 +1718,7 @@ void add_chart_indicator()
    - place the indicator on the chart automatically
    - dir - "Examples\\Custom Moving Average
    */
-   int indicator_handle=iCustom(NULL,PERIOD_CURRENT,"SubWindow");
+   int indicator_handle=iCustom(NULL,PERIOD_CURRENT,"TTC\\SubWindow");
    int subwindow=(int)ChartGetInteger(0,CHART_WINDOWS_TOTAL);
 
    ChartIndicatorAdd(0,subwindow,indicator_handle);
