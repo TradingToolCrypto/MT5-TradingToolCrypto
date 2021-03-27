@@ -1648,7 +1648,6 @@ void CryptoBridge::Parse_Wallets(string exchangeName, int x, int y)
 
       if(k== 4 && result[0] == unique_id && result[1] == exchangeName && result[2] == "Wallet")
         {
-         Print(" k " + k + " | name " + name);
          ArrayResize(exchange_wallets, countD + 1, 0);
          ArrayResize(exchange_wallets_balance, countD + 1, 0);
          ArrayResize(exchange_wallets_freemargin, countD + 1, 0);
