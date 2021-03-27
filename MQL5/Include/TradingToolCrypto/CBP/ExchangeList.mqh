@@ -1,3 +1,10 @@
+//+------------------------------------------------------------------+
+//|                                                      ProjectName |
+//|                                      Copyright 2020, CompanyName |
+//|                                       http://www.companyname.net |
+//+------------------------------------------------------------------+
+#property copyright "Copyright 2020, TradingToolCrypto Corp."
+#property link      "https://github.com/TradingToolCrypto/TradingTool-Wiki/wiki"
 #include <TradingToolCrypto\MQL\Jason.mqh>
 CJAVal jasonClass(NULL, jtUNDEF);
 //+------------------------------------------------------------------+
@@ -84,8 +91,6 @@ int BitmexSymbolsVolumeDigit[];
 int FTXSymbolsVolumeDigit[];
 
 
-
-
 string GLOBAL_exchange = "";
 string get_suffix_exchange_name(string suffix, int id)
   {
@@ -140,13 +145,11 @@ string get_suffix_exchange_name(string suffix, int id)
          GLOBAL_exchange = "Coinbase";
          return(".cbs");
         }
-
       if(id == 10)
         {
          GLOBAL_exchange = "Bitfinex";
          return(".btf");
         }
-
       if(id == 11)
         {
          GLOBAL_exchange = "Bitstamp";
@@ -220,7 +223,7 @@ string get_suffix_exchange_name(string suffix, int id)
          GLOBAL_exchange = "BybitU";
          return(".bytt");
         }
-         if(id == 25)
+      if(id == 25)
         {
          GLOBAL_exchange = "Gemini";
          return(".gem");
@@ -230,7 +233,7 @@ string get_suffix_exchange_name(string suffix, int id)
   }
 
 /*
- suffix is unqiue for each exchange api 
+ suffix is unqiue for each exchange api
  - input the suffix and get the exchange_number for the cryptobridgeproClass
 */
 int suffix_exchange_number(string id)
@@ -335,7 +338,7 @@ int suffix_exchange_number(string id)
      {
       return(22);
      }
-    if(id == ".gem") // bybit usdt testnet
+   if(id == ".gem") // bybit usdt testnet
      {
       return(25);
      }
@@ -343,73 +346,337 @@ int suffix_exchange_number(string id)
   }
 /*
          BTCUSDT.binance
-    
+
          returns .binance
 */
-string get_suffix_from_symbol(string symbol){
-      string sep=".";              // A separator as a character
-      ushort u_sep;                  // The code of the separator character
-      string result[];               // An array to get strings
-      u_sep=StringGetCharacter(sep,0);
-      int k=StringSplit(symbol,u_sep,result);
-      string value ="";
-      if(k>=2){
-         value = sep + result[1];
-         return(value);
-      }
+string get_suffix_from_symbol(string symbol)
+  {
+   string sep=".";              // A separator as a character
+   ushort u_sep;                  // The code of the separator character
+   string result[];               // An array to get strings
+   u_sep=StringGetCharacter(sep,0);
+   int k=StringSplit(symbol,u_sep,result);
+   string value ="";
+   if(k>=2)
+     {
+      value = sep + result[1];
       return(value);
-}
-
+     }
+   return(value);
+  }
 /*
          BTCUSDT.binance
-        
+
          returns BTCUSDT
 */
-string remove_suffix_from_symbol(string symbol){
-      string sep=".";              // A separator as a character
-      ushort u_sep;                  // The code of the separator character
-      string result[];               // An array to get strings
-      u_sep=StringGetCharacter(sep,0);
-      int k=StringSplit(symbol,u_sep,result);
-      string value ="";
-      if(k>=2){
-         value = result[0];
-         return(value);
-      }
+string remove_suffix_from_symbol(string symbol)
+  {
+   string sep=".";              // A separator as a character
+   ushort u_sep;                  // The code of the separator character
+   string result[];               // An array to get strings
+   u_sep=StringGetCharacter(sep,0);
+   int k=StringSplit(symbol,u_sep,result);
+   string value ="";
+   if(k>=2)
+     {
+      value = result[0];
       return(value);
-}
+     }
+   return(value);
+  }
 /*
 
-- binance futures coin perps/futures 
+- binance futures coin perps/futures
    - account balance is in coins
    - 1 contract == 10 usd
    - every market is based in USD (Feb 2021)
-   
-   - wallets are in coins 
-      - take the market name and return the coin name 
+
+   - wallets are in coins
+      - take the market name and return the coin name
          - parse out USD
 
 */
-string get_quote_coin(string symbol){
-
+string get_quote_coin(string symbol)
+  {
    int index = StringFind(symbol,"USD",0);
-   //string remove = StringSubstr(symbol,index,-1);
    string quote = StringSubstr(symbol,0,index);
    return(quote);
-}
-
+  }
 /*
 
     get_quote_coin("BTCUSDT", "USDT")
-    
+
     returns BTC
 
 */
-
-string get_quote_coin(string symbol, string base){
+string get_quote_coin(string symbol, string base)
+  {
 
    int index = StringFind(symbol,base,0);
-   //string remove = StringSubstr(symbol,index,-1);
+//string remove = StringSubstr(symbol,index,-1);
    string quote = StringSubstr(symbol,0,index);
    return(quote);
-}
+  }
+
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+void create_custom_symbol(string customSymbolName, int symbolDigits, string folderName, bool openChart)
+  {
+
+   if(!SymbolSelect(customSymbolName, true))
+     {
+      // Symbol Name,  Sub Group, and what Symbol_Properties to copy ( symbol properties? )
+      if(!CustomSymbolCreate(customSymbolName, folderName, NULL))
+        {
+         Print("CustomSymbolCreate failed: " + IntegerToString(GetLastError()));
+         ResetLastError();
+         return;
+        }
+      //QUOTE
+      if(!CustomSymbolSetSessionQuote(customSymbolName,SUNDAY,0, StringToTime("2021.2.7 00:00"),StringToTime("2021.2.7 23:59")))
+        {
+         Print("CustomSymbolSetSessionQuote | --- | Failed" + IntegerToString(GetLastError()));
+         ResetLastError();
+        }
+      if(!CustomSymbolSetSessionQuote(customSymbolName,MONDAY,0, StringToTime("2021.2.8 00:00"),StringToTime("2021.2.8 23:59")))
+        {
+         Print("CustomSymbolSetSessionQuote | --- | Failed" + IntegerToString(GetLastError()));
+         ResetLastError();
+        }
+      if(!CustomSymbolSetSessionQuote(customSymbolName,TUESDAY,0, StringToTime("2021.2.9 00:00"),StringToTime("2021.2.9 23:59")))
+        {
+         Print("CustomSymbolSetSessionQuote | --- | Failed" + IntegerToString(GetLastError()));
+         ResetLastError();
+        }
+      if(!CustomSymbolSetSessionQuote(customSymbolName,WEDNESDAY,0, StringToTime("2021.2.10 00:00"),StringToTime("2021.2.10 23:59")))
+        {
+         Print("CustomSymbolSetSessionQuote | --- | Failed" + IntegerToString(GetLastError()));
+         ResetLastError();
+        }
+      if(!CustomSymbolSetSessionQuote(customSymbolName,THURSDAY,0, StringToTime("2021.2.11 00:00"),StringToTime("2021.2.11 23:59")))
+        {
+         Print("CustomSymbolSetSessionQuote | --- | Failed" + IntegerToString(GetLastError()));
+         ResetLastError();
+        }
+      if(!CustomSymbolSetSessionQuote(customSymbolName,FRIDAY,0, StringToTime("2021.2.12 00:00"),StringToTime("2021.2.12 23:59")))
+        {
+         Print("CustomSymbolSetSessionQuote | --- | Failed" + IntegerToString(GetLastError()));
+         ResetLastError();
+        }
+      if(!CustomSymbolSetSessionQuote(customSymbolName,SATURDAY,0, StringToTime("2021.2.13 00:00"),StringToTime("2021.2.13 23:59")))
+        {
+         Print("CustomSymbolSetSessionQuote | --- | Failed" + IntegerToString(GetLastError()));
+         ResetLastError();
+        }
+      //TRADE
+      if(!CustomSymbolSetSessionTrade(customSymbolName,SUNDAY,0, StringToTime("2021.2.7 00:00"),StringToTime("2021.2.7 23:59")))
+        {
+         Print("CustomSymbolSetSessionTrade | --- | Failed" + IntegerToString(GetLastError()));
+         ResetLastError();
+        }
+      if(!CustomSymbolSetSessionTrade(customSymbolName,MONDAY,0, StringToTime("2021.2.8 00:00"),StringToTime("2021.2.8 23:59")))
+        {
+         Print("CustomSymbolSetSessionTrade | --- | Failed" + IntegerToString(GetLastError()));
+         ResetLastError();
+        }
+      if(!CustomSymbolSetSessionTrade(customSymbolName,TUESDAY,0, StringToTime("2021.2.9 00:00"),StringToTime("2021.2.9 23:59")))
+        {
+         Print("CustomSymbolSetSessionTrade | --- | Failed" + IntegerToString(GetLastError()));
+         ResetLastError();
+        }
+      if(!CustomSymbolSetSessionTrade(customSymbolName,WEDNESDAY,0, StringToTime("2021.2.10 00:00"),StringToTime("2021.2.10 23:59")))
+        {
+         Print("CustomSymbolSetSessionTrade | --- | Failed" + IntegerToString(GetLastError()));
+         ResetLastError();
+        }
+      if(!CustomSymbolSetSessionTrade(customSymbolName,THURSDAY,0, StringToTime("2021.2.11 00:00"),StringToTime("2021.2.11 23:59")))
+        {
+         Print("CustomSymbolSetSessionTrade | --- | Failed" + IntegerToString(GetLastError()));
+         ResetLastError();
+        }
+      if(!CustomSymbolSetSessionTrade(customSymbolName,FRIDAY,0, StringToTime("2021.2.12 00:00"),StringToTime("2021.2.12 23:59")))
+        {
+         Print("CustomSymbolSetSessionTrade | --- | Failed" + IntegerToString(GetLastError()));
+         ResetLastError();
+        }
+      if(!CustomSymbolSetSessionTrade(customSymbolName,SATURDAY,0, StringToTime("2021.2.13 00:00"),StringToTime("2021.2.13 23:59")))
+        {
+         Print("CustomSymbolSetSessionTrade | --- | Failed" + IntegerToString(GetLastError()));
+         ResetLastError();
+        }
+      //SYMBOL_TICKS_BOOKDEPTH
+      if(!CustomSymbolSetInteger(customSymbolName, SYMBOL_TICKS_BOOKDEPTH, 20))
+        {
+         Print("CustomSymbolSetInteger | SYMBOL_DIGITS | Failed" + IntegerToString(GetLastError()));
+         ResetLastError();
+        }
+      //SYMBOL_DIGITS
+      if(!CustomSymbolSetInteger(customSymbolName, SYMBOL_DIGITS, symbolDigits))
+        {
+         Print("CustomSymbolSetInteger | SYMBOL_DIGITS | Failed" + IntegerToString(GetLastError()));
+         ResetLastError();
+        }
+      //SYMBOL_CHART_MODE
+      if(!CustomSymbolSetInteger(customSymbolName, SYMBOL_CHART_MODE, SYMBOL_CHART_MODE_BID))
+        {
+         Print("CustomSymbolSetInteger | SYMBOL_CHART_MODE | Failed" + IntegerToString(GetLastError()));
+         ResetLastError();
+        }
+      /*
+        //SYMBOL_VISIBLE
+         if(!CustomSymbolSetInteger(customSymbolName,SYMBOL_VISIBLE,true))
+        {
+         Print("CustomSymbolSetInteger | SYMBOL_VISIBLE | Failed" + IntegerToString( GetLastError() ) );
+         ResetLastError();
+         return;
+        }
+      */
+      //SYMBOL_SPREAD_FLOAT
+      if(!CustomSymbolSetInteger(customSymbolName, SYMBOL_SPREAD_FLOAT, true))
+        {
+         Print("CustomSymbolSetInteger | SYMBOL_SPREAD_FLOAT | Failed" + IntegerToString(GetLastError()));
+         ResetLastError();
+        }
+      //SYMBOL_TRADE_STOPS_LEVEL
+      if(!CustomSymbolSetInteger(customSymbolName, SYMBOL_TRADE_STOPS_LEVEL, 0))
+        {
+         Print("CustomSymbolSetInteger | SYMBOL_TRADE_STOPS_LEVEL | Failed" + IntegerToString(GetLastError()));
+         ResetLastError();
+        }
+      //SYMBOL_TRADE_FREEZE_LEVEL
+      if(!CustomSymbolSetInteger(customSymbolName, SYMBOL_TRADE_FREEZE_LEVEL, 0))
+        {
+         Print("CustomSymbolSetInteger | SYMBOL_TRADE_FREEZE_LEVEL | Failed" + IntegerToString(GetLastError()));
+         ResetLastError();
+        }
+      //SYMBOL_POINT
+      if(!CustomSymbolSetDouble(customSymbolName, SYMBOL_POINT, get_tick_size(symbolDigits)))
+        {
+         Print("CustomSymbolSetDouble | SYMBOL_POINT | Failed" + IntegerToString(GetLastError()));
+         ResetLastError();
+        }
+      if(!CustomSymbolSetInteger(customSymbolName, SYMBOL_TRADE_CALC_MODE, SYMBOL_CALC_MODE_CFDLEVERAGE))
+        {
+         Print("CustomSymbolSetInteger | SYMBOL_TRADE_CALC_MODE | Failed" + IntegerToString(GetLastError()));
+         ResetLastError();
+        }
+      //SYMBOL_TRADE_CONTRACT_SIZE
+      if(!CustomSymbolSetDouble(customSymbolName, SYMBOL_TRADE_CONTRACT_SIZE, 1))
+        {
+         Print("CustomSymbolSetDouble | SYMBOL_TRADE_CONTRACT_SIZE | Failed" + IntegerToString(GetLastError()));
+         ResetLastError();
+        }
+      //SYMBOL_TRADE_TICK_SIZE
+      if(!CustomSymbolSetDouble(customSymbolName, SYMBOL_TRADE_TICK_SIZE, get_tick_size(symbolDigits)))
+        {
+         Print("CustomSymbolSetDouble | SYMBOL_TRADE_TICK_SIZE | Failed" + IntegerToString(GetLastError()));
+         ResetLastError();
+        }
+      //SYMBOL_TRADE_TICK_VALUE
+      if(!CustomSymbolSetDouble(customSymbolName, SYMBOL_TRADE_TICK_VALUE, 1))
+        {
+         Print("CustomSymbolSetDouble | SYMBOL_TRADE_TICK_VALUE | Failed" + IntegerToString(GetLastError()));
+         ResetLastError();
+        }
+      //SYMBOL_VOLUME_MIN
+      if(!CustomSymbolSetDouble(customSymbolName, SYMBOL_VOLUME_MIN,  0.00000001))
+        {
+         Print("CustomSymbolSetDouble | SYMBOL_VOLUME_MIN | Failed" + IntegerToString(GetLastError()));
+         ResetLastError();
+        }
+      //SYMBOL_VOLUME_MAX
+      if(!CustomSymbolSetDouble(customSymbolName, SYMBOL_VOLUME_MAX, 99999999))
+        {
+         Print("CustomSymbolSetInteger | SYMBOL_VOLUME_MAX | Failed" + IntegerToString(GetLastError()));
+         ResetLastError();
+        }
+      //SYMBOL_VOLUME_LIMIT
+      if(!CustomSymbolSetDouble(customSymbolName, SYMBOL_VOLUME_LIMIT, 999999999))
+        {
+         Print("CustomSymbolSetDouble | SYMBOL_VOLUME_LIMIT | Failed" + IntegerToString(GetLastError()));
+         ResetLastError();
+        }
+      //SYMBOL_SECTOR
+      if(!CustomSymbolSetInteger(customSymbolName, SYMBOL_SECTOR, SECTOR_CURRENCY_CRYPTO))
+        {
+         Print("CustomSymbolSetInteger | SYMBOL_DIGITS | Failed" + IntegerToString(GetLastError()));
+         ResetLastError();
+        }
+      //SYMBOL_INDUSTRY
+      if(!CustomSymbolSetInteger(customSymbolName, SYMBOL_INDUSTRY, INDUSTRY_INTERNET_CONTENT))
+        {
+         Print("CustomSymbolSetInteger | SYMBOL_DIGITS | Failed" + IntegerToString(GetLastError()));
+         ResetLastError();
+        }
+
+      if(!SymbolSelect(customSymbolName, true))
+        {
+         Print("Creating the CustomChart Failed for some reason: " + IntegerToString(GetLastError()));
+         Alert("Creating the CustomChart Failed for some reason: " + IntegerToString(GetLastError()));
+         ResetLastError();
+        }
+      else
+        {
+         if(openChart)
+           {
+            ChartOpen(customSymbolName, PERIOD_M1);
+           }
+        }
+     }
+   else
+     {
+      if(openChart)
+        {
+         ChartOpen(customSymbolName, PERIOD_M1);
+        }
+     }
+  }
+
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+double get_tick_size(int sym_digits)
+  {
+
+   if(sym_digits == 0)
+     {
+      return (1.0);
+     }
+   if(sym_digits == 1)
+     {
+      return (0.1);
+     }
+   if(sym_digits == 2)
+     {
+      return (0.01);
+     }
+   if(sym_digits == 3)
+     {
+      return (0.001);
+     }
+   if(sym_digits == 4)
+     {
+      return (0.0001);
+     }
+   if(sym_digits == 5)
+     {
+      return (0.00001);
+     }
+   if(sym_digits == 6)
+     {
+      return (0.000001);
+     }
+   if(sym_digits == 7)
+     {
+      return (0.0000001);
+     }
+   if(sym_digits == 8)
+     {
+      return (0.00000001);
+     }
+
+   return (1);
+  }
+
+//+------------------------------------------------------------------+
