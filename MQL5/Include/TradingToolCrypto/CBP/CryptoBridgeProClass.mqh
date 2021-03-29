@@ -1386,10 +1386,8 @@ void CryptoBridge::Parse_Orders(string exchangeName, int order_location, int id_
       /*
       Only use the GV that matchs the unique id, exchangeName and Order
       */
-      if(k ==8 && result[2] == "Order" && result[1] == exchangeName && result[0] == unique_id)
+      if(k >=8 && result[2] == "Order" && result[1] == exchangeName && result[0] == unique_id)
         {
-         Print(" K " + k + " Name " + name);
-
          r_id = result[0];
          r_exchange = result[1];
          r_order = result[2];// ORDER
@@ -1485,10 +1483,8 @@ void CryptoBridge::Parse_OrdersY(string exchangeName, int order_location_x,int o
       /*
       Only use the GV that matchs the unique id, exchangeName and Order
       */
-      if(k ==8 && result[2] == "Order" && result[1] == exchangeName && result[0] == unique_id)
+      if(k >=8 && result[2] == "Order" && result[1] == exchangeName && result[0] == unique_id)
         {
-         Print(" K " + k + " Name " + name);
-
          r_id = result[0];
          r_exchange = result[1];
          r_order = result[2];// ORDER
