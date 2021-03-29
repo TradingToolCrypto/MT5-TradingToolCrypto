@@ -1430,11 +1430,11 @@ void CryptoBridge::Parse_Orders(string exchangeName, int order_location, int id_
         {
          if(exchange_orderside[i] == "BUY" && exchange_ordertype[i] != "STOPLIMIT")
            {
-            CreateOrderEntryLine(exchange_symbol[i] +"_"+exchange_ordertype[i]+ "_BUY_"  +exchange_ordersize[i] + "_" + IntegerToString(i), GetObjectDesc(exchange_orderindex[i]-1), bar_close - 6000, exchange_orderprice[i], bar_close, exchange_orderprice[i], OrderColorBuy, OrderlineThickness, OrderlineStyle);
+            CreateOrderEntryLine(exchange_symbol[i] +GLOBAL_Parse_Separator+exchange_ordertype[i]+ GLOBAL_Parse_Separator + "BUY"+ GLOBAL_Parse_Separator  +exchange_ordersize[i] + GLOBAL_Parse_Separator + IntegerToString(i), GetObjectDesc(exchange_orderindex[i]-1), bar_close - 6000, exchange_orderprice[i], bar_close, exchange_orderprice[i], OrderColorBuy, OrderlineThickness, OrderlineStyle);
            }
          if(exchange_orderside[i] == "SELL" && exchange_ordertype[i] != "STOPLIMIT")
            {
-            CreateOrderEntryLine(exchange_symbol[i] +"_"+exchange_ordertype[i]+ "_SELL_" +exchange_ordersize[i] + "_" + IntegerToString(i), GetObjectDesc(exchange_orderindex[i]-1), bar_close - 6000, exchange_orderprice[i], bar_close, exchange_orderprice[i], OrderColorSell, OrderlineThickness, OrderlineStyle);
+            CreateOrderEntryLine(exchange_symbol[i] +GLOBAL_Parse_Separator+exchange_ordertype[i]+GLOBAL_Parse_Separator +  "SELL" + GLOBAL_Parse_Separator +exchange_ordersize[i] + GLOBAL_Parse_Separator + IntegerToString(i), GetObjectDesc(exchange_orderindex[i]-1), bar_close - 6000, exchange_orderprice[i], bar_close, exchange_orderprice[i], OrderColorSell, OrderlineThickness, OrderlineStyle);
            }
          /*
          stop limit orders need to be a different color because these orders require two prices and drag to modify will be disabled
@@ -1442,11 +1442,11 @@ void CryptoBridge::Parse_Orders(string exchangeName, int order_location, int id_
          */
          if(exchange_orderside[i] == "BUY" && exchange_ordertype[i] == "STOPLIMIT")
            {
-            CreateOrderEntryLine(exchange_symbol[i] +"_"+exchange_ordertype[i]+ "_BUY_"  +exchange_ordersize[i] + "_" + IntegerToString(i), GetObjectDesc(exchange_orderindex[i]-1), bar_close - 6000, exchange_orderprice[i], bar_close, exchange_orderprice[i], OrderColorStopLimit, OrderlineThickness, OrderlineStyle);
+            CreateOrderEntryLine(exchange_symbol[i] +GLOBAL_Parse_Separator+exchange_ordertype[i]+GLOBAL_Parse_Separator +  "BUY" + GLOBAL_Parse_Separator  +exchange_ordersize[i] + GLOBAL_Parse_Separator + IntegerToString(i), GetObjectDesc(exchange_orderindex[i]-1), bar_close - 6000, exchange_orderprice[i], bar_close, exchange_orderprice[i], OrderColorStopLimit, OrderlineThickness, OrderlineStyle);
            }
          if(exchange_orderside[i] == "SELL" && exchange_ordertype[i] == "STOPLIMIT")
            {
-            CreateOrderEntryLine(exchange_symbol[i] +"_"+exchange_ordertype[i]+ "_SELL_" +exchange_ordersize[i] + "_" + IntegerToString(i), GetObjectDesc(exchange_orderindex[i]-1), bar_close - 6000, exchange_orderprice[i], bar_close, exchange_orderprice[i], OrderColorStopLimit, OrderlineThickness, OrderlineStyle);
+            CreateOrderEntryLine(exchange_symbol[i] +GLOBAL_Parse_Separator+exchange_ordertype[i]+GLOBAL_Parse_Separator +  "SELL" + GLOBAL_Parse_Separator +exchange_ordersize[i] + GLOBAL_Parse_Separator + IntegerToString(i), GetObjectDesc(exchange_orderindex[i]-1), bar_close - 6000, exchange_orderprice[i], bar_close, exchange_orderprice[i], OrderColorStopLimit, OrderlineThickness, OrderlineStyle);
            }
         }
      }
@@ -1526,11 +1526,11 @@ void CryptoBridge::Parse_OrdersY(string exchangeName, int order_location_x,int o
         {
          if(exchange_orderside[i] == "BUY" && exchange_ordertype[i] != "STOPLIMIT")
            {
-            CreateOrderEntryLine(exchange_symbol[i] +"_"+exchange_ordertype[i]+ "_BUY_"  +exchange_ordersize[i] + "_" + IntegerToString(i), GetObjectDesc(exchange_orderindex[i]-1), bar_close - 6000, exchange_orderprice[i], bar_close, exchange_orderprice[i], OrderColorBuy, OrderlineThickness, OrderlineStyle);
+            CreateOrderEntryLine(exchange_symbol[i] +GLOBAL_Parse_Separator+exchange_ordertype[i]+ GLOBAL_Parse_Separator + "BUY"+ GLOBAL_Parse_Separator  +exchange_ordersize[i] + GLOBAL_Parse_Separator + IntegerToString(i), GetObjectDesc(exchange_orderindex[i]-1), bar_close - 6000, exchange_orderprice[i], bar_close, exchange_orderprice[i], OrderColorBuy, OrderlineThickness, OrderlineStyle);
            }
          if(exchange_orderside[i] == "SELL" && exchange_ordertype[i] != "STOPLIMIT")
            {
-            CreateOrderEntryLine(exchange_symbol[i] +"_"+exchange_ordertype[i]+ "_SELL_" +exchange_ordersize[i] + "_" + IntegerToString(i), GetObjectDesc(exchange_orderindex[i]-1), bar_close - 6000, exchange_orderprice[i], bar_close, exchange_orderprice[i], OrderColorSell, OrderlineThickness, OrderlineStyle);
+            CreateOrderEntryLine(exchange_symbol[i] +GLOBAL_Parse_Separator+exchange_ordertype[i]+GLOBAL_Parse_Separator +  "SELL" + GLOBAL_Parse_Separator +exchange_ordersize[i] + GLOBAL_Parse_Separator + IntegerToString(i), GetObjectDesc(exchange_orderindex[i]-1), bar_close - 6000, exchange_orderprice[i], bar_close, exchange_orderprice[i], OrderColorSell, OrderlineThickness, OrderlineStyle);
            }
          /*
          stop limit orders need to be a different color because these orders require two prices and drag to modify will be disabled
@@ -1538,11 +1538,11 @@ void CryptoBridge::Parse_OrdersY(string exchangeName, int order_location_x,int o
          */
          if(exchange_orderside[i] == "BUY" && exchange_ordertype[i] == "STOPLIMIT")
            {
-            CreateOrderEntryLine(exchange_symbol[i] +"_"+exchange_ordertype[i]+ "_BUY_"  +exchange_ordersize[i] + "_" + IntegerToString(i), GetObjectDesc(exchange_orderindex[i]-1), bar_close - 6000, exchange_orderprice[i], bar_close, exchange_orderprice[i], OrderColorStopLimit, OrderlineThickness, OrderlineStyle);
+            CreateOrderEntryLine(exchange_symbol[i] +GLOBAL_Parse_Separator+exchange_ordertype[i]+GLOBAL_Parse_Separator +  "BUY" + GLOBAL_Parse_Separator  +exchange_ordersize[i] + GLOBAL_Parse_Separator + IntegerToString(i), GetObjectDesc(exchange_orderindex[i]-1), bar_close - 6000, exchange_orderprice[i], bar_close, exchange_orderprice[i], OrderColorStopLimit, OrderlineThickness, OrderlineStyle);
            }
          if(exchange_orderside[i] == "SELL" && exchange_ordertype[i] == "STOPLIMIT")
            {
-            CreateOrderEntryLine(exchange_symbol[i] +"_"+exchange_ordertype[i]+ "_SELL_" +exchange_ordersize[i] + "_" + IntegerToString(i), GetObjectDesc(exchange_orderindex[i]-1), bar_close - 6000, exchange_orderprice[i], bar_close, exchange_orderprice[i], OrderColorStopLimit, OrderlineThickness, OrderlineStyle);
+            CreateOrderEntryLine(exchange_symbol[i] +GLOBAL_Parse_Separator+exchange_ordertype[i]+GLOBAL_Parse_Separator +  "SELL" + GLOBAL_Parse_Separator +exchange_ordersize[i] + GLOBAL_Parse_Separator + IntegerToString(i), GetObjectDesc(exchange_orderindex[i]-1), bar_close - 6000, exchange_orderprice[i], bar_close, exchange_orderprice[i], OrderColorStopLimit, OrderlineThickness, OrderlineStyle);
            }
         }
      }
