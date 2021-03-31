@@ -5,4 +5,4 @@ March 15th,2021 CB_Charts v1.44 (Gemini Added)
 March 20th,2021 CB_ChartALLUpdates v1.00
 March 24th,2021 PaymentBot v2.70 - https://youtu.be/HA12LLvXEro 
 March 27th,2021 CryptoBridge v1.41
-March 31th,2021 ActivateMonthlyLicense Script + CB_ChartALL v1.20
+March 31th,2021 ActivateMonthlyLicense Script + CB_ChartALL v1.2 + CB_ChartAllUpdates v1.02
