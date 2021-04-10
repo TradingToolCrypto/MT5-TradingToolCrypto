@@ -40,7 +40,9 @@ enum ENUM_AVAILABLE_EXCHANGE
    BINANCE = 1,
    BINANCE_US = 6,
    BINANCE_FUTURES_USDT = 5,
+   BINANCE_FUTURES_USDT_TEST = 26,
    BINANCE_FUTURES_COIN = 21,
+   BINANCE_FUTURES_COIN_TEST = 27,
    BITFINEX = 10,
    BITMEX = 3,
    BITSTAMP =11,
@@ -228,6 +230,16 @@ string get_suffix_exchange_name(string suffix, int id)
          GLOBAL_exchange = "Gemini";
          return(".gem");
         }
+      if(id == 26)
+        {
+         GLOBAL_exchange = "BinanceFutures";
+         return(".bnft");
+        }
+      if(id == 27)
+        {
+         GLOBAL_exchange = "BinanceFuturesC";
+         return(".bndt");
+        }
      }
    return(suffix);
   }
@@ -338,9 +350,17 @@ int suffix_exchange_number(string id)
      {
       return(22);
      }
-   if(id == ".gem") // bybit usdt testnet
+   if(id == ".gem")
      {
       return(25);
+     }
+   if(id == ".bnft") // binance futures usdt testnet
+     {
+      return(26);
+     }
+   if(id == ".bndt") // binance futures coin testnet
+     {
+      return(27);
      }
    return(-1);
   }
