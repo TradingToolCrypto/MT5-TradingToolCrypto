@@ -5,7 +5,7 @@
 //+------------------------------------------------------------------+
 #property copyright "Copyright 2020, TradingToolCrypto Corp."
 #property link      "https://github.com/tradingtoolcrypto"
-#define VERSION 1.41
+#define VERSION 1.42
 
 #import "CBP_Functions.ex5"
 string RemoveSymbolSeperator(string symbolname, string seperator);
@@ -422,7 +422,7 @@ bool CryptoBridge::Init_Api_Keys(int exchange)
       return (Kucoin_Get_API_Key(Kucoin_Api_Key, Kucoin_Api_Secret, Kucoin_Passphase));
      }
    */
-   if(exchange == 5)
+   if((exchange == 5) || (exchange == 26))
      {
       checked = BinanceFutures_Get_API_Key(BinanceFutures_Api_Key, BinanceFutures_Api_Secret, BinanceFutures_LiveDemo);
       BinanceFutures_Set_Instance(unique_id);
@@ -458,7 +458,7 @@ bool CryptoBridge::Init_Api_Keys(int exchange)
       CryptoBridge::Margin_Set_Leverage(Exchange_Symbol_Name,Exchange_Leverage,Exchange_Number);
       return (checked);
      }
-   if(exchange == 21)
+   if((exchange == 21) || (exchange == 27)  )
      {
       checked = BinanceFuturesC_Get_API_Key(BinanceFutures_Api_Key, BinanceFutures_Api_Secret, BinanceFutures_LiveDemo);
       BinanceFuturesC_Set_Instance(unique_id);
@@ -519,7 +519,7 @@ string CryptoBridge::Get_Exchange_Name(int exchange_number)
      {
       return ("Kucoin");
      }
-   if(exchange_number == 5)
+   if((exchange_number == 5) || (exchange_number == 26) )
      {
       return ("BinanceFutures");
      }
@@ -539,7 +539,7 @@ string CryptoBridge::Get_Exchange_Name(int exchange_number)
      {
       return ("FTX");
      }
-   if(exchange_number == 21)
+   if((exchange_number == 21) || (exchange_number == 27) )
      {
       return ("BinanceFuturesC");
      }
@@ -552,7 +552,7 @@ string CryptoBridge::Get_Exchange_Name(int exchange_number)
 bool CryptoBridge::Hedge_Mode(bool on_true_off_false, int exchangeNumber)
   {
    Print("CBP HedgeMode");
-   if(exchangeNumber == 5)
+   if((exchangeNumber == 5) || (exchangeNumber == 26))
      {
       if(on_true_off_false)
         {
@@ -563,7 +563,7 @@ bool CryptoBridge::Hedge_Mode(bool on_true_off_false, int exchangeNumber)
          return (BinanceFutures_HedgeMode("false"));
         }
      }
-   if(exchangeNumber == 21)
+   if((exchangeNumber == 21) || (exchangeNumber == 27))
      {
       if(on_true_off_false)
         {
@@ -611,7 +611,7 @@ bool CryptoBridge::Modify_Trade(string sym, string side, string orderType, strin
      {
       // return (Kucoin_Open_Trade(sym, side, orderType, orderSize, orderPrice));
      }
-   if(exchangeNumber == 5)
+   if((exchangeNumber == 5) || (exchangeNumber == 26))
      {
       if(orderType=="STOPMARKET")       //CBP returns on line drag/drop function
         {
@@ -663,7 +663,7 @@ bool CryptoBridge::Modify_Trade(string sym, string side, string orderType, strin
 
      }
 
-   if(exchangeNumber == 21)
+   if((exchangeNumber == 21) || (exchangeNumber == 27))
      {
 
       if(orderType=="STOPMARKET")       //CBP returns on line drag/drop function
@@ -715,7 +715,7 @@ bool CryptoBridge::Open_Trade(string sym, string side, string orderType, string 
       return (Kucoin_Open_Trade(sym, side, orderType, orderSize, orderPrice,quoteDigit,lotDigit, orderId));
      }
    */
-   if(exchangeNumber == 5)
+   if((exchangeNumber == 5) || (exchangeNumber == 26))
      {
       return (BinanceFutures_Open_Trade(sym, side, orderType, orderSize, orderPrice,quoteDigit,lotDigit,orderId));
      }
@@ -733,7 +733,7 @@ bool CryptoBridge::Open_Trade(string sym, string side, string orderType, string 
      {
       return (FTX_Open_Trade(sym, side, orderType, orderSize, orderPrice,quoteDigit,lotDigit,orderId));
      }
-   if(exchangeNumber == 21)
+   if((exchangeNumber == 21) || (exchangeNumber == 27))
      {
       return (BinanceFuturesC_Open_Trade(sym, side, orderType, orderSize, orderPrice,quoteDigit,lotDigit,orderId));
      }
@@ -757,7 +757,7 @@ bool CryptoBridge::Open_Trade_Stop(string sym, string side, string orderType, st
      {
       return (Bitmex_Open_Trade_Stop(sym, side, orderType, orderSize, stopPrice,quoteDigit,lotDigit,orderId));
      }
-   if(exchangeNumber == 5)
+   if((exchangeNumber == 5) || (exchangeNumber == 26))
      {
       return (BinanceFutures_Open_Trade_Stop(sym, side, orderType, orderSize, stopPrice,quoteDigit,lotDigit,orderId));
      }
@@ -769,7 +769,7 @@ bool CryptoBridge::Open_Trade_Stop(string sym, string side, string orderType, st
      {
       return (FTX_Open_Trade_Stop(sym, side, orderType, orderSize,stopPrice,quoteDigit,lotDigit,orderId));
      }
-   if(exchangeNumber == 21)
+   if((exchangeNumber == 21) || (exchangeNumber == 27))
      {
       return (BinanceFuturesC_Open_Trade_Stop(sym, side, orderType, orderSize, stopPrice,quoteDigit,lotDigit,orderId));
      }
@@ -793,7 +793,7 @@ bool CryptoBridge::Open_Trade_StopLimit(string sym, string side, string orderTyp
      {
       return (Bitmex_Open_Trade_StopLimit(sym, side, orderType, orderSize, orderPrice, stopPrice,quoteDigit,lotDigit,orderId));
      }
-   if(exchangeNumber == 5)
+   if((exchangeNumber == 5) || (exchangeNumber == 26))
      {
       return (BinanceFutures_Open_Trade_StopLimit(sym, side, orderType, orderSize, orderPrice, stopPrice,quoteDigit,lotDigit,orderId));
      }
@@ -805,7 +805,7 @@ bool CryptoBridge::Open_Trade_StopLimit(string sym, string side, string orderTyp
      {
       return (FTX_Open_Trade_StopLimit(sym, side, orderType, orderSize, orderPrice, stopPrice,quoteDigit,lotDigit,orderId));
      }
-   if(exchangeNumber == 21)
+   if((exchangeNumber == 21) || (exchangeNumber == 27))
      {
       return (BinanceFuturesC_Open_Trade_StopLimit(sym, side, orderType, orderSize, orderPrice, stopPrice,quoteDigit,lotDigit,orderId));
      }
@@ -842,7 +842,7 @@ bool CryptoBridge::Cancel_Trade(string sym, string orderId, int exchangeNumber, 
      {
       return (Bitmex_Cancel_Trade(sym, orderId,clientOrderId));
      }
-   if(exchangeNumber == 5)
+   if((exchangeNumber == 5) || (exchangeNumber == 26))
      {
       return (BinanceFutures_Cancel_Trade(sym, StringToInteger(orderId),clientOrderId));
      }
@@ -860,7 +860,7 @@ bool CryptoBridge::Cancel_Trade(string sym, string orderId, int exchangeNumber, 
      {
       return (FTX_Cancel_Trade(sym, orderId,clientOrderId));
      }
-   if(exchangeNumber == 21)
+   if((exchangeNumber == 21) || (exchangeNumber == 27))
      {
       return (BinanceFuturesC_Cancel_Trade(sym, StringToInteger(orderId),clientOrderId));
      }
@@ -892,7 +892,7 @@ bool CryptoBridge::Cancel_Trade_All(string sym, int exchangeNumber)
      {
       return (Bitmex_Cancel_Trade_All(sym));
      }
-   if(exchangeNumber == 5)
+   if((exchangeNumber == 5) || (exchangeNumber == 26))
      {
       return (BinanceFutures_Cancel_Trade_ALL(sym));
      }
@@ -904,7 +904,7 @@ bool CryptoBridge::Cancel_Trade_All(string sym, int exchangeNumber)
      {
       return (FTX_Cancel_Trade_All(sym));
      }
-   if(exchangeNumber == 21)
+   if((exchangeNumber == 21) || (exchangeNumber == 27))
      {
       return (BinanceFuturesC_Cancel_Trade_ALL(sym));
      }
@@ -940,7 +940,7 @@ bool CryptoBridge::Get_Exchange_Server_Time(int exchangeNumber)
       return (Kucoin_GetServerTime());
      }
    */
-   if(exchangeNumber == 5)
+   if((exchangeNumber == 5) || (exchangeNumber == 26))
      {
       return (BinanceFutures_GetServerTime());
      }
@@ -962,7 +962,7 @@ bool CryptoBridge::Get_Exchange_Server_Time(int exchangeNumber)
      {
       return (FTX_GetServerTime());
      }
-   if(exchangeNumber == 21)
+   if((exchangeNumber == 21) || (exchangeNumber == 27))
      {
       return (BinanceFuturesC_GetServerTime());
      }
@@ -998,7 +998,7 @@ bool CryptoBridge::Get_PriceBest(string sym, int exchangeNumber, int quote_preci
       return (Kucoin_GetPriceBest(sym,quote_precision));
      }
    */
-   if(exchangeNumber == 5)
+   if((exchangeNumber == 5) || (exchangeNumber == 26))
      {
       return (BinanceFutures_GetPriceBest(sym, quote_precision));
      }
@@ -1020,7 +1020,7 @@ bool CryptoBridge::Get_PriceBest(string sym, int exchangeNumber, int quote_preci
      {
       return (FTX_GetPriceBest(sym, quote_precision));
      }
-   if(exchangeNumber == 21)
+   if((exchangeNumber == 21) || (exchangeNumber == 27))
      {
       return (BinanceFuturesC_GetPriceBest(sym, quote_precision));
      }
@@ -1056,7 +1056,7 @@ bool CryptoBridge::Get_Price(string sym, int exchangeNumber, int quote_precision
       return (Kucoin_GetPrice(sym));
      }
    */
-   if(exchangeNumber == 5)
+   if((exchangeNumber == 5) || (exchangeNumber == 26))
      {
       return (BinanceFutures_GetPrice(sym, quote_precision));
      }
@@ -1078,7 +1078,7 @@ bool CryptoBridge::Get_Price(string sym, int exchangeNumber, int quote_precision
      {
       return (FTX_GetPrice(sym, quote_precision));
      }
-   if(exchangeNumber == 21)
+   if((exchangeNumber == 21) || (exchangeNumber == 27))
      {
       return (BinanceFuturesC_GetPrice(sym, quote_precision));
      }
@@ -1110,7 +1110,7 @@ bool CryptoBridge::Get_OpenInterest(string sym, int exchangeNumber, int quote_pr
      {
       //  return (Kucoin_GetPrice(sym));
      }
-   if(exchangeNumber == 5)
+   if((exchangeNumber == 5) || (exchangeNumber == 26))
      {
       return (BinanceFutures_GetOpenInterest(sym, quote_precision));
      }
@@ -1130,7 +1130,7 @@ bool CryptoBridge::Get_OpenInterest(string sym, int exchangeNumber, int quote_pr
      {
       return (FTX_GetOpenInterest(sym, quote_precision));
      }
-   if(exchangeNumber == 21)
+   if((exchangeNumber == 21) || (exchangeNumber == 27))
      {
       return (BinanceFuturesC_GetOpenInterest(sym, quote_precision));
      }
@@ -1162,7 +1162,7 @@ bool CryptoBridge::Get_FundRate(string sym, int exchangeNumber, int quote_precis
      {
       //  return (Kucoin_GetPrice(sym));
      }
-   if(exchangeNumber == 5)
+   if((exchangeNumber == 5) || (exchangeNumber == 26))
      {
       return (BinanceFutures_GetFundRate(sym, quote_precision));
      }
@@ -1182,7 +1182,7 @@ bool CryptoBridge::Get_FundRate(string sym, int exchangeNumber, int quote_precis
      {
       return (FTX_GetFundRate(sym, quote_precision));
      }
-   if(exchangeNumber == 21)
+   if((exchangeNumber == 21) || (exchangeNumber == 27))
      {
       return (BinanceFuturesC_GetFundRate(sym, quote_precision));
      }
@@ -1205,11 +1205,11 @@ bool CryptoBridge::Margin_Close_Position(string sym, string side, string orderTy
      {
       return (Bitmex_ClosePosition(sym, orderType));
      }
-   if(exchangeNumber == 5)
+   if((exchangeNumber == 5) || (exchangeNumber == 26))
      {
       return (BinanceFutures_Close_Trade(sym, side, orderType, orderSize, orderPrice,quoteDigit, lotDigit));
      }
-   if(exchangeNumber == 21)
+   if((exchangeNumber == 21) || (exchangeNumber == 27))
      {
       return (BinanceFuturesC_Close_Trade(sym, side, orderType, orderSize, orderPrice,quoteDigit, lotDigit));
      }
@@ -1229,7 +1229,7 @@ bool CryptoBridge::Margin_Set_Leverage(string sym, double leverage, int exchange
      {
       return (Bitmex_Set_Leverage(sym, leverage));
      }
-   if(exchangeNumber == 5)
+   if((exchangeNumber == 5) || (exchangeNumber == 26))
      {
       return (BinanceFutures_Set_Leverage(sym, leverage));
      }
@@ -1237,7 +1237,7 @@ bool CryptoBridge::Margin_Set_Leverage(string sym, double leverage, int exchange
      {
       return (FTX_Set_Leverage("",leverage));
      }
-   if(exchangeNumber == 21)
+   if((exchangeNumber == 21) || (exchangeNumber == 27))
      {
       return (BinanceFuturesC_Set_Leverage(sym, leverage));
      }
@@ -1271,7 +1271,7 @@ bool CryptoBridge::Get_Balance(string sym, string quote_base, int exchangeNumber
       return (Kucoin_Balance(sym, quote_base));
      }
    */
-   if(exchangeNumber == 5)
+   if((exchangeNumber == 5) || (exchangeNumber == 26))
      {
       return (BinanceFutures_Balance(sym, quote_base));
      }
@@ -1289,7 +1289,7 @@ bool CryptoBridge::Get_Balance(string sym, string quote_base, int exchangeNumber
      {
       return (FTX_Balance(sym, quote_base));
      }
-   if(exchangeNumber == 21)
+   if((exchangeNumber == 21) || (exchangeNumber == 27))
      {
       return (BinanceFuturesC_Balance(sym, quote_base));
      }
@@ -1324,7 +1324,7 @@ bool CryptoBridge::Get_OpenOrders(string sym, int exchangeNumber, int quote_prec
      {
       return (Bitmex_GetOpenOrders(sym, quote_precision));
      }
-   if(exchangeNumber == 5)
+   if((exchangeNumber == 5) || (exchangeNumber == 26))
      {
       return (BinanceFutures_GetOpenOrders(sym, quote_precision));
      }
@@ -1342,7 +1342,7 @@ bool CryptoBridge::Get_OpenOrders(string sym, int exchangeNumber, int quote_prec
      {
       return (FTX_GetOpenOrders(sym, quote_precision));
      }
-   if(exchangeNumber == 21)
+   if((exchangeNumber == 21) || (exchangeNumber == 27))
      {
       return (BinanceFuturesC_GetOpenOrders(sym, quote_precision));
      }
@@ -1590,7 +1590,7 @@ bool CryptoBridge::Get_Position(string sym, int exchangeNumber, int quote_precis
      {
       return (Bitmex_Positions(sym, quote_precision));
      }
-   if(exchangeNumber == 5)
+   if((exchangeNumber == 5) || (exchangeNumber == 26))
      {
       return (BinanceFutures_Positions(sym, quote_precision));
      }
@@ -1604,7 +1604,7 @@ bool CryptoBridge::Get_Position(string sym, int exchangeNumber, int quote_precis
      {
       return (FTX_Positions(sym, quote_precision));
      }
-   if(exchangeNumber == 21)
+   if((exchangeNumber == 21) || (exchangeNumber == 27))
      {
       return (BinanceFuturesC_Positions(sym, quote_precision));
      }
@@ -1752,9 +1752,6 @@ void CryptoBridge::adjust_unique_id()
       GlobalVariableSet(id,0);
      }
   }
-
-
-
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
@@ -1768,7 +1765,6 @@ string CryptoBridge::Get_Transactions(int exchangeNumber, string sym,string tran
 
    return("");
   }
-
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
@@ -1800,7 +1796,7 @@ int CryptoBridge::Get_SymbolQuoteDigit(int exchangeNumber, string sym)
      }
 
 
-   if(exchangeNumber == 5)
+   if((exchangeNumber == 5) || (exchangeNumber == 26))
      {
       int loop = ArraySize(BinanceFuturesSymbols);
       for(int i = 0; i<loop; i++)
@@ -1811,7 +1807,7 @@ int CryptoBridge::Get_SymbolQuoteDigit(int exchangeNumber, string sym)
            }
         }
      }
-   if(exchangeNumber == 21)
+   if((exchangeNumber == 21) || (exchangeNumber == 27))
      {
       int loop = ArraySize(BinanceFuturesCSymbols);
       for(int i = 0; i<loop; i++)
@@ -1841,7 +1837,7 @@ int CryptoBridge::Get_SymbolVolumeDigit(int exchangeNumber, string sym)
            }
         }
      }
-   if(exchangeNumber == 5)
+   if((exchangeNumber == 5) || (exchangeNumber == 26))
      {
       int loop = ArraySize(BinanceFuturesSymbols);
       for(int i = 0; i<loop; i++)
@@ -1852,7 +1848,7 @@ int CryptoBridge::Get_SymbolVolumeDigit(int exchangeNumber, string sym)
            }
         }
      }
-   if(exchangeNumber == 21)
+   if((exchangeNumber == 21) || (exchangeNumber == 27))
      {
       int loop = ArraySize(BinanceFuturesCSymbols);
       for(int i = 0; i<loop; i++)
@@ -1925,7 +1921,7 @@ void add_exchange_info(int exchangeNumber)
       ArrayResize(BybitSymbolsQuoteDigit,count_index);
       ArrayResize(BybitSymbolsVolumeDigit,count_index);
      }
-   if(exchangeNumber == 5)
+   if((exchangeNumber == 5) || (exchangeNumber == 26))
      {
       string info = BinanceFutures_ExchangeInfo();
       jasonClass.Clear();
@@ -1952,7 +1948,7 @@ void add_exchange_info(int exchangeNumber)
       ArrayResize(BinanceFuturesSymbolsQuoteDigit,count_index);
       ArrayResize(BinanceFuturesSymbolsVolumeDigit,count_index);
      }
-   if(exchangeNumber == 21)
+   if((exchangeNumber == 21) || (exchangeNumber == 27))
      {
       string info = BinanceFuturesC_ExchangeInfo();
       jasonClass.Clear();
