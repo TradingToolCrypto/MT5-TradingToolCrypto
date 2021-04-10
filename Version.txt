@@ -8,4 +8,4 @@ March 27th,2021 CryptoBridge v1.41
 March 31th,2021 ActivateMonthlyLicense Script + CB_ChartALL v1.2 + CB_ChartAllUpdates v1.02 + CryptoBridge v1.411 ( bug fixed with GetOpenOrders==drag and drop)
 April 1st, 2021 CB_chartALlUpdates v1.04 
 April 7st, 2021 MarketScanner v1.01
-April 10st, 2021 CB_Charts v1.46 (Binance Futures Testnets Added)
+April 10st, 2021 CB_Charts v1.46 (Binance Futures Testnets Added) + CryptoBridgeDark v1.42 + BinanceFuturesCoin lib
