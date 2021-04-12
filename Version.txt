@@ -10,3 +10,4 @@ April 1st, 2021 CB_chartALlUpdates v1.04
 April 7st, 2021 MarketScanner v1.01
 April 10st, 2021 CB_Charts v1.46 (Binance Futures Testnets Added) + CryptoBridgeDark v1.42 + BinanceFuturesCoin lib
 April 11st, 2021 CryptoBridgeLite v1.00 
+April 13st, 2021 CryptoBridgePro v1.42 (CBP class upgrade)
