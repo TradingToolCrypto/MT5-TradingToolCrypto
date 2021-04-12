@@ -698,5 +698,47 @@ double get_tick_size(int sym_digits)
 
    return (1);
   }
-
 //+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+int enter_string_get_digit(string value)
+  {
+   double in = StringToDouble(value);
+   if(in == 0.1)
+     {
+      return(1);
+     }
+   if(in == 0.01)
+     {
+      return(2);
+     }
+   if(in == 0.001)
+     {
+      return(3);
+     }
+   if(in == 0.0001)
+     {
+      return(4);
+     }
+   if(in == 0.00001)
+     {
+      return(5);
+     }
+   if(in == 0.000001)
+     {
+      return(6);
+     }
+   if(in == 0.0000001)
+     {
+      return(7);
+     }
+   if(in == 0.00000001)
+     {
+      return(8);
+     }
+   if(in == 1)
+     {
+      return(0);
+     }
+   return(0);
+  }

@@ -49,6 +49,7 @@ bool Binance_GetOpenOrders(string sym, int quote_precision);
 #import
 
 #import "BinanceUS_api.ex5"
+string BinanceUS_ExchangeInfo();
 bool Binance_US_Cancel_Trade(string sym, long orderId, string  clientOrderId);
 bool Binance_US_Cancel_Trade_All(string sym);
 bool Binance_US_Open_Trade(string sym, string side, string orderType, string orderSize, string orderPrice, int quoteDigit, int lotDigit,string newClientOrderId);
@@ -458,7 +459,7 @@ bool CryptoBridge::Init_Api_Keys(int exchange)
       CryptoBridge::Margin_Set_Leverage(Exchange_Symbol_Name,Exchange_Leverage,Exchange_Number);
       return (checked);
      }
-   if((exchange == 21) || (exchange == 27)  )
+   if((exchange == 21) || (exchange == 27))
      {
       checked = BinanceFuturesC_Get_API_Key(BinanceFutures_Api_Key, BinanceFutures_Api_Secret, BinanceFutures_LiveDemo);
       BinanceFuturesC_Set_Instance(unique_id);
@@ -519,7 +520,7 @@ string CryptoBridge::Get_Exchange_Name(int exchange_number)
      {
       return ("Kucoin");
      }
-   if((exchange_number == 5) || (exchange_number == 26) )
+   if((exchange_number == 5) || (exchange_number == 26))
      {
       return ("BinanceFutures");
      }
@@ -539,7 +540,7 @@ string CryptoBridge::Get_Exchange_Name(int exchange_number)
      {
       return ("FTX");
      }
-   if((exchange_number == 21) || (exchange_number == 27) )
+   if((exchange_number == 21) || (exchange_number == 27))
      {
       return ("BinanceFuturesC");
      }
@@ -1783,6 +1784,17 @@ bool CryptoBridge::Get_FundRateAll(int exchangeNumber, double minimum)
 int CryptoBridge::Get_SymbolQuoteDigit(int exchangeNumber, string sym)
   {
    Print("CBP SymbolQuoteDigit");
+   if(exchangeNumber == 1)
+     {
+      int loop = ArraySize(BinanceSymbols);
+      for(int i = 0; i<loop; i++)
+        {
+         if(sym == BinanceSymbols[i])
+           {
+            return(BinanceSymbolsQuoteDigit[i]);
+           }
+        }
+     }
    if(exchangeNumber == 2)
      {
       int loop = ArraySize(BybitSymbols);
@@ -1794,8 +1806,6 @@ int CryptoBridge::Get_SymbolQuoteDigit(int exchangeNumber, string sym)
            }
         }
      }
-
-
    if((exchangeNumber == 5) || (exchangeNumber == 26))
      {
       int loop = ArraySize(BinanceFuturesSymbols);
@@ -1804,6 +1814,17 @@ int CryptoBridge::Get_SymbolQuoteDigit(int exchangeNumber, string sym)
          if(sym == BinanceFuturesSymbols[i])
            {
             return(BinanceFuturesSymbolsQuoteDigit[i]);
+           }
+        }
+     }
+   if(exchangeNumber == 6)
+     {
+      int loop = ArraySize(BinanceUSSymbols);
+      for(int i = 0; i<loop; i++)
+        {
+         if(sym == BinanceUSSymbols[i])
+           {
+            return(BinanceUSSymbolsQuoteDigit[i]);
            }
         }
      }
@@ -1826,6 +1847,17 @@ int CryptoBridge::Get_SymbolQuoteDigit(int exchangeNumber, string sym)
 int CryptoBridge::Get_SymbolVolumeDigit(int exchangeNumber, string sym)
   {
    Print("CBP SymbolVolumeDigit");
+   if(exchangeNumber == 1)
+     {
+      int loop = ArraySize(BinanceSymbols);
+      for(int i = 0; i<loop; i++)
+        {
+         if(sym == BinanceSymbols[i])
+           {
+            return(BinanceSymbolsVolumeDigit[i]);
+           }
+        }
+     }
    if(exchangeNumber == 2)
      {
       int loop = ArraySize(BybitSymbols);
@@ -1845,6 +1877,17 @@ int CryptoBridge::Get_SymbolVolumeDigit(int exchangeNumber, string sym)
          if(sym == BinanceFuturesSymbols[i])
            {
             return(BinanceFuturesSymbolsVolumeDigit[i]);
+           }
+        }
+     }
+   if(exchangeNumber == 6)
+     {
+      int loop = ArraySize(BinanceUSSymbols);
+      for(int i = 0; i<loop; i++)
+        {
+         if(sym == BinanceUSSymbols[i])
+           {
+            return(BinanceUSSymbolsVolumeDigit[i]);
            }
         }
      }
@@ -1869,25 +1912,27 @@ void add_exchange_info(int exchangeNumber)
    Print("CBP ExchangeInfo");
    if(exchangeNumber == 1)
      {
+      const int marketsTotal = 2000;
       string info = Binance_ExchangeInfo();
       jasonClass.Clear();
       jasonClass.Deserialize(info);
       ArrayFree(BinanceSymbols);
-      ArrayResize(BinanceSymbols,5000);
+      ArrayResize(BinanceSymbols,marketsTotal);
       ArrayFree(BinanceSymbolsQuoteDigit);
-      ArrayResize(BinanceSymbolsQuoteDigit,5000);
+      ArrayResize(BinanceSymbolsQuoteDigit,marketsTotal);
       ArrayFree(BinanceSymbolsVolumeDigit);
-      ArrayResize(BinanceSymbolsVolumeDigit,5000);
+      ArrayResize(BinanceSymbolsVolumeDigit,marketsTotal);
       string sym = "";
       int count_index=0;
-      for(int i =0; i<5000; i++)
+      for(int i =0; i<marketsTotal; i++)
         {
          sym = jasonClass["symbols"][i]["symbol"].ToStr();;
          if(sym=="")
             break;
-         BinanceSymbols[i] = jasonClass["symbols"][i]["symbol"].ToStr();
-         BinanceSymbolsQuoteDigit[i] = jasonClass["symbols"][i]["pricePrecision"].ToInt();
-         BinanceSymbolsVolumeDigit[i] = jasonClass["symbols"][i]["quantityPrecision"].ToInt();
+
+         BinanceSymbols[i] = sym;
+         BinanceSymbolsQuoteDigit[i] = enter_string_get_digit(jasonClass["symbols"][i]["filters"][0]["tickSize"].ToStr());
+         BinanceSymbolsVolumeDigit[i] = enter_string_get_digit(jasonClass["symbols"][i]["filters"][2]["stepSize"].ToStr());
          count_index++;
         }
       ArrayResize(BinanceSymbols,count_index);
@@ -1947,6 +1992,35 @@ void add_exchange_info(int exchangeNumber)
       ArrayResize(BinanceFuturesSymbols,count_index);
       ArrayResize(BinanceFuturesSymbolsQuoteDigit,count_index);
       ArrayResize(BinanceFuturesSymbolsVolumeDigit,count_index);
+     }
+      if(exchangeNumber == 6)
+     {
+      const int marketsTotal = 2000;
+      string info = BinanceUS_ExchangeInfo();
+      jasonClass.Clear();
+      jasonClass.Deserialize(info);
+      ArrayFree(BinanceUSSymbols);
+      ArrayResize(BinanceUSSymbols,marketsTotal);
+      ArrayFree(BinanceUSSymbolsQuoteDigit);
+      ArrayResize(BinanceUSSymbolsQuoteDigit,marketsTotal);
+      ArrayFree(BinanceUSSymbolsVolumeDigit);
+      ArrayResize(BinanceUSSymbolsVolumeDigit,marketsTotal);
+      string sym = "";
+      int count_index=0;
+      for(int i =0; i<marketsTotal; i++)
+        {
+         sym = jasonClass["symbols"][i]["symbol"].ToStr();;
+         if(sym=="")
+            break;
+
+         BinanceUSSymbols[i] = sym;
+         BinanceUSSymbolsQuoteDigit[i] = enter_string_get_digit(jasonClass["symbols"][i]["filters"][0]["tickSize"].ToStr());
+         BinanceUSSymbolsVolumeDigit[i] = enter_string_get_digit(jasonClass["symbols"][i]["filters"][2]["stepSize"].ToStr());
+         count_index++;
+        }
+      ArrayResize(BinanceUSSymbols,count_index);
+      ArrayResize(BinanceUSSymbolsQuoteDigit,count_index);
+      ArrayResize(BinanceUSSymbolsVolumeDigit,count_index);
      }
    if((exchangeNumber == 21) || (exchangeNumber == 27))
      {
