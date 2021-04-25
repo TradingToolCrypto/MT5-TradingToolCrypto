@@ -15,6 +15,7 @@ CJAVal jasonClass(NULL, jtUNDEF);
 #define EXCHANGE_BINANCE ".bnc"
 #define EXCHANGE_BYBIT ".byb"
 #define EXCHANGE_BITMEX ".mex"
+#define EXCHANGE_BITHUMB ".hum"
 #define EXCHANGE_KUCOIN ".kuc"
 #define EXCHANGE_BINANCE_FUTURES ".bnf"
 #define EXCHANGE_BINANCE_FUTURES_COIN ".bnd"
@@ -37,12 +38,14 @@ CJAVal jasonClass(NULL, jtUNDEF);
 
 enum ENUM_AVAILABLE_EXCHANGE
   {
+   ASCENDEX = 28,
    BINANCE = 1,
    BINANCE_US = 6,
    BINANCE_FUTURES_USDT = 5,
    BINANCE_FUTURES_USDT_TEST = 26,
    BINANCE_FUTURES_COIN = 21,
    BINANCE_FUTURES_COIN_TEST = 27,
+   BITHUMB = 29,
    BITFINEX = 10,
    BITMEX = 3,
    BITSTAMP =11,
@@ -62,7 +65,7 @@ enum ENUM_AVAILABLE_EXCHANGE
    KUCOIN_FUTURES = 19,
    PHEMEX = 16,
    SATANG_PRO = 13,
-   ZBG = 17
+   ZBG = 17,
 // OKEX = 8,
   };
 
@@ -240,6 +243,16 @@ string get_suffix_exchange_name(string suffix, int id)
          GLOBAL_exchange = "BinanceFuturesC";
          return(".bndt");
         }
+      if(id == 28)
+        {
+         GLOBAL_exchange = "Ascendex";
+         return(".asc");
+        }
+      if(id == 29)
+        {
+         GLOBAL_exchange = "Bithumb";
+         return(".hum");
+        }
      }
    return(suffix);
   }
@@ -361,6 +374,14 @@ int suffix_exchange_number(string id)
    if(id == ".bndt") // binance futures coin testnet
      {
       return(27);
+     }
+   if(id == ".asc")
+     {
+      return(28);
+     }
+   if(id == ".hum")
+     {
+      return(29);
      }
    return(-1);
   }
@@ -742,3 +763,4 @@ int enter_string_get_digit(string value)
      }
    return(0);
   }
+//+------------------------------------------------------------------+
