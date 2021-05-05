@@ -12,3 +12,4 @@ April 10st, 2021 CB_Charts v1.46 (Binance Futures Testnets Added) + CryptoBridge
 April 11st, 2021 CryptoBridgeLite v1.00 
 April 13st, 2021 CryptoBridgePro v1.42 (CBP class upgrade)
 April 25st, 2021 CB_Charts v1.48 (Bithumb and Bitmax)
+May 5th,2021 PaymentBot v3.0 - https://youtu.be/HA12LLvXEro 
