@@ -84,7 +84,8 @@ public:
 CBPFrameWork::CBPFrameWork()
   {
    exchangeName = bridge.Get_Exchange_Name(Exchange_Number);
-   frameworkPrefix = (string)Exchange_Number + "." + exchangeName + ".";
+  // frameworkPrefix = (string)Exchange_Number + "." + exchangeName + ".";//binance 
+   frameworkPrefix = (string)Exchange_Number + exchangeName;
    RobotFrameWork::Init_Symbol(Symbol());
 
    Print(" Check RobotFrameWork Symbol's Price " + RobotFrameWork::symbolAsk());
@@ -484,6 +485,14 @@ int CBPFrameWork::orderPending()
    bool              tradeDeleteLimit(bool longOnly);
    bool              tradeDeleteStop(bool longOnly);
 */
+bool CBPFrameWork::tradeDelete(string orderid)
+  {
+   if(bridge.Cancel_Trade(Exchange_Symbol_Name,orderid,Exchange_Number,0,""))
+     {
+      return(true);
+     }
+   return(false);
+  }
 //+------------------------------------------------------------------+
 bool CBPFrameWork::tradeDeleteAll()
   {
