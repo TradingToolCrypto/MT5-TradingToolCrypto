@@ -9,10 +9,7 @@ string ttc_d(string hexData);
 
 #include <TradingToolCrypto\MQL\sha256.mqh>
 #include <TradingToolCrypto\MQL\Jason.mqh>
-#include <TradingToolCrypto\MQL\HEX.mqh>
-
 SHA256 hash256;
-
 string GLOBAL_Parse = "#";
 
 
@@ -360,32 +357,6 @@ string Get_Trailing_ZerosC(string has_zeros)
 
    return(DoubleToString(zeros,8));
   }
-
-
-//+------------------------------------------------------------------+
-//|                                                                  |
-//+------------------------------------------------------------------+
-string build_hash(string message_body, string secret)
-  {
-
-// BUILD THE HASH KEY
-
-//  Print(" Build hash from string: " + message_body);
-   string hash = hash256.hmac(message_body,secret);
-
-   /*
-    Try to convert the hash into a HEX value string
-   */
-
-   string HEX =  convert_String_HEX(hash);
-
-
-//  Print(" Hash result:  " + hash + "\nHEX: " + HEX);
-   return(HEX);
-
-  }
-
-
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
@@ -412,7 +383,6 @@ void Object_Delete(string objectname)
         }
      }
   }
-
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
