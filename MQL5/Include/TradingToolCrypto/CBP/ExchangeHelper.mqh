@@ -735,3 +735,44 @@ string remove_zeros_from_string(string value)
   }
 //+------------------------------------------------------------------+
 //+------------------------------------------------------------------+
+
+//+------------------------------------------------------------------+
+//| Converts a hex string into a string and char array               |
+//+------------------------------------------------------------------+
+string hexStringToCharArray(string hex,uchar &decode[])
+  {
+   if(MathMod(StringLen(hex),2)!=0)
+      return NULL;
+   uchar array[];
+   int result[];
+   uchar A[],Zero[];
+   int n=0;
+   StringToCharArray("A",A);
+   StringToCharArray("0",Zero);
+   StringToCharArray(hex,array);
+   int sizeArray=ArraySize(array);
+   ArrayResize(result,sizeArray);
+   ArrayResize(decode,((sizeArray-1)/2));
+   for(int i=0; i<sizeArray; i++)
+     {
+      if(MathMod(i,2)==0)
+        {
+         if(array[i]>=A[0])
+            result[i]=(array[i]-A[0]+10)*16;
+         else
+            result[i]=(array[i]-Zero[0])*16;
+        }
+      else
+        {
+         if(array[i]>=A[0])
+            result[i]=(array[i]-A[0]+10);
+         else
+            result[i]=(array[i]-Zero[0]);
+         decode[n]=(uchar)(result[i-1]+result[i]);
+         n++;
+        }
+     }
+   return CharArrayToString(decode);
+  }
+//+------------------------------------------------------------------+
+//+------------------------------------------------------------------+
