@@ -15,3 +15,4 @@ April 25st, 2021 CB_Charts v1.48 (Bithumb and Bitmax)
 May 5th,2021 PaymentBot v3.0 - https://youtu.be/HA12LLvXEro 
 May 6th,2021 Telegram Price Alerts - https://github.com/TradingToolCrypto/TradingTool-Wiki/wiki/Telegram-Price-Alerts
 May 10th, 2021 CB_Charts v1.49 (Bithumb fixed)
+May 31th, 2021 CryptoBridgeDark v1.43 (Kucoin Spot Trading)
