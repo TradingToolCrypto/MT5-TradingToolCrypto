@@ -5,7 +5,7 @@
 //+------------------------------------------------------------------+
 #property copyright "Copyright 2020, TradingToolCrypto Corp."
 #property link      "https://github.com/tradingtoolcrypto"
-#define VERSION 1.42
+#define VERSION 1.43
 
 #import "CBP_Functions.ex5"
 string RemoveSymbolSeperator(string symbolname, string seperator);
@@ -326,7 +326,7 @@ input string FTX_Api_Secret = "";
 
 input string Kucoin_Api_Key = "";
 input string Kucoin_Api_Secret = "";
-input string Kucoin_Passphase = "";
+input string Kucoin_Passphrase = "";
 
 /*
 input string Deribit_Api_Key = "";
@@ -334,7 +334,7 @@ input string Deribit_Api_Secret = "";
 
 input string Kucoin_Api_Key = "";
 input string Kucoin_Api_Secret = "";
-input string Kucoin_Passphase = "";
+input string Kucoin_Passphrase = "";
 
 input string Okex_Api_Key = "";
 input string Okex_Api_Secret = "";
@@ -465,7 +465,7 @@ bool CryptoBridge::Init_Api_Keys(int exchange)
 
    if(exchange == 4)
      {
-      checked = Kucoin_Get_API_Key(Kucoin_Api_Key, Kucoin_Api_Secret, Kucoin_Passphase);
+      checked = Kucoin_Get_API_Key(Kucoin_Api_Key, Kucoin_Api_Secret, Kucoin_Passphrase);
       Kucoin_Set_Instance(unique_id);
       add_exchange_info(exchange);
       return (checked);
