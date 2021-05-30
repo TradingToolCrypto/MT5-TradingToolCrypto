@@ -220,17 +220,20 @@ bool FTX_GetOpenOrders(string sym, int quoteDigit);
 bool FTX_Set_Leverage(string sym, double leverage);
 #import
 
-/*
-#import "Kucoin_api.ex5"
-bool Kucoin_Cancel_Trade(string sym, int orderId);
-bool Kucoin_Open_Trade(string sym, string side, string orderType, string orderSize, string orderPrice, int quoteDigit, int lotDigit, string newClientOrderId);
-bool Kucoin_Balance(string sym, string quotebase);
-bool Kucoin_GetPriceBest(string sym,int quoteDigit);
-bool Kucoin_GetPrice(string sym);
-bool Kucoin_GetServerTime();
-bool Kucoin_Get_API_Key(string key, string secret, string passphase);
-#import
 
+#import "Kucoin_api.ex5"
+void Kucoin_Set_Instance(int id);
+bool Kucoin_Get_API_Key(string key, string secret, string passphrase);
+bool Kucoin_Balance(string sym, string quotebase);
+string Kucoin_ExchangeInfo();
+bool Kucoin_GetServerTime();
+bool Kucoin_GetPrice(string sym);
+bool Kucoin_GetPriceBest(string sym, int digit_UI);
+bool Kucoin_GetOpenOrders(string sym, int quoteDigit);
+bool Kucoin_Cancel_Trade(string sym, string orderId, string clientOrderId);
+bool Kucoin_Open_Trade(string sym, string side, string orderType, string orderSize, string orderPrice, int quoteDigit, int lotDigit, string newClientOrderId);
+#import
+/*
 #import "Deribit_api.ex5"
 bool Deribit_Cancel_Trade(string sym, string orderId);
 bool Deribit_Open_Trade(string sym, string side, string orderType, string orderSize, string orderPrice, int quoteDigit, int lotDigit);
@@ -280,14 +283,14 @@ enum ENUM_TRADING_EXCHANGE
    BINANCE = 1,
    BINANCE_US = 6,
    BINANCE_FUTURES = 5,
+   BINANCE_FUTURES_COIN = 21,
    BITHUMB = 29,
    BITMEX = 3,
    BYBIT = 2,
-// KUCOIN = 4,
 //  DERIBIT = 7,
 //  OKEX = 8
    FTX = 12,
-   BINANCE_FUTURES_COIN = 21
+   KUCOIN = 4
   };
 
 
@@ -320,6 +323,10 @@ input string Bybit_LiveDemo = "live";
 
 input string FTX_Api_Key = "";
 input string FTX_Api_Secret = "";
+
+input string Kucoin_Api_Key = "";
+input string Kucoin_Api_Secret = "";
+input string Kucoin_Passphase = "";
 
 /*
 input string Deribit_Api_Key = "";
@@ -455,13 +462,15 @@ bool CryptoBridge::Init_Api_Keys(int exchange)
       CryptoBridge::Margin_Set_Leverage(Exchange_Symbol_Name,Exchange_Leverage,Exchange_Number);
       return (checked);
      }
-   /*
+
    if(exchange == 4)
      {
-
-      return (Kucoin_Get_API_Key(Kucoin_Api_Key, Kucoin_Api_Secret, Kucoin_Passphase));
+      checked = Kucoin_Get_API_Key(Kucoin_Api_Key, Kucoin_Api_Secret, Kucoin_Passphase);
+      Kucoin_Set_Instance(unique_id);
+      add_exchange_info(exchange);
+      return (checked);
      }
-   */
+
    if((exchange == 5) || (exchange == 26))
      {
       checked = BinanceFutures_Get_API_Key(BinanceFutures_Api_Key, BinanceFutures_Api_Secret, BinanceFutures_LiveDemo);
@@ -601,7 +610,7 @@ string CryptoBridge::Get_Exchange_Name(int exchange_number)
      {
       return ("Bitmax");
      }
-     if(exchange_number == 29)
+   if(exchange_number == 29)
      {
       return ("Bithumb");
      }
@@ -673,7 +682,8 @@ bool CryptoBridge::Modify_Trade(string sym, string side, string orderType, strin
      }
    if(exchangeNumber == 4)
      {
-      // return (Kucoin_Open_Trade(sym, side, orderType, orderSize, orderPrice));
+      CryptoBridge::Cancel_Trade(sym,id,exchangeNumber,0,clientId);
+      return (Kucoin_Open_Trade(sym, side, orderType, orderSize, orderPrice,quoteDigit,lotDigit,id));
      }
    /*
    binance futures requires canceling the order and placing a new order with the updated price
@@ -753,7 +763,7 @@ bool CryptoBridge::Modify_Trade(string sym, string side, string orderType, strin
          Bitmax_Open_Trade_Stop(sym,side,orderType,orderSize,orderPrice,quoteDigit,lotDigit,"");
         }
      }
-      if(exchangeNumber == 29)
+   if(exchangeNumber == 29)
      {
       if(orderType=="STOPMARKET")
         {
@@ -790,12 +800,10 @@ bool CryptoBridge::Open_Trade(string sym, string side, string orderType, string 
      {
       return (Bitmex_Open_Trade(sym, side, orderType, orderSize, orderPrice,quoteDigit,lotDigit,orderId));
      }
-   /*
    if(exchangeNumber == 4)
      {
-      return (Kucoin_Open_Trade(sym, side, orderType, orderSize, orderPrice,quoteDigit,lotDigit, orderId));
+      return (Kucoin_Open_Trade(sym, side, orderType, orderSize, orderPrice,quoteDigit,lotDigit,orderId));
      }
-   */
    if((exchangeNumber == 5) || (exchangeNumber == 26))
      {
       return (BinanceFutures_Open_Trade(sym, side, orderType, orderSize, orderPrice,quoteDigit,lotDigit,orderId));
@@ -822,7 +830,7 @@ bool CryptoBridge::Open_Trade(string sym, string side, string orderType, string 
      {
       return (Bitmax_Open_Trade(sym,side, orderType,orderSize,orderPrice,quoteDigit,lotDigit,orderId));
      }
-    if(exchangeNumber == 29)
+   if(exchangeNumber == 29)
      {
       return (Bithumb_Open_Trade(sym,side, orderType,orderSize,orderPrice,quoteDigit,lotDigit,orderId));
      }
@@ -939,6 +947,10 @@ bool CryptoBridge::Cancel_Trade(string sym, string orderId, int exchangeNumber, 
      {
       return (Bitmex_Cancel_Trade(sym, orderId,clientOrderId));
      }
+   if(exchangeNumber == 4)
+     {
+      return (Kucoin_Cancel_Trade(sym, orderId,clientOrderId));
+     }
    if((exchangeNumber == 5) || (exchangeNumber == 26))
      {
       return (BinanceFutures_Cancel_Trade(sym, StringToInteger(orderId),clientOrderId));
@@ -965,7 +977,7 @@ bool CryptoBridge::Cancel_Trade(string sym, string orderId, int exchangeNumber, 
      {
       return (Bitmax_Cancel_Trade(sym,orderId,clientOrderId));
      }
-     if(exchangeNumber == 29)
+   if(exchangeNumber == 29)
      {
       return (Bithumb_Cancel_Trade(sym,orderId,clientOrderId));
      }
@@ -996,6 +1008,10 @@ bool CryptoBridge::Cancel_Trade_All(string sym, int exchangeNumber)
    if(exchangeNumber == 3)
      {
       return (Bitmex_Cancel_Trade_All(sym));
+     }
+   if(exchangeNumber == 4)
+     {
+      return (Kucoin_Cancel_Trade(sym,"",""));
      }
    if((exchangeNumber == 5) || (exchangeNumber == 26))
      {
@@ -1039,12 +1055,10 @@ bool CryptoBridge::Get_Exchange_Server_Time(int exchangeNumber)
      {
       return (Bitmex_GetServerTime());
      }
-   /*
    if(exchangeNumber == 4)
      {
       return (Kucoin_GetServerTime());
      }
-   */
    if((exchangeNumber == 5) || (exchangeNumber == 26))
      {
       return (BinanceFutures_GetServerTime());
@@ -1071,7 +1085,7 @@ bool CryptoBridge::Get_Exchange_Server_Time(int exchangeNumber)
      {
       return (BinanceFuturesC_GetServerTime());
      }
-     if(exchangeNumber == 29)
+   if(exchangeNumber == 29)
      {
       return (Bithumb_GetServerTime());
      }
@@ -1101,12 +1115,10 @@ bool CryptoBridge::Get_PriceBest(string sym, int exchangeNumber, int quote_preci
      {
       return (Bitmex_GetPriceBest(sym));
      }
-   /*
    if(exchangeNumber == 4)
      {
       return (Kucoin_GetPriceBest(sym,quote_precision));
      }
-   */
    if((exchangeNumber == 5) || (exchangeNumber == 26))
      {
       return (BinanceFutures_GetPriceBest(sym, quote_precision));
@@ -1137,7 +1149,7 @@ bool CryptoBridge::Get_PriceBest(string sym, int exchangeNumber, int quote_preci
      {
       return (Bitmax_GetPriceBest(sym,quote_precision));
      }
-     if(exchangeNumber == 29)
+   if(exchangeNumber == 29)
      {
       return (Bithumb_GetPriceBest(sym,quote_precision));
      }
@@ -1167,12 +1179,10 @@ bool CryptoBridge::Get_Price(string sym, int exchangeNumber, int quote_precision
      {
       return (Bitmex_GetPrice(sym));
      }
-   /*
    if(exchangeNumber == 4)
      {
       return (Kucoin_GetPrice(sym));
      }
-   */
    if((exchangeNumber == 5) || (exchangeNumber == 26))
      {
       return (BinanceFutures_GetPrice(sym, quote_precision));
@@ -1203,7 +1213,7 @@ bool CryptoBridge::Get_Price(string sym, int exchangeNumber, int quote_precision
      {
       return (Bitmax_GetPrice(sym,quote_precision));
      }
-    if(exchangeNumber == 29)
+   if(exchangeNumber == 29)
      {
       return (Bithumb_GetPrice(sym));
      }
@@ -1390,12 +1400,10 @@ bool CryptoBridge::Get_Balance(string sym, string quote_base, int exchangeNumber
      {
       return (Bitmex_Balance(sym, quote_base));
      }
-   /*
    if(exchangeNumber == 4)
      {
       return (Kucoin_Balance(sym, quote_base));
      }
-   */
    if((exchangeNumber == 5) || (exchangeNumber == 26))
      {
       return (BinanceFutures_Balance(sym, quote_base));
@@ -1422,7 +1430,7 @@ bool CryptoBridge::Get_Balance(string sym, string quote_base, int exchangeNumber
      {
       return (Bitmax_Balance(sym,quote_base));
      }
-     if(exchangeNumber == 29)
+   if(exchangeNumber == 29)
      {
       return (Bithumb_Balance(sym,"spot"));
      }
@@ -1457,6 +1465,10 @@ bool CryptoBridge::Get_OpenOrders(string sym, int exchangeNumber, int quote_prec
      {
       return (Bitmex_GetOpenOrders(sym, quote_precision));
      }
+    if(exchangeNumber == 4)
+     {
+      return (Kucoin_GetOpenOrders(sym, quote_precision));
+     }
    if((exchangeNumber == 5) || (exchangeNumber == 26))
      {
       return (BinanceFutures_GetOpenOrders(sym, quote_precision));
@@ -1483,7 +1495,7 @@ bool CryptoBridge::Get_OpenOrders(string sym, int exchangeNumber, int quote_prec
      {
       return (Bitmax_GetOpenOrders(sym,quote_precision));
      }
-      if(exchangeNumber == 29)
+   if(exchangeNumber == 29)
      {
       return (Bithumb_GetOpenOrders(sym,quote_precision));
      }
@@ -1903,7 +1915,6 @@ string CryptoBridge::Get_Transactions(int exchangeNumber, string sym,string tran
      {
       return (BinanceFutures_Transactions(sym, transactionType,startTime,endTime));
      }
-
    return("");
   }
 //+------------------------------------------------------------------+
