@@ -5,7 +5,7 @@
 //+------------------------------------------------------------------+
 #property copyright "Copyright 2020, TradingToolCrypto Corp"
 #property link "https://github.com/TradingToolCrypto"
-#property version "1.00"
+#property version "1.01"
 
 #include <TradingToolCrypto/TT/RobotFrameWork.mqh>
 #include <TradingToolCrypto/CBP/CryptoBridgeProClass.mqh>
@@ -18,8 +18,6 @@ private:
 public:
                      CBPFrameWork();
                     ~CBPFrameWork();
-
-   bool              hedgeMode(bool hedgemode);
 
    bool              tradeBuy(double volume);
    bool              tradeSell(double volume);
@@ -105,13 +103,6 @@ CBPFrameWork::CBPFrameWork()
 CBPFrameWork::~CBPFrameWork()
   {
    bridge.Deinit_Api_Keys(Exchange_Number);
-  }
-//+------------------------------------------------------------------+
-//|                                                                  |
-//+------------------------------------------------------------------+
-bool CBPFrameWork::hedgeMode(bool hedgemode)
-  {
-   return(bridge.Hedge_Mode(hedgemode,Exchange_Number));
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
