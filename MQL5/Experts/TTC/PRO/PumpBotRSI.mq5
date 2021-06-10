@@ -5,7 +5,7 @@
 //+------------------------------------------------------------------+
 #property copyright "Copyright 2020, TradingToolCrypto Corp"
 #property link "https://github.com/TradingToolCrypto"
-#property version "1.00"
+#property version "1.01"
 
 #include <TradingToolCrypto\CBP\CBPFrameWork.mqh>
 #include <TradingToolCrypto\TT\RobotFrameWork.mqh>
@@ -22,6 +22,8 @@ input bool MovePrice = false;
 input group "Decide to Buy or Sell";
 input bool OnlyLong = false;
 input bool OnlyShort = false;
+input group "Trading Futures or Spot Exchange (Different Logic)";
+input bool FuturesTrading = true;
 
 //+------------------------------------------------------------------+
 //| Expert initialization function                                   |
@@ -33,14 +35,15 @@ int OnInit()
    const string sym = Symbol();
    indi.Init_IndicatorPlus(sym);
 
-   if(MovePrice){
-    if(!MarketBookAdd(sym))
+   if(MovePrice)
      {
-      Print("Initization Error: Something is wrong with collecting the MarketBookAdd()");
-      return (INIT_FAILED);
+      if(!MarketBookAdd(sym))
+        {
+         Print("Initization Error: Something is wrong with collecting the MarketBookAdd()");
+         return (INIT_FAILED);
+        }
      }
-   }
-  
+
 //---
    return(INIT_SUCCEEDED);
   }
@@ -59,16 +62,17 @@ void OnDeinit(const int reason)
 void OnTimer()
   {
 
-   if(MovePrice){
-    if(index_best_ask == 0 || index_best_bid == 0)
+   if(MovePrice)
      {
-      Print("Can not run the main the loop because the Orderbook is not correct");
-      return;
+      if(index_best_ask == 0 || index_best_bid == 0)
+        {
+         Print("Can not run the main the loop because the Orderbook is not correct");
+         return;
+        }
      }
-   }
-  
+
    /*
-   indicator logic 
+   indicator logic
    */
    const double rsi = indi.get_rsi(1);
 
@@ -98,7 +102,54 @@ void OnTimer()
             cb.tradeSell(Exchange_Lotsize);
            }
         }
+      /*
+      if the position is profitable, close the position (futures logic only)
+      - Only check the positions API endpoint when the LOGIC is confirmed (don't waste useless api calls for no reason)
+      - logic can be improved by adding a buffer on top of the entry price to boost the profits
+         - current logic can close the position at breakeven range in some cases. 
+
+      */
+      if(FuturesTrading)
+        {
+
+         if(rsi >= RSI_SELL)
+           {
+            cb.positionTotal();
+            if(cb.positionTotalLong > 0)
+              {
+               if(cb.position_avg_price_buy < cb.symbolBid())
+                 {
+                  cb.tradeAsk(cb.position_volume_buy);
+                 }
+              }
+
+           }
+
+         if(rsi <= RSI_BUY)
+           {
+            cb.positionTotal();
+            if(cb.positionTotalShort > 0)
+              {
+               if(cb.position_avg_price_sell > cb.symbolAsk())
+                 {
+                  cb.tradeBid(cb.position_volume_sell);
+                 }
+              }
+           }
+
+        }
      }
+     
+     
+   //   else{
+     /*
+      Spot trading requires different logic because we are working with balances and not an actual position
+      Therefore, we would need to keep trade of the market buying in memory and figure out the entry price 
+      
+     */
+   //  }
+   
+   
   }
 
 //+------------------------------------------------------------------+
