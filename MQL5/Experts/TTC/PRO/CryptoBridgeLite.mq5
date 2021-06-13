@@ -7,24 +7,19 @@
 #property link      "https://github.com/tradingtoolcrypto"
 #property description "Tools=> Options => ExpertAdvisors => Allow Webrequests \nExample of URL: https://api.binance.com\n\nMake a payment with PaymentBot before using(Pro Package)"
 #property description "\n\nFeatures: \nAuto Exchange Setup: Enter Api Keys and begin trading\nTrade Any Market: Attach to a CB_Charts, CB_ChartAll, CB_ChartPro generated chart to begin trading"
-#property version "1.00"
+#property version "1.01"
 
 
 #include <TradingToolCrypto\CBP\CBPFrameWork.mqh>
 #include <TradingToolCrypto\TT\RobotFrameWork.mqh>
 #include <TradingToolCrypto\TT\create_objects.mqh>
 
-
-RobotFrameWork mt5;
 CBPFrameWork cb;
 //+------------------------------------------------------------------+
 //| Expert initialization function                                   |
 //+------------------------------------------------------------------+
 int OnInit()
   {
-   string sym = Symbol();
-   mt5.Init_Symbol(sym);
-   cb.Init_Symbol(sym);
    ObjCreateButton("hide_1", false, 187,1, 20, 18, "^", clrLightGray, clrBlack, 0, CORNER_LEFT_UPPER,8,"Arial",0,false,OBJ_ALL_PERIODS);
    ObjCreateButton("balance_1", false, 147,1, 20, 18, "B", clrLightGray, clrBlack, 0, CORNER_LEFT_UPPER,8,"Arial",0,false,OBJ_ALL_PERIODS);
    ObjCreateButton("position_1", false, 167,1, 20, 18, "P", clrLightGray, clrBlack, 0, CORNER_LEFT_UPPER,8,"Arial",0,false,OBJ_ALL_PERIODS);
@@ -44,8 +39,8 @@ void OnDeinit(const int reason)
 //+------------------------------------------------------------------+
 void OnTick()
   {
-   ObjectSetString(0,"buy_2",OBJPROP_TEXT, DoubleToString(mt5.symbolAsk(), mt5.symbolDigit()));
-   ObjectSetString(0,"sell_2",OBJPROP_TEXT, DoubleToString(mt5.symbolBid(), mt5.symbolDigit()));
+   ObjectSetString(0,"buy_2",OBJPROP_TEXT, DoubleToString(cb.symbolAsk(), cb.symbolDigit()));
+   ObjectSetString(0,"sell_2",OBJPROP_TEXT, DoubleToString(cb.symbolBid(), cb.symbolDigit()));
   }
 
 //+------------------------------------------------------------------+
