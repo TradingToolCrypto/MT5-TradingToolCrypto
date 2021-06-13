@@ -9,7 +9,9 @@
 
 #include <TradingToolCrypto/TT/RobotFrameWork.mqh>
 #include <TradingToolCrypto/CBP/CryptoBridgeProClass.mqh>
+
 CryptoBridge bridge;
+
 class CBPFrameWork: public RobotFrameWork
   {
 private:
@@ -86,7 +88,7 @@ CBPFrameWork::CBPFrameWork()
    frameworkPrefix = (string)Exchange_Number + exchangeName;
    RobotFrameWork::Init_Symbol(Symbol());
 
-   Print(" Check RobotFrameWork Symbol's Price " + RobotFrameWork::symbolAsk());
+   Print("RobotFrameWork Symbol's Price " + RobotFrameWork::symbolAsk());
 
    if(bridge.Init_Api_Keys(Exchange_Number))
      {
