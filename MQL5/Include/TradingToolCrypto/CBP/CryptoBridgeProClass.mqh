@@ -5,7 +5,7 @@
 //+------------------------------------------------------------------+
 #property copyright "Copyright 2020, TradingToolCrypto Corp."
 #property link      "https://github.com/tradingtoolcrypto"
-#define VERSION 1.43
+#define VERSION 1.44
 
 #import "CBP_Functions.ex5"
 string RemoveSymbolSeperator(string symbolname, string seperator);
@@ -1511,6 +1511,7 @@ string exchange_orderside[];
 double exchange_orderprice[];
 double exchange_ordersize[];
 int    exchange_orderindex[];
+string    exchange_orderid[];
 void CryptoBridge::Parse_Orders(string exchangeName, int order_location, int id_location)
   {
    Print(" CBP ParseOrders " + exchangeName + " Exchange Unique ID " + unique_id);
@@ -1521,6 +1522,7 @@ void CryptoBridge::Parse_Orders(string exchangeName, int order_location, int id_
    ArrayFree(exchange_orderprice);
    ArrayFree(exchange_ordersize);
    ArrayFree(exchange_orderindex);
+   ArrayFree(exchange_orderid);
    SetSubWindowText("sub_orders_text_", "Orders", order_location, 0, Gray, 10);
    datetime bar_close = iTime(NULL, PERIOD_CURRENT, 0);
 
@@ -1558,6 +1560,7 @@ void CryptoBridge::Parse_Orders(string exchangeName, int order_location, int id_
          ArrayResize(exchange_orderprice, counterD + 1, 0);
          ArrayResize(exchange_ordersize, counterD + 1, 0);
          ArrayResize(exchange_orderindex, counterD + 1, 0);
+         ArrayResize(exchange_orderid, counterD + 1, 0);
 
          // COUNTER STARTS AT ZERO for array[0] =
          exchange_name[counterD] = r_exchange;
@@ -1567,6 +1570,7 @@ void CryptoBridge::Parse_Orders(string exchangeName, int order_location, int id_
          exchange_orderprice[counterD] = StringToDouble(r_order_price);
          exchange_ordersize[counterD] = StringToDouble(r_order_volume);
          exchange_orderindex[counterD] = (int) GlobalVariableGet(name);
+         exchange_orderid[counterD] = GetObjectDesc(exchange_orderindex[counterD]);
          counterD++;
         }
      }
