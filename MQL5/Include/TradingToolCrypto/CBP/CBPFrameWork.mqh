@@ -5,13 +5,16 @@
 //+------------------------------------------------------------------+
 #property copyright "Copyright 2020, TradingToolCrypto Corp"
 #property link "https://github.com/TradingToolCrypto"
-#property version "1.01"
+#property version "1.02"
 
 #include <TradingToolCrypto/TT/RobotFrameWork.mqh>
 #include <TradingToolCrypto/CBP/CryptoBridgeProClass.mqh>
 
 CryptoBridge bridge;
 
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
 class CBPFrameWork: public RobotFrameWork
   {
 private:
@@ -84,7 +87,7 @@ public:
 CBPFrameWork::CBPFrameWork()
   {
    exchangeName = bridge.Get_Exchange_Name(Exchange_Number);
-  // frameworkPrefix = (string)Exchange_Number + "." + exchangeName + ".";//binance 
+// frameworkPrefix = (string)Exchange_Number + "." + exchangeName + ".";//binance
    frameworkPrefix = (string)Exchange_Number + exchangeName;
    RobotFrameWork::Init_Symbol(Symbol());
 
@@ -139,6 +142,7 @@ bool CBPFrameWork::tradeBuyStop(double volume)
    double ask = RobotFrameWork::symbolAsk();
    if(bridge.Open_Trade_Stop(Exchange_Symbol_Name,"BUY","STOP_LOSS",DoubleToString(volume,Exchange_Lot_Precision),DoubleToString(ask,Exchange_Quote_Precision),Exchange_Quote_Precision,Exchange_Lot_Precision,Exchange_Number,order_id))
      {
+      Sleep(Exchange_RateLimiter);
       return(true);
      }
    return(false);
@@ -152,6 +156,7 @@ bool CBPFrameWork::tradeSellStop(double volume)
    double bid = RobotFrameWork::symbolBid();
    if(bridge.Open_Trade_Stop(Exchange_Symbol_Name,"SELL","STOP_LOSS",DoubleToString(volume,Exchange_Lot_Precision),DoubleToString(bid,Exchange_Quote_Precision),Exchange_Quote_Precision,Exchange_Lot_Precision,Exchange_Number,order_id))
      {
+      Sleep(Exchange_RateLimiter);
       return(true);
      }
    return(false);
@@ -164,6 +169,7 @@ bool CBPFrameWork::tradeBuyStop(double volume, double price)
    string order_id = frameworkPrefix + GetTickCount64();
    if(bridge.Open_Trade_Stop(Exchange_Symbol_Name,"BUY","STOP_LOSS",DoubleToString(volume,Exchange_Lot_Precision),DoubleToString(price,Exchange_Quote_Precision),Exchange_Quote_Precision,Exchange_Lot_Precision,Exchange_Number,order_id))
      {
+      Sleep(Exchange_RateLimiter);
       return(true);
      }
    return(false);
@@ -176,6 +182,7 @@ bool CBPFrameWork::tradeSellStop(double volume, double price)
    string order_id = frameworkPrefix + GetTickCount64();
    if(bridge.Open_Trade_Stop(Exchange_Symbol_Name,"SELL","STOP_LOSS",DoubleToString(volume,Exchange_Lot_Precision),DoubleToString(price,Exchange_Quote_Precision),Exchange_Quote_Precision,Exchange_Lot_Precision,Exchange_Number,order_id))
      {
+      Sleep(Exchange_RateLimiter);
       return(true);
      }
    return(false);
@@ -189,6 +196,7 @@ bool CBPFrameWork::tradeBid(double volume)
    double bid = RobotFrameWork::symbolBid();
    if(bridge.Open_Trade(Exchange_Symbol_Name,"BUY","LIMIT",DoubleToString(volume,Exchange_Lot_Precision),DoubleToString(bid,Exchange_Quote_Precision),Exchange_Quote_Precision,Exchange_Lot_Precision,Exchange_Number,order_id))
      {
+      Sleep(Exchange_RateLimiter);
       return(true);
      }
    return(false);
@@ -202,6 +210,7 @@ bool CBPFrameWork::tradeAsk(double volume)
    double ask = RobotFrameWork::symbolAsk();
    if(bridge.Open_Trade(Exchange_Symbol_Name,"SELL","LIMIT",DoubleToString(volume,Exchange_Lot_Precision),DoubleToString(ask,Exchange_Quote_Precision),Exchange_Quote_Precision,Exchange_Lot_Precision,Exchange_Number,order_id))
      {
+      Sleep(Exchange_RateLimiter);
       return(true);
      }
    return(false);
@@ -214,6 +223,7 @@ bool CBPFrameWork::tradeBid(double volume, double price)
    string order_id = frameworkPrefix  + GetTickCount64();
    if(bridge.Open_Trade(Exchange_Symbol_Name,"BUY","LIMIT",DoubleToString(volume,Exchange_Lot_Precision),DoubleToString(price,Exchange_Quote_Precision),Exchange_Quote_Precision,Exchange_Lot_Precision,Exchange_Number,order_id))
      {
+      Sleep(Exchange_RateLimiter);
       return(true);
      }
    return(false);
@@ -226,6 +236,7 @@ bool CBPFrameWork::tradeAsk(double volume, double price)
    string order_id = frameworkPrefix  + GetTickCount64();
    if(bridge.Open_Trade(Exchange_Symbol_Name,"SELL","LIMIT",DoubleToString(volume,Exchange_Lot_Precision),DoubleToString(price,Exchange_Quote_Precision),Exchange_Quote_Precision,Exchange_Lot_Precision,Exchange_Number,order_id))
      {
+      Sleep(Exchange_RateLimiter);
       return(true);
      }
    return(false);
@@ -239,6 +250,7 @@ bool CBPFrameWork::tradeBuyStopLimit(double volume,double trigger)
    double price = RobotFrameWork::symbolBid();
    if(bridge.Open_Trade_StopLimit(Exchange_Symbol_Name,"BUY","STOP_LOSS_LIMIT",DoubleToString(volume,Exchange_Lot_Precision),DoubleToString(price,Exchange_Quote_Precision),DoubleToString(trigger,Exchange_Quote_Precision),Exchange_Quote_Precision,Exchange_Lot_Precision,Exchange_Number,order_id))
      {
+      Sleep(Exchange_RateLimiter);
       return(true);
      }
    return(false);
@@ -252,6 +264,7 @@ bool CBPFrameWork::tradeSellStopLimit(double volume,double trigger)
    double price = RobotFrameWork::symbolAsk();
    if(bridge.Open_Trade_StopLimit(Exchange_Symbol_Name,"SELL","STOP_LOSS_LIMIT",DoubleToString(volume,Exchange_Lot_Precision),DoubleToString(price,Exchange_Quote_Precision),DoubleToString(trigger,Exchange_Quote_Precision),Exchange_Quote_Precision,Exchange_Lot_Precision,Exchange_Number,order_id))
      {
+      Sleep(Exchange_RateLimiter);
       return(true);
      }
    return(false);
@@ -265,6 +278,7 @@ bool CBPFrameWork::tradeBuyStopLimit(double volume,double trigger, double orderp
    double price = orderprice;
    if(bridge.Open_Trade_StopLimit(Exchange_Symbol_Name,"BUY","STOP_LOSS_LIMIT",DoubleToString(volume,Exchange_Lot_Precision),DoubleToString(price,Exchange_Quote_Precision),DoubleToString(trigger,Exchange_Quote_Precision),Exchange_Quote_Precision,Exchange_Lot_Precision,Exchange_Number,order_id))
      {
+      Sleep(Exchange_RateLimiter);
       return(true);
      }
    return(false);
@@ -278,6 +292,7 @@ bool CBPFrameWork::tradeSellStopLimit(double volume,double trigger, double order
    double price = orderprice;
    if(bridge.Open_Trade_StopLimit(Exchange_Symbol_Name,"SELL","STOP_LOSS_LIMIT",DoubleToString(volume,Exchange_Lot_Precision),DoubleToString(price,Exchange_Quote_Precision),DoubleToString(trigger,Exchange_Quote_Precision),Exchange_Quote_Precision,Exchange_Lot_Precision,Exchange_Number,order_id))
      {
+      Sleep(Exchange_RateLimiter);
       return(true);
      }
    return(false);
@@ -291,6 +306,7 @@ bool CBPFrameWork::tradeCloseMarket(bool isLong, double volume)
      {
       if(bridge.Margin_Close_Position(Exchange_Symbol_Name,"SELL","MARKET",DoubleToString(volume,Exchange_Lot_Precision), "",Exchange_Quote_Precision,Exchange_Lot_Precision,Exchange_Number))
         {
+         Sleep(Exchange_RateLimiter);
          return(true);
         }
      }
@@ -298,6 +314,7 @@ bool CBPFrameWork::tradeCloseMarket(bool isLong, double volume)
      {
       if(bridge.Margin_Close_Position(Exchange_Symbol_Name,"BUY","MARKET",DoubleToString(volume,Exchange_Lot_Precision), "",Exchange_Quote_Precision,Exchange_Lot_Precision,Exchange_Number))
         {
+         Sleep(Exchange_RateLimiter);
          return(true);
         }
      }
@@ -313,6 +330,7 @@ bool CBPFrameWork::tradeCloseLimit(bool isLong, double volume)
       double price = RobotFrameWork::symbolAsk();
       if(bridge.Margin_Close_Position(Exchange_Symbol_Name,"SELL","LIMIT",DoubleToString(volume,Exchange_Lot_Precision), DoubleToString(price, Exchange_Quote_Precision),Exchange_Quote_Precision,Exchange_Lot_Precision,Exchange_Number))
         {
+         Sleep(Exchange_RateLimiter);
          return(true);
         }
      }
@@ -321,6 +339,7 @@ bool CBPFrameWork::tradeCloseLimit(bool isLong, double volume)
       double price = RobotFrameWork::symbolBid();
       if(bridge.Margin_Close_Position(Exchange_Symbol_Name,"BUY","LIMIT",DoubleToString(volume,Exchange_Lot_Precision), DoubleToString(price, Exchange_Quote_Precision),Exchange_Quote_Precision,Exchange_Lot_Precision,Exchange_Number))
         {
+         Sleep(Exchange_RateLimiter);
          return(true);
         }
      }
@@ -336,6 +355,7 @@ bool CBPFrameWork::tradeCloseLimit(bool isLong, double volume, double price)
 
       if(bridge.Margin_Close_Position(Exchange_Symbol_Name,"SELL","LIMIT",DoubleToString(volume,Exchange_Lot_Precision), DoubleToString(price, Exchange_Quote_Precision),Exchange_Quote_Precision,Exchange_Lot_Precision,Exchange_Number))
         {
+         Sleep(Exchange_RateLimiter);
          return(true);
         }
      }
@@ -344,6 +364,7 @@ bool CBPFrameWork::tradeCloseLimit(bool isLong, double volume, double price)
 
       if(bridge.Margin_Close_Position(Exchange_Symbol_Name,"BUY","LIMIT",DoubleToString(volume,Exchange_Lot_Precision), DoubleToString(price, Exchange_Quote_Precision),Exchange_Quote_Precision,Exchange_Lot_Precision,Exchange_Number))
         {
+         Sleep(Exchange_RateLimiter);
          return(true);
         }
      }
@@ -469,8 +490,6 @@ int CBPFrameWork::orderPending()
      }
    return(loop);
   }
-
-//+------------------------------------------------------------------+
 /*
    bool              tradeDelete(string orderid);
    bool              tradeDeleteAll();
@@ -482,10 +501,13 @@ bool CBPFrameWork::tradeDelete(string orderid)
   {
    if(bridge.Cancel_Trade(Exchange_Symbol_Name,orderid,Exchange_Number,0,""))
      {
+      Sleep(Exchange_RateLimiter);
       return(true);
      }
    return(false);
   }
+//+------------------------------------------------------------------+
+//|                                                                  |
 //+------------------------------------------------------------------+
 bool CBPFrameWork::tradeDeleteAll()
   {
@@ -497,8 +519,134 @@ bool CBPFrameWork::tradeDeleteAll()
    return(false);
   }
 //+------------------------------------------------------------------+
-
-
+//|                                                                  |
+//+------------------------------------------------------------------+
+bool CBPFrameWork::tradeDeleteAll(bool longOnly)
+  {
+   int deleted = 0;
+   int loop = 0;
+   if(bridge.Get_OpenOrders(Exchange_Symbol_Name,Exchange_Number,Exchange_Quote_Precision))
+     {
+      bridge.Parse_Orders(exchangeName,640, 1000);
+      loop = ArraySize(exchange_name);
+      for(int i = 0; i<loop; i++)
+        {
+         if(longOnly)
+           {
+            if(Exchange_Symbol_Name ==  exchange_symbol[i] && exchange_orderside[i] == "BUY")
+              {
+               if(bridge.Cancel_Trade(Exchange_Symbol_Name,exchange_orderid[i],Exchange_Number,0,""))
+                 {
+                  deleted ++;
+                  Sleep(Exchange_RateLimiter);
+                 }
+              }
+           }
+         else
+           {
+            if(Exchange_Symbol_Name ==  exchange_symbol[i] && exchange_orderside[i] == "SELL")
+              {
+               if(bridge.Cancel_Trade(Exchange_Symbol_Name,exchange_orderid[i],Exchange_Number,0,""))
+                 {
+                  deleted ++;
+                  Sleep(Exchange_RateLimiter);
+                 }
+              }
+           }
+        }
+     }
+   if(deleted>0)
+     {
+      return(true);
+     }
+   return(false);
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+bool CBPFrameWork::tradeDeleteLimit(bool longOnly)
+  {
+   int deleted = 0;
+   int loop = 0;
+   if(bridge.Get_OpenOrders(Exchange_Symbol_Name,Exchange_Number,Exchange_Quote_Precision))
+     {
+      bridge.Parse_Orders(exchangeName,640, 1000);
+      loop = ArraySize(exchange_name);
+      for(int i = 0; i<loop; i++)
+        {
+         if(longOnly)
+           {
+            if(Exchange_Symbol_Name ==  exchange_symbol[i] && exchange_orderside[i] == "BUY" && exchange_ordertype[i] == "LIMIT")
+              {
+               if(bridge.Cancel_Trade(Exchange_Symbol_Name,exchange_orderid[i],Exchange_Number,0,""))
+                 {
+                  deleted ++;
+                  Sleep(Exchange_RateLimiter);
+                 }
+              }
+           }
+         else
+           {
+            if(Exchange_Symbol_Name ==  exchange_symbol[i] && exchange_orderside[i] == "SELL" && exchange_ordertype[i] == "LIMIT")
+              {
+               if(bridge.Cancel_Trade(Exchange_Symbol_Name,exchange_orderid[i],Exchange_Number,0,""))
+                 {
+                  deleted ++;
+                  Sleep(Exchange_RateLimiter);
+                 }
+              }
+           }
+        }
+     }
+   if(deleted>0)
+     {
+      return(true);
+     }
+   return(false);
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+bool CBPFrameWork::tradeDeleteStop(bool longOnly)
+  {
+   int deleted = 0;
+   int loop = 0;
+   if(bridge.Get_OpenOrders(Exchange_Symbol_Name,Exchange_Number,Exchange_Quote_Precision))
+     {
+      bridge.Parse_Orders(exchangeName,640, 1000);
+      loop = ArraySize(exchange_name);
+      for(int i = 0; i<loop; i++)
+        {
+         if(longOnly)
+           {
+            if(Exchange_Symbol_Name ==  exchange_symbol[i] && exchange_orderside[i] == "BUY" && exchange_ordertype[i] == "STOPMARKET")
+              {
+               if(bridge.Cancel_Trade(Exchange_Symbol_Name,exchange_orderid[i],Exchange_Number,0,""))
+                 {
+                  deleted ++;
+                  Sleep(Exchange_RateLimiter);
+                 }
+              }
+           }
+         else
+           {
+            if(Exchange_Symbol_Name ==  exchange_symbol[i] && exchange_orderside[i] == "SELL" && exchange_ordertype[i] == "STOPMARKET")
+              {
+               if(bridge.Cancel_Trade(Exchange_Symbol_Name,exchange_orderid[i],Exchange_Number,0,""))
+                 {
+                  deleted ++;
+                  Sleep(Exchange_RateLimiter);
+                 }
+              }
+           }
+        }
+     }
+   if(deleted>0)
+     {
+      return(true);
+     }
+   return(false);
+  }
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
@@ -533,7 +681,7 @@ bool CBPFrameWork::balance(string baseCurrency, int x_axis, int y_axis)
          int id = bridge.Get_UniqueID();
          /*
          need to update the libs to add the echange id
-         id + GLOBAL_Parse_Separator +  
+         id + GLOBAL_Parse_Separator +
          */
          double quote = GlobalVariableGet(exchangeName + GLOBAL_Parse_Separator + Exchange_Symbol_Name +GLOBAL_Parse_Separator +"Ask");
          balanceBaseCurrency = quote*balanceBase;
@@ -602,7 +750,7 @@ bool CBPFrameWork::orderPendingTriggered(bool isLong,double bid,double ask,bool 
         {
          if(limit)
            {
-            if(bid <= exchange_orderprice[i] && exchange_orderside[i] == "BUY" && exchange_ordertype[i] == "LIMIT" )
+            if(bid <= exchange_orderprice[i] && exchange_orderside[i] == "BUY" && exchange_ordertype[i] == "LIMIT")
               {
                return(true);
               }
