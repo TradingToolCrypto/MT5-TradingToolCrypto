@@ -1,8 +1,9 @@
 /*
    Functions for the Exchange Libraries
 */
-#import "TTC_PRO.ex5"
-void ttc_g();
+
+#import "TTC_KEY.ex5"
+void ttc_g_pro();
 string ttc_e();
 string ttc_d(string hexData);
 #import

@@ -639,6 +639,7 @@ void create_custom_symbol(string customSymbolName, int symbolDigits, string fold
          ResetLastError();
         }
       //SYMBOL_SECTOR
+     
       if(!CustomSymbolSetInteger(customSymbolName, SYMBOL_SECTOR, SECTOR_CURRENCY_CRYPTO))
         {
          Print("CustomSymbolSetInteger | SYMBOL_DIGITS | Failed" + IntegerToString(GetLastError()));
@@ -650,6 +651,7 @@ void create_custom_symbol(string customSymbolName, int symbolDigits, string fold
          Print("CustomSymbolSetInteger | SYMBOL_DIGITS | Failed" + IntegerToString(GetLastError()));
          ResetLastError();
         }
+      
 
       if(!SymbolSelect(customSymbolName, true))
         {
