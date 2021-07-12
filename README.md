@@ -14,8 +14,4 @@ Visit the [wiki](https://github.com/TradingToolCrypto/TradingTool/wiki) to disco
 - [Youtube Tutorials](https://youtu.be/7NNFIp6vtFI)
 - [Telegram Announcements](https://t.me/tradingtool)
 - [Telegram Group](https://t.me/TradingToolCrypto)
-- [Medium Crypto Metatrader](https://tradingtoolcrypto.medium.com/multi-crypto-exchange-integration-for-metatrader-part-one-d8dee24f96c4)
 
-
-# Change Log
-- [Project TradingToolCrypto](https://github.com/TradingToolCrypto/TradingTool-Wiki/projects/1)
