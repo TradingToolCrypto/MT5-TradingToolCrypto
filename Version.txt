@@ -19,3 +19,4 @@ May 31th, 2021 CryptoBridgeDark v1.43 (Kucoin Spot Trading)
 June 12th, 2021 CB_CopyTrades v1.51 MT5 Brokerage Hedging Account Types for Binance Futures HedgeMode Ready
 June 24th, 2021 CBP FrameWork v1.02 Added new functions for deleting pending orders
 July 2021 New Libraries - CryptoBridgePro update - refactor Crypto Charts
+July 28th, 2021 - Add Historical Input Day/Date scripts v1.0
