@@ -152,9 +152,9 @@ bool OrderSendCBP(const MqlTradeRequest &m_request, MqlTradeResult &m_result)
       
       if(bridge.Cancel_Trade(Exchange_Symbol_Name,0,Exchange_Number,0,ord)){
       
-         Sleep(Exchange_Millisecond_RateLimiter);
+         Sleep(Exchange_RateLimiter);
          bridge.Cancel_Trade(Exchange_Symbol_Name,0,Exchange_Number,0,ord_tp);
-         Sleep(Exchange_Millisecond_RateLimiter);
+         Sleep(Exchange_RateLimiter);
          bridge.Cancel_Trade(Exchange_Symbol_Name,0,Exchange_Number,0,ord_sl);
       
       }
@@ -199,12 +199,12 @@ bool OrderSendCBP(const MqlTradeRequest &m_request, MqlTradeResult &m_result)
                if(SEND_SL)
                  {
                   bridge.Open_Trade_Stop(Exchange_Symbol_Name, "SELL", type, Exchange_Lotsize, sl, Exchange_Quote_Precision, Exchange_Lot_Precision, Exchange_Number,order_id+"sl");
-                  Sleep(Exchange_Millisecond_RateLimiter);
+                  Sleep(Exchange_RateLimiter);
                  }
 
                // enter breakout
                bridge.Open_Trade_Stop(Exchange_Symbol_Name, side, type, Exchange_Lotsize, price, Exchange_Quote_Precision, Exchange_Lot_Precision, Exchange_Number,order_id+"op");
-               Sleep(Exchange_Millisecond_RateLimiter);
+               Sleep(Exchange_RateLimiter);
 
                // tp
                if(SEND_TP)
@@ -219,7 +219,7 @@ bool OrderSendCBP(const MqlTradeRequest &m_request, MqlTradeResult &m_result)
                if(SEND_SL)
                  {
                   bridge.Open_Trade_Stop(Exchange_Symbol_Name, "SELL", type, Exchange_Lotsize, sl, Exchange_Quote_Precision, Exchange_Lot_Precision, Exchange_Number,order_id+"sl");
-                  Sleep(Exchange_Millisecond_RateLimiter);
+                  Sleep(Exchange_RateLimiter);
                  }
                // enter breakout
                bridge.Open_Trade_Stop(Exchange_Symbol_Name, side, type, Exchange_Lotsize, price, Exchange_Quote_Precision, Exchange_Lot_Precision, Exchange_Number,order_id+"op");
@@ -228,7 +228,7 @@ bool OrderSendCBP(const MqlTradeRequest &m_request, MqlTradeResult &m_result)
               {
 
                bridge.Open_Trade_Stop(Exchange_Symbol_Name, side, type, Exchange_Lotsize, price, Exchange_Quote_Precision, Exchange_Lot_Precision, Exchange_Number,order_id+"op");
-               Sleep(Exchange_Millisecond_RateLimiter);
+               Sleep(Exchange_RateLimiter);
 
                if(SEND_TP)
                  {
@@ -251,11 +251,11 @@ bool OrderSendCBP(const MqlTradeRequest &m_request, MqlTradeResult &m_result)
                if(SEND_SL)
                  {
                   bridge.Open_Trade_Stop(Exchange_Symbol_Name, "BUY", type, Exchange_Lotsize, sl, Exchange_Quote_Precision, Exchange_Lot_Precision, Exchange_Number,order_id+"sl");
-                  Sleep(Exchange_Millisecond_RateLimiter);
+                  Sleep(Exchange_RateLimiter);
                  }
                // enter breakout
                bridge.Open_Trade_Stop(Exchange_Symbol_Name, side, type, Exchange_Lotsize, price, Exchange_Quote_Precision, Exchange_Lot_Precision, Exchange_Number,order_id+"op");
-               Sleep(Exchange_Millisecond_RateLimiter);
+               Sleep(Exchange_RateLimiter);
                // tp
                if(SEND_TP)
                  {
@@ -268,7 +268,7 @@ bool OrderSendCBP(const MqlTradeRequest &m_request, MqlTradeResult &m_result)
 
                // enter breakout
                bridge.Open_Trade_Stop(Exchange_Symbol_Name, side, type, Exchange_Lotsize, price, Exchange_Quote_Precision, Exchange_Lot_Precision, Exchange_Number,order_id+"op");
-               Sleep(Exchange_Millisecond_RateLimiter);
+               Sleep(Exchange_RateLimiter);
 
                //stoploss is a sell stop_market
                if(SEND_SL)
@@ -282,7 +282,7 @@ bool OrderSendCBP(const MqlTradeRequest &m_request, MqlTradeResult &m_result)
 
                // enter breakout
                bridge.Open_Trade_Stop(Exchange_Symbol_Name, side, type, Exchange_Lotsize, price, Exchange_Quote_Precision, Exchange_Lot_Precision, Exchange_Number,order_id+"op");
-               Sleep(Exchange_Millisecond_RateLimiter);
+               Sleep(Exchange_RateLimiter);
                // tp
                if(SEND_TP)
                  {

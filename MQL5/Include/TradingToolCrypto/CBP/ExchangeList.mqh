@@ -212,7 +212,7 @@ string get_suffix_exchange_name(string suffix, int id)
          GLOBAL_exchange = "BinanceFuturesC";
          return(".bnd");
         }
-
+//--Bybit USDT 
       if(id == 22)
         {
          GLOBAL_exchange = "BybitU";
@@ -220,14 +220,15 @@ string get_suffix_exchange_name(string suffix, int id)
         }
       if(id == 23)
         {
-         GLOBAL_exchange = "Bybit";
+         GLOBAL_exchange = "Bybit";// test net
          return(".bybt");
         }
       if(id == 24)
         {
-         GLOBAL_exchange = "BybitU";
+         GLOBAL_exchange = "BybitU";// test net
          return(".bytt");
         }
+//--Bybit      
       if(id == 25)
         {
          GLOBAL_exchange = "Gemini";

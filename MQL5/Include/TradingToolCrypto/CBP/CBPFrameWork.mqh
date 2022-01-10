@@ -77,6 +77,8 @@ public:
 
    bool              balance(string baseCurrency, int x_axis, int y_axis);
    double            balanceBaseCurrency;
+   double            balanceMargin;
+   double            balancePNL;
 
    bool              volume(bool ifLong, const string baseCurrency,const double balanceInBase, const double riskPercentage, const double slPoints, const double commissionPercent);
    double            volumeUnits;
@@ -89,6 +91,7 @@ CBPFrameWork::CBPFrameWork()
    exchangeName = bridge.Get_Exchange_Name(Exchange_Number);
 // frameworkPrefix = (string)Exchange_Number + "." + exchangeName + ".";//binance
    frameworkPrefix = (string)Exchange_Number + exchangeName;
+   
    RobotFrameWork::Init_Symbol(Symbol());
 
    Print("RobotFrameWork Symbol's Price " + RobotFrameWork::symbolAsk());
@@ -661,30 +664,20 @@ bool CBPFrameWork::balance(string baseCurrency, int x_axis, int y_axis)
       Alert("Failed to get Exchange Balance");
       return(false);
      }
-   double balanceBase = 0;
-   double balanceUSD = 0;
+ 
+  
+   /*
+   Find the correct wallet output that matches the BaseCurrency
+   */
    int loop = ArraySize(exchange_wallets);
    for(int i = 0; i<loop; i++)
      {
       if(exchange_wallets[i] == baseCurrency)
-         balanceBase = exchange_wallets_balance[i];
-      break;
-     }
-   if((baseCurrency == "USDT") || (baseCurrency == "USD"))
-     {
-      balanceBaseCurrency = balanceBase;
-     }
-   else
-     {
-      if(bridge.Get_Price(Exchange_Symbol_Name,Exchange_Number,Exchange_Quote_Precision))
         {
-         int id = bridge.Get_UniqueID();
-         /*
-         need to update the libs to add the echange id
-         id + GLOBAL_Parse_Separator +
-         */
-         double quote = GlobalVariableGet(exchangeName + GLOBAL_Parse_Separator + Exchange_Symbol_Name +GLOBAL_Parse_Separator +"Ask");
-         balanceBaseCurrency = quote*balanceBase;
+         balanceBaseCurrency = exchange_wallets_balance[i];
+         balanceMargin = exchange_wallets_freemargin[i];
+         balancePNL = exchange_wallets_pnl[i];
+         break;
         }
      }
    return(true);
