@@ -217,6 +217,7 @@ bool Bybit_P_Leverage(int liveOne_demoTwo);
 bool Bybit_P_Positions(string sym, int quoteDigit);
 bool Bybit_P_ClosePosition(string sym, string side, string orderType, double orderVolume, double orderPrice);
 bool Bybit_P_Set_Leverage(string sym, double leverage);
+bool Bybit_P_HedgeMode(string sym, string hedgeOn_true_else_false);
 #import
 
 #import "Bitmex_api.ex5"
@@ -556,6 +557,7 @@ bool CryptoBridge::Init_Api_Keys(int exchange)
       checked = Bybit_P_Get_API_Key(Bybit_Api_Key, Bybit_Api_Secret, Bybit_LiveDemo);
       Bybit_P_Set_Instance(unique_id);
       add_exchange_info(exchange);
+      CryptoBridge::Hedge_Mode(Exchange_HedgeMode, 22);
       CryptoBridge::Margin_Set_Leverage(Exchange_Symbol_Name, Exchange_Leverage, Exchange_Number);
       return (checked);
      }
@@ -690,6 +692,17 @@ bool CryptoBridge::Hedge_Mode(bool on_true_off_false, int exchangeNumber)
       else
         {
          return (BinanceFuturesC_HedgeMode("false"));
+        }
+     }
+     if((exchangeNumber == 22) || (exchangeNumber == 22))
+     {
+      if(on_true_off_false)
+        {
+         return (Bybit_P_HedgeMode(Exchange_Symbol_Name, "BothSide"));
+        }
+      else
+        {
+         return (Bybit_P_HedgeMode(Exchange_Symbol_Name, "MergedSingle"));
         }
      }
    return (false);
