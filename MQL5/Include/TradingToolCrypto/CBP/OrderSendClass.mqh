@@ -1,5 +1,8 @@
 /*
 
+Give your current robot the ability to trade at crypto exchanges using the same logic. 
+This library allows your robot to operate as normally while trading your crypto account through api.
+
  - How to use the OrderSendClass with your current robots
  -- add InitCBP(); within the OnInit function to load your apik keys into the CryptoBridgeProClass
  -- OnInit(){ InitCBP(); }
