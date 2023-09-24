@@ -70,7 +70,9 @@ enum ENUM_AVAILABLE_EXCHANGE
   };
 
 
-
+/*
+ These are used within the CryptoBridgePro GUI for storing values onInit for faster fetching and better UX
+*/
 string BinanceSymbols[];
 string BinanceUSSymbols[];
 string BinanceFuturesSymbols[];

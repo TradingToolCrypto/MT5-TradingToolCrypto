@@ -31,7 +31,7 @@ This library allows your robot to operate as normally while trading your crypto 
 */
 
 #include <TradingToolCrypto\CBP\CryptoBridgeProClass.mqh>
-#property version "1.01"
+#property version "1.02"
 
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -393,9 +393,9 @@ string orderSide(int type)
 
    return ("ERROR");
   }
-//+------------------------------------------------------------------+
-//|                                                                  |
-//+------------------------------------------------------------------+
+/*
+These are the order types that the CryptoBridgePro uses as default
+*/
 string orderType(int type)
   {
    if(type == ORDER_TYPE_BUY)
