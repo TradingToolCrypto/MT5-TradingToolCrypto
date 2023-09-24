@@ -32,6 +32,9 @@ void RewriteGlobals(string checkifexist, string replacewith);
 string NormalizeString(string value, int digit);
 #import
 
+/*
+bithumb global scam exchange: tons of users can't withdrawal funds
+*/
 #import "Bithumb_api.ex5"
 void Bithumb_Set_Instance(int id);
 bool Bithumb_Get_API_Key(string key, string secret);
@@ -43,7 +46,9 @@ bool Bithumb_Cancel_Trade(string sym, string orderId, string clientOrderId);
 bool Bithumb_Balance(string sym, string quotebase);
 bool Bithumb_GetOpenOrders(string sym, int quoteDigit);
 #import
-
+/*
+Rebranded to https://ascendex.com/
+*/
 #import "Bitmax_api.ex5"
 void Bitmax_Set_Instance(int id);
 bool Bitmax_Get_API_Key(string key, string secret, string account_category);
@@ -58,7 +63,9 @@ bool Bitmax_Cancel_Trade(string sym, string orderId, string clientOrderId);
 bool Bitmax_Cancel_Trade_All(string sym);
 bool Bitmax_GetOpenOrders(string sym, int quoteDigit);
 #import
-
+/*
+Spot Testnet: https://testnet.binance.vision/
+*/
 #import "BinanceTestnet_api.ex5"
 string Binance_Test_ExchangeInfo();
 bool Binance_Test_Cancel_Trade(string sym, long orderId, string clientOrderId);
