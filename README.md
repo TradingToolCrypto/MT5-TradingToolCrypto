@@ -16,4 +16,11 @@ Visit the [wiki](https://github.com/TradingToolCrypto/TradingTool/wiki) to disco
 - [Telegram Group](https://t.me/TradingToolCrypto)
 
 # Exchange List 
-![exchangelist](https://github.com/TradingToolCrypto/TradingTool-Wiki/raw/master/Crypto%20Exchange%20Supported.png)
+- Binance Spot and Futures
+- Bybit Futures 
+- Bitmex Futures
+- Ascendex Spot trading 
+- Kucoin Spot trading 
+- - Old
+- - ftx (scam)
+- - bithumb (scam)
