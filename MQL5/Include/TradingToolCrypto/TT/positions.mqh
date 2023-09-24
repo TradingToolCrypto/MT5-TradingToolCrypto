@@ -53,7 +53,7 @@ string convert_int_to_OrderType(int inputValue)
      {
       return ("SELLSTOP");
      }
-   return ("UNKNOWN ORDER TYPE: " + inputValue);
+   return ("UNKNOWN ORDER TYPE: " + DoubleToString(inputValue,0));
   }
   
 //+------------------------------------------------------------------+
@@ -91,7 +91,7 @@ long Find_Order_Magic(ulong position_ticket)
 //+------------------------------------------------------------------+
 long Find_Position_Magic(ulong position_ticket)
   {
-   long ticket = 0;
+   ulong ticket = 0;
    int total = PositionsTotal();
    if(total == 0)
       return(0);
@@ -100,18 +100,14 @@ long Find_Position_Magic(ulong position_ticket)
       if(m_position.SelectByIndex(i))
         {
          ticket = m_position.Ticket();
-
          if(ticket  == position_ticket)
            {
-
             return(m_position.Magic());
-
            }
         }
      }
    return(0);
   }
-  
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
