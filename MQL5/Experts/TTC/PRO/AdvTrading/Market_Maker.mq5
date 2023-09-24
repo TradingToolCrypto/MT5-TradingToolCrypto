@@ -1,9 +1,11 @@
 #property copyright "Copyright 2020, TradingToolCrypto Corp"
 #property link "https://github.com/TradingToolCrypto"
 #property version   "1.00"
-/* CryptoBridgeProClass variables
+/* CryptoBridgePro FrameWork Class variables
 
- cb.orderPending() then these values will be populated
+ cb.orderPending() 
+
+ run this function to gather the values below
 
       string exchange_name[];
       string exchange_symbol[];
@@ -13,17 +15,15 @@
       double exchange_ordersize[];
       int    exchange_orderindex[];
       string    exchange_orderid[];
-
-
 */
 
 #include <TradingToolCrypto/CBP/CBPFrameWork.mqh>
-CBPFrameWork cb;
+CBPFrameWork cb;// For Trading 
 /*
    - class (RobotFrameWork) becomes an object and is imported within CBPFramework
    - give the class a pointer name (btc,bnb,etc)
 */
-RobotFrameWork btc;
+RobotFrameWork btc;// For Data aka charting,indicators,price values
 
 input double RobotParamMaxBuyVolume = 20000;
 input double RobotParamMaxSellVolume = 20000;

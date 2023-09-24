@@ -24,6 +24,7 @@ int OnInit()
    ObjCreateButton("balance_1", false, 147,1, 20, 18, "B", clrLightGray, clrBlack, 0, CORNER_LEFT_UPPER,8,"Arial",0,false,OBJ_ALL_PERIODS);
    ObjCreateButton("position_1", false, 167,1, 20, 18, "P", clrLightGray, clrBlack, 0, CORNER_LEFT_UPPER,8,"Arial",0,false,OBJ_ALL_PERIODS);
    ChartRedraw();
+   cb.Init_Symbol(Symbol());
    return(INIT_SUCCEEDED);
   }
 //+------------------------------------------------------------------+
