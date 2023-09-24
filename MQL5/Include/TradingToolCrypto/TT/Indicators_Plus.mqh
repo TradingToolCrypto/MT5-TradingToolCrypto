@@ -401,7 +401,7 @@ string get_signal_EMA_CROSS()
    if (Mybars < EMA_PERIOD_A && Mybars < EMA_PERIOD_B) // if total bars is less than 60 bars
    {
       Print("We have less than enough bars on the chart, Robot will wait for more bars before deciding on what to do next");
-      return (0);
+      return ("0");
    }
 
    CopyBuffer(EMA_handle_1, 0, 0, 5, EMA_1);
