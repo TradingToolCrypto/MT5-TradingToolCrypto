@@ -26,4 +26,4 @@ includes full trading api support. market, limits, stops, etc.
 - - ftx (scam)
 - - bithumb (scam)
 ## Exchange List (charting)
-View [Full List] (https://github.com/TradingToolCrypto/TradingTool-Wiki/wiki/CB-Charts#compare-crypto-exchange-charts)
+View [Full List](https://github.com/TradingToolCrypto/TradingTool-Wiki/wiki/CB-Charts#compare-crypto-exchange-charts)
