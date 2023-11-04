@@ -1,11 +1,11 @@
 //+------------------------------------------------------------------+
-//|                                                      ProjectName |
-//|                                      Copyright 2020, CompanyName |
-//|                                       http://www.companyname.net |
+//|                                                TradingToolCrypto |
+//|                           Copyright 2020, TradingToolCrypto Corp |
+//|                                https://www.TradingToolCrypto.com |
 //+------------------------------------------------------------------+
 #property copyright "Copyright 2020, TradingToolCrypto Corp."
 #property link      "https://github.com/tradingtoolcrypto"
-#define VERSION 1.44
+#define VERSION 1.441
 
 #import "CBP_Functions.ex5"
 string RemoveSymbolSeperator(string symbolname, string seperator);
@@ -32,9 +32,6 @@ void RewriteGlobals(string checkifexist, string replacewith);
 string NormalizeString(string value, int digit);
 #import
 
-/*
-bithumb global scam exchange: tons of users can't withdrawal funds
-*/
 #import "Bithumb_api.ex5"
 void Bithumb_Set_Instance(int id);
 bool Bithumb_Get_API_Key(string key, string secret);
@@ -46,9 +43,7 @@ bool Bithumb_Cancel_Trade(string sym, string orderId, string clientOrderId);
 bool Bithumb_Balance(string sym, string quotebase);
 bool Bithumb_GetOpenOrders(string sym, int quoteDigit);
 #import
-/*
-Rebranded to https://ascendex.com/
-*/
+
 #import "Bitmax_api.ex5"
 void Bitmax_Set_Instance(int id);
 bool Bitmax_Get_API_Key(string key, string secret, string account_category);
@@ -63,9 +58,7 @@ bool Bitmax_Cancel_Trade(string sym, string orderId, string clientOrderId);
 bool Bitmax_Cancel_Trade_All(string sym);
 bool Bitmax_GetOpenOrders(string sym, int quoteDigit);
 #import
-/*
-Spot Testnet: https://testnet.binance.vision/
-*/
+
 #import "BinanceTestnet_api.ex5"
 string Binance_Test_ExchangeInfo();
 bool Binance_Test_Cancel_Trade(string sym, long orderId, string clientOrderId);
@@ -414,7 +407,7 @@ input color                   OrderColorStopLimit     = clrGoldenrod;
 input group "-----ADJUSTMENTS BELOW ARE FOR CUSTOM ROBOTS------";
 input ENUM_TRADING_EXCHANGE   Exchange_Number;
 input string                  Exchange_Symbol_Name          = "BTCUSDT";
-input double                  Exchange_Lotsize              = 1.0;
+input double                  Exchange_Lotsize              = 0.0;
 input int                     Exchange_Lot_Precision        = 8;
 input int                     Exchange_Quote_Precision      = 8;
 input double                  Exchange_Leverage             = 10;
