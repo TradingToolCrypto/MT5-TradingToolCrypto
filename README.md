@@ -15,7 +15,8 @@ Visit the [wiki](https://github.com/TradingToolCrypto/TradingTool/wiki) to disco
 - [Telegram Announcements](https://t.me/tradingtool)
 - [Telegram Group](https://t.me/TradingToolCrypto)
 
-# Exchange List 
+# Exchange List (trading)
+includes full trading api support. market, limits, stops, etc.
 - Binance Spot and Futures
 - Bybit Futures 
 - Bitmex Futures
@@ -24,3 +25,5 @@ Visit the [wiki](https://github.com/TradingToolCrypto/TradingTool/wiki) to disco
 - - Old
 - - ftx (scam)
 - - bithumb (scam)
+## Exchange List (charting)
+View [Full List] (https://github.com/TradingToolCrypto/TradingTool-Wiki/wiki/CB-Charts#compare-crypto-exchange-charts)
