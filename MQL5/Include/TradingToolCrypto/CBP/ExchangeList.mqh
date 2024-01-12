@@ -13,6 +13,8 @@ CJAVal jasonClass(NULL, jtUNDEF);
 // #define MacrosYear    2010
 #define EXCHANGE_BINANCE_DEX ".bnx"
 #define EXCHANGE_BINANCE ".bnc"
+#define EXCHANGE_BYBIT_INVERSE ".byi"
+#define EXCHANGE_BYBIT_LINEAR ".byl"
 #define EXCHANGE_BYBIT ".byb"
 #define EXCHANGE_BITMEX ".mex"
 #define EXCHANGE_BITHUMB ".hum"
@@ -35,6 +37,9 @@ CJAVal jasonClass(NULL, jtUNDEF);
 #define EXCHANGE_KUCOIN_FUTURES ".kuf"
 #define EXCHANGE_BTSE ".bts"
 #define EXCHANGE_GEMINI ".gem"
+#define EXCHANGE_MEXC ".mxc"
+
+#define EXCHANGE_CHART_DIGIT 8
 
 enum ENUM_AVAILABLE_EXCHANGE
   {
@@ -52,6 +57,7 @@ enum ENUM_AVAILABLE_EXCHANGE
    BTSE = 20,
    BYBIT_COIN = 2,
    BYBIT_USDT = 22,
+   BYBIT_SPOT = 31,
    BYBIT_COIN_TEST = 23,
    BYBIT_USDT_TEST = 24,
    COINBASE = 9,
@@ -63,6 +69,7 @@ enum ENUM_AVAILABLE_EXCHANGE
    KRAKEN = 18,
    KUCOIN = 4,
    KUCOIN_FUTURES = 19,
+   MEXC = 30,
    PHEMEX = 16,
    SATANG_PRO = 13,
    ZBG = 17,
@@ -70,9 +77,7 @@ enum ENUM_AVAILABLE_EXCHANGE
   };
 
 
-/*
- These are used within the CryptoBridgePro GUI for storing values onInit for faster fetching and better UX
-*/
+
 string BinanceSymbols[];
 string BinanceUSSymbols[];
 string BinanceFuturesSymbols[];
@@ -97,9 +102,164 @@ int BybitSymbolsVolumeDigit[];
 int BitmexSymbolsVolumeDigit[];
 int FTXSymbolsVolumeDigit[];
 
+//+------------------------------------------------------------------+
+int CreateDigitsFromPrice(string quote)
+  {
+   return (RemoveZerosFromString(quote));
+  }
+
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+int RemoveZerosFromString(string value)
+  {
+
+   value = RemoveZerosFromStringValue(value);
+
+
+   int decimal = StringFind(value, ".", 0);
+   if(decimal == -1)
+     {
+      /*
+      decimal not found
+      whole number
+      */
+      return (0);
+     }
+   string decimal_after = StringSubstr(value, decimal + 1, -1);// returns the values after the decimal
+   int decimal_length = StringLen(decimal_after);
+
+   Print("debug Remove Zeros", value, " remaining", decimal_after, " digi ", decimal_length);
+
+   if(decimal_length >= EXCHANGE_CHART_DIGIT)
+     {
+      return(EXCHANGE_CHART_DIGIT);
+     }
+
+   return (decimal_length);
+  }
+//+------------------------------------------------------------------+
+
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+string RemoveZerosFromStringValue(string value)
+  {
+   bool debug = false;
+   string create = "";
+   string result = "";
+   int decimal = StringFind(value, ".", 0);
+   string decimal_before = StringSubstr(value, 0, decimal);
+   string decimal_after = StringSubstr(value, decimal + 1, -1);
+   int decimal_length = StringLen(decimal_after);
+   int try1 = StringFind(decimal_after, "0", decimal_length - 1);
+   if(try1 != -1)
+     {
+      string found_zero_1 = StringSubstr(decimal_after, 0, decimal_length - 1);
+      if(debug)
+         Print(" Found then Edit ==> " + found_zero_1);
+      int try2 = StringFind(found_zero_1, "0", decimal_length - 2);
+      if(try2 != -1)
+        {
+         string found_zero_2 = StringSubstr(found_zero_1, 0, decimal_length - 2);
+         if(debug)
+            Print(" Found then Edit ==> " + found_zero_2);
+         int try3 = StringFind(found_zero_2, "0", decimal_length - 3);
+         if(try3 != -1)
+           {
+            string found_zero_3 = StringSubstr(found_zero_2, 0, decimal_length - 3);
+            if(debug)
+               Print(" Found then Edit ==> " + found_zero_3);
+            int try4 = StringFind(found_zero_3, "0", decimal_length - 4);
+            if(try4 != -1)
+              {
+               string found_zero_4 = StringSubstr(found_zero_3, 0, decimal_length - 4);
+               if(debug)
+                  Print(" Found then Edit ==> " + found_zero_4);
+               int try5 = StringFind(found_zero_4, "0", decimal_length - 5);
+               if(try5 != -1)
+                 {
+                  string found_zero_5 = StringSubstr(found_zero_4, 0, decimal_length - 5);
+                  if(debug)
+                     Print(" Found then Edit ==> " + found_zero_5);
+                  int try6 = StringFind(found_zero_5, "0", decimal_length - 6);
+                  if(try6 != -1)
+                    {
+                     string found_zero_6 = StringSubstr(found_zero_5, 0, decimal_length - 6);
+                     if(debug)
+                        Print(" Found then Edit ==> " + found_zero_6);
+                     int try7 = StringFind(found_zero_6, "0", decimal_length - 7);
+                     if(try7 != -1)
+                       {
+                        string found_zero_7 = StringSubstr(found_zero_6, 0, decimal_length - 7);
+                        if(debug)
+                           Print(" Found then Edit ==> " + found_zero_7);
+                        int try8 = StringFind(found_zero_7, "0", decimal_length - 8);
+                        if(try8 != -1)
+                          {
+                           string found_zero_8 = StringSubstr(found_zero_7, 0, decimal_length - 8);
+                           if(debug)
+                              Print(" Found then Edit ==> " + found_zero_8);
+                           int try9 = StringFind(found_zero_8, "0", decimal_length - 9);
+                          }
+                        else
+                          {
+                           create  = found_zero_7;
+                          }
+                       }
+                     else
+                       {
+                        create  = found_zero_6;
+                       }
+                    }
+                  else
+                    {
+                     create  = found_zero_5;
+                    }
+                 }
+               else
+                 {
+                  create  = found_zero_4;
+                 }
+              }
+            else
+              {
+               create  = found_zero_3;
+              }
+           }
+         else
+           {
+            create  = found_zero_2;
+           }
+        }
+      else
+        {
+         create  = found_zero_1;
+        }
+     }
+   else
+     {
+      create = decimal_after;
+     }
+   if(create != "")
+     {
+      result = decimal_before + "." + create;
+     }
+   else
+     {
+      result = decimal_before;
+     }
+   if(debug)
+      Print(" FINAL RESULT " + result);
+   return(result);
+  }
+//+------------------------------------------------------------------+
+
+
 
 string GLOBAL_exchange = "";
-string get_suffix_exchange_name(string suffix, int id)
+// create a suffix for specific exchange if suffix doesn't exist
+string GetExchangeSuffixFromExchangeID(string suffix, int id)
   {
    if(suffix == "")
      {
@@ -115,7 +275,7 @@ string get_suffix_exchange_name(string suffix, int id)
       if(id == 2)
         {
          GLOBAL_exchange = "Bybit";
-         return(".byb");
+         return(".byi");
         }
       if(id == 3)
         {
@@ -214,11 +374,11 @@ string get_suffix_exchange_name(string suffix, int id)
          GLOBAL_exchange = "BinanceFuturesC";
          return(".bnd");
         }
-//--Bybit USDT 
+
       if(id == 22)
         {
-         GLOBAL_exchange = "BybitU";
-         return(".byt");
+         GLOBAL_exchange = "BybitL";
+         return(".byl");
         }
       if(id == 23)
         {
@@ -230,7 +390,7 @@ string get_suffix_exchange_name(string suffix, int id)
          GLOBAL_exchange = "BybitU";// test net
          return(".bytt");
         }
-//--Bybit      
+      //--Bybit
       if(id == 25)
         {
          GLOBAL_exchange = "Gemini";
@@ -256,6 +416,17 @@ string get_suffix_exchange_name(string suffix, int id)
          GLOBAL_exchange = "Bithumb";
          return(".hum");
         }
+      if(id == 30)
+        {
+         GLOBAL_exchange = "Mexc";
+         return(".mxc");
+        }
+      //bybit spot
+      if(id == 31)
+        {
+         GLOBAL_exchange = "Bybit";
+         return(".byb");
+        }
      }
    return(suffix);
   }
@@ -264,7 +435,7 @@ string get_suffix_exchange_name(string suffix, int id)
  suffix is unqiue for each exchange api
  - input the suffix and get the exchange_number for the cryptobridgeproClass
 */
-int suffix_exchange_number(string id)
+int GetExchangeIDFromChartSuffix(string id)
   {
    if(id == ".bnx")
      {
@@ -274,7 +445,7 @@ int suffix_exchange_number(string id)
      {
       return(1);
      }
-   if(id == ".byb")
+   if(id == ".byi")
      {
       return(2);
      }
@@ -354,7 +525,7 @@ int suffix_exchange_number(string id)
      {
       return(21);
      }
-   if(id == ".byt")// bybit usdt
+   if(id == ".byl")// bybit usdt
      {
       return(22);
      }
@@ -386,6 +557,14 @@ int suffix_exchange_number(string id)
      {
       return(29);
      }
+   if(id == ".mxc")
+     {
+      return(30);
+     }
+   if(id == ".byb")
+     {
+      return(31);
+     }
    return(-1);
   }
 /*
@@ -393,7 +572,7 @@ int suffix_exchange_number(string id)
 
          returns .binance
 */
-string get_suffix_from_symbol(string symbol)
+string GetExchangeSuffixFromChartSymbol(string symbol)
   {
    string sep=".";              // A separator as a character
    ushort u_sep;                  // The code of the separator character
@@ -413,7 +592,7 @@ string get_suffix_from_symbol(string symbol)
 
          returns BTCUSDT
 */
-string remove_suffix_from_symbol(string symbol)
+string RemoveSuffixFromChartSymbol(string symbol)
   {
    string sep=".";              // A separator as a character
    ushort u_sep;                  // The code of the separator character
@@ -440,7 +619,7 @@ string remove_suffix_from_symbol(string symbol)
          - parse out USD
 
 */
-string get_quote_coin(string symbol)
+string GetQuoteAsset(string symbol)
   {
    int index = StringFind(symbol,"USD",0);
    string quote = StringSubstr(symbol,0,index);
@@ -448,19 +627,194 @@ string get_quote_coin(string symbol)
   }
 /*
 
-    get_quote_coin("BTCUSDT", "USDT")
+    GetQuoteAsset("BTCUSDT", "USDT")
 
     returns BTC
 
 */
-string get_quote_coin(string symbol, string base)
+string GetQuoteAsset(string symbol, string base)
   {
-
    int index = StringFind(symbol,base,0);
-//string remove = StringSubstr(symbol,index,-1);
    string quote = StringSubstr(symbol,0,index);
    return(quote);
   }
+
+
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+double CreateTickSizeFromSymbolDigits(int sym_digits)
+  {
+
+   if(sym_digits == 0)
+     {
+      return (1.0);
+     }
+   if(sym_digits == 1)
+     {
+      return (0.1);
+     }
+   if(sym_digits == 2)
+     {
+      return (0.01);
+     }
+   if(sym_digits == 3)
+     {
+      return (0.001);
+     }
+   if(sym_digits == 4)
+     {
+      return (0.0001);
+     }
+   if(sym_digits == 5)
+     {
+      return (0.00001);
+     }
+   if(sym_digits == 6)
+     {
+      return (0.000001);
+     }
+   if(sym_digits == 7)
+     {
+      return (0.0000001);
+     }
+   if(sym_digits == 8)
+     {
+      return (0.00000001);
+     }
+// can MT5 chart assets beyond 8 decimals?
+
+   if(sym_digits == 9)
+     {
+      return (0.000000001);
+     }
+   if(sym_digits == 10)
+     {
+      return (0.0000000001);
+     }
+   if(sym_digits == 11)
+     {
+      return (0.00000000001);
+     }
+   if(sym_digits == 12)
+     {
+      return (0.000000000001);
+     }
+   if(sym_digits == 13)
+     {
+      return (0.0000000000001);
+     }
+   if(sym_digits == 14)
+     {
+      return (0.00000000000001);
+     }
+   if(sym_digits == 15)
+     {
+      return (0.000000000000001);
+     }
+   if(sym_digits == 16)
+     {
+      return (0.0000000000000001);
+     }
+   if(sym_digits == 17)
+     {
+      return (0.00000000000000001);
+     }
+   if(sym_digits == 18)
+     {
+      return (0.000000000000000001);
+     }
+
+   return (1);
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+int CreateDigitsFromTickSize(string value)
+  {
+   double in = StringToDouble(value);
+   if(in == 0.1)
+     {
+      return(1);
+     }
+   if(in == 0.01)
+     {
+      return(2);
+     }
+   if(in == 0.001)
+     {
+      return(3);
+     }
+   if(in == 0.0001)
+     {
+      return(4);
+     }
+   if(in == 0.00001)
+     {
+      return(5);
+     }
+   if(in == 0.000001)
+     {
+      return(6);
+     }
+   if(in == 0.0000001)
+     {
+      return(7);
+     }
+   if(in == 0.00000001)
+     {
+      return(8);
+     }
+// can MT5 chart assets beyond 8 decimals?
+
+   if(in == 0.000000001)
+     {
+      return(9);
+     }
+   if(in == 0.0000000001)
+     {
+      return(10);
+     }
+   if(in == 0.00000000001)
+     {
+      return(11);
+     }
+   if(in == 0.000000000001)
+     {
+      return(12);
+     }
+   if(in == 0.0000000000001)
+     {
+      return(13);
+     }
+   if(in == 0.00000000000001)
+     {
+      return(14);
+     }
+   if(in == 0.000000000000001)
+     {
+      return(15);
+     }
+   if(in == 0.0000000000000001)
+     {
+      return(16);
+     }
+   if(in == 0.00000000000000001)
+     {
+      return(17);
+     }
+   if(in == 0.000000000000000001)
+     {
+      return(18);
+     }
+   if(in == 1)
+     {
+      return(0);
+     }
+   return(0);
+  }
+//+------------------------------------------------------------------+
+
 
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -556,6 +910,10 @@ void create_custom_symbol(string customSymbolName, int symbolDigits, string fold
          ResetLastError();
         }
       //SYMBOL_DIGITS
+      if(symbolDigits > 8)
+        {
+         symbolDigits = 8;
+        }
       if(!CustomSymbolSetInteger(customSymbolName, SYMBOL_DIGITS, symbolDigits))
         {
          Print("CustomSymbolSetInteger | SYMBOL_DIGITS | Failed" + IntegerToString(GetLastError()));
@@ -595,7 +953,7 @@ void create_custom_symbol(string customSymbolName, int symbolDigits, string fold
          ResetLastError();
         }
       //SYMBOL_POINT
-      if(!CustomSymbolSetDouble(customSymbolName, SYMBOL_POINT, get_tick_size(symbolDigits)))
+      if(!CustomSymbolSetDouble(customSymbolName, SYMBOL_POINT, CreateTickSizeFromSymbolDigits(symbolDigits)))
         {
          Print("CustomSymbolSetDouble | SYMBOL_POINT | Failed" + IntegerToString(GetLastError()));
          ResetLastError();
@@ -612,7 +970,7 @@ void create_custom_symbol(string customSymbolName, int symbolDigits, string fold
          ResetLastError();
         }
       //SYMBOL_TRADE_TICK_SIZE
-      if(!CustomSymbolSetDouble(customSymbolName, SYMBOL_TRADE_TICK_SIZE, get_tick_size(symbolDigits)))
+      if(!CustomSymbolSetDouble(customSymbolName, SYMBOL_TRADE_TICK_SIZE, CreateTickSizeFromSymbolDigits(symbolDigits)))
         {
          Print("CustomSymbolSetDouble | SYMBOL_TRADE_TICK_SIZE | Failed" + IntegerToString(GetLastError()));
          ResetLastError();
@@ -642,7 +1000,7 @@ void create_custom_symbol(string customSymbolName, int symbolDigits, string fold
          ResetLastError();
         }
       //SYMBOL_SECTOR
-     
+
       if(!CustomSymbolSetInteger(customSymbolName, SYMBOL_SECTOR, SECTOR_CURRENCY_CRYPTO))
         {
          Print("CustomSymbolSetInteger | SYMBOL_DIGITS | Failed" + IntegerToString(GetLastError()));
@@ -654,7 +1012,7 @@ void create_custom_symbol(string customSymbolName, int symbolDigits, string fold
          Print("CustomSymbolSetInteger | SYMBOL_DIGITS | Failed" + IntegerToString(GetLastError()));
          ResetLastError();
         }
-      
+
 
       if(!SymbolSelect(customSymbolName, true))
         {
@@ -679,93 +1037,4 @@ void create_custom_symbol(string customSymbolName, int symbolDigits, string fold
      }
   }
 
-//+------------------------------------------------------------------+
-//|                                                                  |
-//+------------------------------------------------------------------+
-double get_tick_size(int sym_digits)
-  {
-
-   if(sym_digits == 0)
-     {
-      return (1.0);
-     }
-   if(sym_digits == 1)
-     {
-      return (0.1);
-     }
-   if(sym_digits == 2)
-     {
-      return (0.01);
-     }
-   if(sym_digits == 3)
-     {
-      return (0.001);
-     }
-   if(sym_digits == 4)
-     {
-      return (0.0001);
-     }
-   if(sym_digits == 5)
-     {
-      return (0.00001);
-     }
-   if(sym_digits == 6)
-     {
-      return (0.000001);
-     }
-   if(sym_digits == 7)
-     {
-      return (0.0000001);
-     }
-   if(sym_digits == 8)
-     {
-      return (0.00000001);
-     }
-
-   return (1);
-  }
-//+------------------------------------------------------------------+
-//|                                                                  |
-//+------------------------------------------------------------------+
-int enter_string_get_digit(string value)
-  {
-   double in = StringToDouble(value);
-   if(in == 0.1)
-     {
-      return(1);
-     }
-   if(in == 0.01)
-     {
-      return(2);
-     }
-   if(in == 0.001)
-     {
-      return(3);
-     }
-   if(in == 0.0001)
-     {
-      return(4);
-     }
-   if(in == 0.00001)
-     {
-      return(5);
-     }
-   if(in == 0.000001)
-     {
-      return(6);
-     }
-   if(in == 0.0000001)
-     {
-      return(7);
-     }
-   if(in == 0.00000001)
-     {
-      return(8);
-     }
-   if(in == 1)
-     {
-      return(0);
-     }
-   return(0);
-  }
 //+------------------------------------------------------------------+

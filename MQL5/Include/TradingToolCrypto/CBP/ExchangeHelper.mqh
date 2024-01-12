@@ -587,7 +587,7 @@ string NormalizeSymbol(string symbolname, string seperator)
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-string remove_zeros_from_string(string value)
+string RemoveZerosFromString(string value)
   {
    bool debug = false;
    string create = "";

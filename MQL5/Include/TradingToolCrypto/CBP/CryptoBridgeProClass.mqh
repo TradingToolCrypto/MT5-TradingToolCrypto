@@ -2226,8 +2226,8 @@ void add_exchange_info(int exchangeNumber)
          if(sym == "")
             break;
          BinanceSymbols[i] = sym;
-         BinanceSymbolsQuoteDigit[i] = enter_string_get_digit(jasonClass["symbols"][i]["filters"][0]["tickSize"].ToStr());
-         BinanceSymbolsVolumeDigit[i] = enter_string_get_digit(jasonClass["symbols"][i]["filters"][2]["stepSize"].ToStr());
+         BinanceSymbolsQuoteDigit[i] = CreateDigitsFromTickSize(jasonClass["symbols"][i]["filters"][0]["tickSize"].ToStr());
+         BinanceSymbolsVolumeDigit[i] = CreateDigitsFromTickSize(jasonClass["symbols"][i]["filters"][2]["stepSize"].ToStr());
          count_index++;
         }
       ArrayResize(BinanceSymbols, count_index);
@@ -2308,8 +2308,8 @@ void add_exchange_info(int exchangeNumber)
          if(sym == "")
             break;
          BinanceUSSymbols[i] = sym;
-         BinanceUSSymbolsQuoteDigit[i] = enter_string_get_digit(jasonClass["symbols"][i]["filters"][0]["tickSize"].ToStr());
-         BinanceUSSymbolsVolumeDigit[i] = enter_string_get_digit(jasonClass["symbols"][i]["filters"][2]["stepSize"].ToStr());
+         BinanceUSSymbolsQuoteDigit[i] = CreateDigitsFromTickSize(jasonClass["symbols"][i]["filters"][0]["tickSize"].ToStr());
+         BinanceUSSymbolsVolumeDigit[i] = CreateDigitsFromTickSize(jasonClass["symbols"][i]["filters"][2]["stepSize"].ToStr());
          count_index++;
         }
       ArrayResize(BinanceUSSymbols, count_index);
