@@ -68,27 +68,27 @@ bool CreateRectangle(string name,int sub_window,datetime time1,double price1,dat
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-bool ObjCreateRectangleLabel(const string name,const  int sub_window,const  int x,const  int y,const int width, const int height, color bg_color,const ENUM_BORDER_TYPE border , const int border_width, const ENUM_BASE_CORNER corner)
+bool ObjCreateRectangleLabel(const string name,const  int sub_window,const  int x,const  int y,const int width, const int height, color bg_color,const ENUM_BORDER_TYPE border, const int border_width, const ENUM_BASE_CORNER corner)
   {
    if(ObjectFind(0,name) != -1)
      {
       if(ObjectCreate(0,name,OBJ_RECTANGLE_LABEL,sub_window,0,0))
         {
-        
+
          ObjectSetInteger(0,name,OBJPROP_BACK,true);
          ObjectSetInteger(0,name,OBJPROP_XDISTANCE,x);
          ObjectSetInteger(0,name,OBJPROP_YDISTANCE,y);
          ObjectSetInteger(0,name,OBJPROP_XSIZE,width);
          ObjectSetInteger(0,name,OBJPROP_YSIZE,height);
-         
-         
+
+
          ObjectSetInteger(0,name,OBJPROP_BGCOLOR,bg_color);
          ObjectSetInteger(0,name,OBJPROP_COLOR,bg_color);
          ObjectSetInteger(0,name,OBJPROP_BORDER_TYPE,border);
          ObjectSetInteger(0,name,OBJPROP_WIDTH,border_width);
          ObjectSetInteger(0,name,OBJPROP_CORNER,corner);
          ObjectSetInteger(0,name,OBJPROP_STYLE,STYLE_SOLID);
-         
+
          ObjectSetInteger(0,name,OBJPROP_SELECTABLE,0);
          ObjectSetInteger(0,name,OBJPROP_SELECTED,0);
          ObjectSetInteger(0,name,OBJPROP_HIDDEN,true);
@@ -111,7 +111,7 @@ bool ObjCreateRectangleLabel(const string name,const  int sub_window,const  int 
          ObjectSetInteger(0,name,OBJPROP_WIDTH,border_width);
          ObjectSetInteger(0,name,OBJPROP_CORNER,corner);
          ObjectSetInteger(0,name,OBJPROP_STYLE,STYLE_SOLID);
-         
+
          ObjectSetInteger(0,name,OBJPROP_SELECTABLE,0);
          ObjectSetInteger(0,name,OBJPROP_SELECTED,0);
          ObjectSetInteger(0,name,OBJPROP_HIDDEN,true);
@@ -147,23 +147,28 @@ void CreateButton(
    bool aBack = false,
    long aTimeFrames = OBJ_ALL_PERIODS)
   {
-   ObjectDelete(aChartID, aObjName);
-   ObjectCreate(aChartID, aObjName, OBJ_BUTTON, aWindow, 0, 0);
-   ObjectSetInteger(aChartID, aObjName, OBJPROP_STATE, aState);
-   ObjectSetInteger(aChartID, aObjName, OBJPROP_CORNER, aCorner);
-   ObjectSetInteger(aChartID, aObjName, OBJPROP_XDISTANCE, aX);
-   ObjectSetInteger(aChartID, aObjName, OBJPROP_YDISTANCE, aY);
-   ObjectSetInteger(aChartID, aObjName, OBJPROP_XSIZE, aWidth);
-   ObjectSetInteger(aChartID, aObjName, OBJPROP_YSIZE, aHeight);
-   ObjectSetInteger(aChartID, aObjName, OBJPROP_BGCOLOR, aBgColor);
-   ObjectSetInteger(aChartID, aObjName, OBJPROP_COLOR, aTextColor);
-   ObjectSetString(aChartID, aObjName, OBJPROP_FONT, aFont);
-   ObjectSetInteger(aChartID, aObjName, OBJPROP_FONTSIZE, aFontSize);
-   ObjectSetString(aChartID, aObjName, OBJPROP_TEXT, aCaption);
-   ObjectSetInteger(aChartID, aObjName, OBJPROP_BACK, aBack);
-   ObjectSetInteger(aChartID, aObjName, OBJPROP_TIMEFRAMES, aTimeFrames);
-   ObjectSetInteger(aChartID, aObjName, OBJPROP_SELECTABLE, false);
-   ObjectSetInteger(aChartID, aObjName, OBJPROP_SELECTED, false);
+
+   if(ObjectFind(0,aObjName) != -1)
+     {
+      if(ObjectCreate(aChartID, aObjName, OBJ_BUTTON, aWindow, 0, 0))
+        {
+         ObjectSetInteger(aChartID, aObjName, OBJPROP_STATE, aState);
+         ObjectSetInteger(aChartID, aObjName, OBJPROP_CORNER, aCorner);
+         ObjectSetInteger(aChartID, aObjName, OBJPROP_XDISTANCE, aX);
+         ObjectSetInteger(aChartID, aObjName, OBJPROP_YDISTANCE, aY);
+         ObjectSetInteger(aChartID, aObjName, OBJPROP_XSIZE, aWidth);
+         ObjectSetInteger(aChartID, aObjName, OBJPROP_YSIZE, aHeight);
+         ObjectSetInteger(aChartID, aObjName, OBJPROP_BGCOLOR, aBgColor);
+         ObjectSetInteger(aChartID, aObjName, OBJPROP_COLOR, aTextColor);
+         ObjectSetString(aChartID, aObjName, OBJPROP_FONT, aFont);
+         ObjectSetInteger(aChartID, aObjName, OBJPROP_FONTSIZE, aFontSize);
+         ObjectSetString(aChartID, aObjName, OBJPROP_TEXT, aCaption);
+         ObjectSetInteger(aChartID, aObjName, OBJPROP_BACK, aBack);
+         ObjectSetInteger(aChartID, aObjName, OBJPROP_TIMEFRAMES, aTimeFrames);
+         ObjectSetInteger(aChartID, aObjName, OBJPROP_SELECTABLE, false);
+         ObjectSetInteger(aChartID, aObjName, OBJPROP_SELECTED, false);
+        }
+     }
   }
 
 
@@ -294,10 +299,10 @@ void ObjCreateButton(
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-bool ObjCreateHLine(string name, string text, datetime time1, double price1, datetime time2, double price2, color col, int lineWidth, int lineStyle)export
+bool ObjCreateHLine(string name, string text, datetime time1, double price1, color col, int lineWidth, int lineStyle)export
   {
 
-   price2 = price1;
+
 
    if(ObjectCreate(0, name, OBJ_HLINE, 0, time1, price1))
      {
@@ -312,5 +317,89 @@ bool ObjCreateHLine(string name, string text, datetime time1, double price1, dat
       return (true);
      }
    return (false);
+  }
+//+------------------------------------------------------------------+
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+bool ObjCreateVLine(string name, string text, datetime time1, double price1, color col, int lineWidth, int lineStyle)export
+  {
+
+
+
+   if(ObjectCreate(0, name, OBJ_VLINE, 0, time1, price1))
+     {
+      // ObjectSetDouble(0,name,OBJPROP_PRICE,price1);
+      ObjectSetInteger(0, name, OBJPROP_COLOR, col);
+      ObjectSetInteger(0, name, OBJPROP_WIDTH, lineWidth);
+      ObjectSetInteger(0, name, OBJPROP_STYLE, lineStyle);
+      ObjectSetInteger(0, name, OBJPROP_BACK, true);
+      ObjectSetString(0, name, OBJPROP_TEXT, text);
+      ObjectSetInteger(0, name, OBJPROP_SELECTABLE, true);
+      ObjectSetInteger(0, name, OBJPROP_HIDDEN, false);
+      return (true);
+     }
+   return (false);
+  }
+//+------------------------------------------------------------------+
+
+
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+bool ObjCreateTLine(string name, string text, datetime time1, double price1, datetime time2, double price2, color col, int lineWidth, int lineStyle)export
+  {
+
+   if(ObjectCreate(0, name, OBJ_TREND, 0, time1, price1,price2, time2))
+     {
+      // ObjectSetDouble(0,name,OBJPROP_PRICE,price1);
+      ObjectSetInteger(0, name, OBJPROP_COLOR, col);
+      ObjectSetInteger(0, name, OBJPROP_WIDTH, lineWidth);
+      ObjectSetInteger(0, name, OBJPROP_STYLE, lineStyle);
+      ObjectSetInteger(0, name, OBJPROP_BACK, true);
+      ObjectSetString(0, name, OBJPROP_TEXT, text);
+      ObjectSetInteger(0, name, OBJPROP_SELECTABLE, true);
+      ObjectSetInteger(0, name, OBJPROP_HIDDEN, false);
+      return (true);
+     }
+   return (false);
+  }
+//+------------------------------------------------------------------+
+
+//+------------------------------------------------------------------+
+
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+bool ObjCreateChannelLine(string name, string text, datetime time1, double price1, datetime time2, double price2,datetime time3, double price3, color col, int lineWidth, int lineStyle)export
+  {
+
+
+   if(ObjectCreate(0, name, OBJ_CHANNEL, 0, time1,price1,time2,price2,time3,price3))
+     {
+      // ObjectSetDouble(0,name,OBJPROP_PRICE,price1);
+
+      ObjectSetInteger(0, name, OBJPROP_COLOR, col);
+      ObjectSetInteger(0, name, OBJPROP_WIDTH, lineWidth);
+      ObjectSetInteger(0, name, OBJPROP_STYLE, lineStyle);
+      ObjectSetInteger(0, name, OBJPROP_BACK, true);
+      ObjectSetString(0, name, OBJPROP_TEXT, text);
+      ObjectSetInteger(0, name, OBJPROP_SELECTABLE, true);
+      ObjectSetInteger(0, name, OBJPROP_HIDDEN, false);
+
+      ObjectSetInteger(0,name,OBJPROP_RAY_RIGHT,true);
+
+      ObjectSetInteger(0,name,OBJPROP_RAY_LEFT,true);
+
+      return (true);
+     }
+   return (false);
+  }
+//+------------------------------------------------------------------+
+
+//+------------------------------------------------------------------+
+bool ObjEditTextField(string name, string text)export
+  {
+   return(ObjectSetString(0, name, OBJPROP_TEXT, text));
   }
 //+------------------------------------------------------------------+
