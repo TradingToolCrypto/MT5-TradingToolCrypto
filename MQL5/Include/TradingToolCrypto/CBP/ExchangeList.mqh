@@ -11,6 +11,7 @@ CJAVal jasonClass(NULL, jtUNDEF);
 //| defines                                                          |
 //+------------------------------------------------------------------+
 // #define MacrosYear    2010
+#define EXCHANGE_AEVO ".avo"
 #define EXCHANGE_BINANCE_DEX ".bnx"
 #define EXCHANGE_BINANCE ".bnc"
 #define EXCHANGE_BYBIT_INVERSE ".byi"
@@ -43,6 +44,7 @@ CJAVal jasonClass(NULL, jtUNDEF);
 
 enum ENUM_AVAILABLE_EXCHANGE
   {
+   AEVO = 32,
    ASCENDEX = 28,
    BINANCE = 1,
    BINANCE_US = 6,
@@ -108,9 +110,7 @@ int CreateDigitsFromPrice(string quote)
    return (RemoveZerosFromString(quote));
   }
 
-//+------------------------------------------------------------------+
-//|                                                                  |
-//+------------------------------------------------------------------+
+// returns 0 or up to 8 digits defined by the MT5 digit limitation
 int RemoveZerosFromString(string value)
   {
 
@@ -128,8 +128,6 @@ int RemoveZerosFromString(string value)
      }
    string decimal_after = StringSubstr(value, decimal + 1, -1);// returns the values after the decimal
    int decimal_length = StringLen(decimal_after);
-
-   Print("debug Remove Zeros", value, " remaining", decimal_after, " digi ", decimal_length);
 
    if(decimal_length >= EXCHANGE_CHART_DIGIT)
      {
@@ -427,6 +425,13 @@ string GetExchangeSuffixFromExchangeID(string suffix, int id)
          GLOBAL_exchange = "Bybit";
          return(".byb");
         }
+
+      //bybit spot
+      if(id == 32)
+        {
+         GLOBAL_exchange = "Aevo";
+         return(".avo");
+        }
      }
    return(suffix);
   }
@@ -564,6 +569,10 @@ int GetExchangeIDFromChartSuffix(string id)
    if(id == ".byb")
      {
       return(31);
+     }
+   if(id == ".avo")
+     {
+      return(32);
      }
    return(-1);
   }

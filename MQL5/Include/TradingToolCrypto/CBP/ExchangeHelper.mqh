@@ -11,7 +11,12 @@ string ttc_d(string hexData);
 #include <TradingToolCrypto\MQL\sha256.mqh>
 #include <TradingToolCrypto\MQL\Jason.mqh>
 SHA256 hash256;
-string GLOBAL_Parse = "#";
+string GLOBAL_Parse = "#";// see also CryptoBridgeProClass.mqh : GLOBAL_Parse_Separator
+
+/*
+show only the wallets with more than this value
+*/
+double GLOBAL_Wallet_Mininum = 0.01;
 
 
 /*
@@ -385,8 +390,7 @@ void Object_Delete(string objectname)
      }
   }
 //+------------------------------------------------------------------+
-//|                                                                  |
-//+------------------------------------------------------------------+
+// duplicate function exists in the CBP_FUNCTIONS library, but a lib can't use functinos from other lib. only include'
 void SetText_subWindow(string name, string text, int x, int y, color colour, int size = 12)
   {
    int find = ObjectFind(0, name);
@@ -429,10 +433,53 @@ void SetText_subWindow(string name, string text, int x, int y, color colour, int
         }
      }
   }
-//+------------------------------------------------------------------+
-//|                                                                  |
-//+------------------------------------------------------------------+
 
+
+//+------------------------------------------------------------------+
+//|            SetSubWindowText                                                      |
+//+------------------------------------------------------------------+
+void SetText_AnySubWindow(int subWindowIndex, string name, string text, int x, int y, color colour, int size = 12)
+  {
+   int find = ObjectFind(subWindowIndex, name);
+   if(find >= 0)  // Object found in window 0 or window 1
+     {
+      //  Print("OBJECT FOUND "+name  + " chart window():" + find );
+      string ob_text = ObjectGetString(0, name, OBJPROP_TEXT, 0);
+      //  Print("OBJECT FOUND "+name+" obj(text):"+ob_text+" change obj(text): "+text);
+      if(ob_text != text)
+        {
+
+         if(ObjectSetString(0, name, OBJPROP_TEXT, text))
+           {
+            // Print("SetText_subWindow() Text Updated: "+text);
+           }
+         else
+           {
+            Print(" objectSetString failed; Error(): " + IntegerToString(GetLastError()));
+           }
+        }
+     }
+   else
+     {
+      //+------------------------------------------------------------------+
+      //|                                                                  |
+      //+------------------------------------------------------------------+
+      if(ObjectCreate(0, name, OBJ_LABEL, subWindowIndex, 0, 0))
+        {
+         ObjectSetInteger(0, name, OBJPROP_XDISTANCE, x);
+         ObjectSetInteger(0, name, OBJPROP_YDISTANCE, y);
+         ObjectSetInteger(0, name, OBJPROP_COLOR, colour);
+         ObjectSetInteger(0, name, OBJPROP_FONTSIZE, size);
+         ObjectSetInteger(0, name, OBJPROP_CORNER, CORNER_LEFT_UPPER);
+         ObjectSetString(0, name, OBJPROP_TEXT, text);
+
+        }
+      else
+        {
+         Print(" object creation failed; Error(): " + IntegerToString(GetLastError()));
+        }
+     }
+  }
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
@@ -705,9 +752,6 @@ string RemoveZerosFromString(string value)
    return(result);
   }
 //+------------------------------------------------------------------+
-//+------------------------------------------------------------------+
-
-//+------------------------------------------------------------------+
 //| Converts a hex string into a string and char array               |
 //+------------------------------------------------------------------+
 string hexStringToCharArray(string hex,uchar &decode[])
@@ -745,5 +789,4 @@ string hexStringToCharArray(string hex,uchar &decode[])
      }
    return CharArrayToString(decode);
   }
-//+------------------------------------------------------------------+
 //+------------------------------------------------------------------+
