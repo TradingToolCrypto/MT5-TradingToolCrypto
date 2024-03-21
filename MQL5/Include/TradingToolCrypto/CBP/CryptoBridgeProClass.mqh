@@ -149,6 +149,7 @@ bool BinanceFuturesC_GetPriceBest(string sym, int quote_digit);
 bool BinanceFuturesC_GetPrice(string sym, int quoteDigit);
 bool BinanceFuturesC_GetOpenInterest(string sym, int quoteDigit);
 bool BinanceFuturesC_GetFundRate(string sym, int quoteDigit);
+bool BinanceFuturesC_GetFundRate_All(double min_funding_rate);
 bool BinanceFuturesC_GetOpenOrders(string sym, int quote_precision);
 bool BinanceFuturesC_GetServerTime();
 bool BinanceFuturesC_Set_Leverage(string sym, double leverage);
@@ -1995,12 +1996,12 @@ void CryptoBridge::Parse_Wallets(string exchangeName, int x, int y)
       u_sep = StringGetCharacter(GLOBAL_Parse_Separator, 0);
       k = StringSplit(name, u_sep, result);
 
-      if(k==4)
+      if(k==4)  // ||k==5 Allow custom naming for more filtering options
         {
-         if(StringToInteger(result[0]) >=1)
+         if(StringToInteger(result[0]) == unique_id)
            {
 
-            if(result[1] != "")
+            if(result[1] == exchangeName)
               {
 
                if(result[2] == "Wallet")
@@ -2009,8 +2010,9 @@ void CryptoBridge::Parse_Wallets(string exchangeName, int x, int y)
                   ArrayResize(exchange_wallets_balance, countD + 1, 0);
                   ArrayResize(exchange_wallets_freemargin, countD + 1, 0);
                   ArrayResize(exchange_wallets_pnl, countD + 1, 0);
-                  exchange_wallets[countD] = result[3];
+                  exchange_wallets[countD] = result[3];//Wallet Naming < aka equity, margin, pnl, balance etc
                   exchange_wallets_balance[countD] = GlobalVariableGet(name);
+                  // Special case : refactor (2024)
                   exchange_wallets_freemargin[countD] = GlobalVariableGet(name + GLOBAL_Parse_Separator + "MARGIN");
                   exchange_wallets_pnl[countD] = GlobalVariableGet(name + GLOBAL_Parse_Separator + "PNL");
                   countD++;
@@ -2030,7 +2032,7 @@ void CryptoBridge::Parse_Wallets(string exchangeName, int x, int y)
       ArrayResize(exchange_wallets_pnl, countD, 0);
       for(int i = 0; i < countD; i++)
         {
-         if(exchange_wallets_balance[i] != 0)
+         if(exchange_wallets_balance[i] != 0)// Only show balances on GUI that exist
            {
             if(HD_Screen)
               {
@@ -2186,6 +2188,11 @@ bool CryptoBridge::Get_FundRateAll(int exchangeNumber, double minimum)
    if(exchangeNumber == 5)
      {
       return (BinanceFutures_GetFundRate_All(minimum));
+     }
+   if(exchangeNumber == 21)
+     {
+      //BinanceFuturesC_GetFundRate_All
+      return (BinanceFuturesC_GetFundRate_All(minimum));
      }
    return(false);
   }

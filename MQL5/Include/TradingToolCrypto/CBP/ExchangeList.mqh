@@ -450,7 +450,7 @@ int GetExchangeIDFromChartSuffix(string id)
      {
       return(1);
      }
-   if(id == ".byi")
+   if(id == ".byi")// Inverse
      {
       return(2);
      }
@@ -530,9 +530,9 @@ int GetExchangeIDFromChartSuffix(string id)
      {
       return(21);
      }
-   if(id == ".byl")// bybit usdt
+   if(id == ".byl")// linear bybit usdt
      {
-      return(22);
+      return(2);
      }
    if(id == ".bybt")// bybit coin testnet
      {
@@ -566,9 +566,9 @@ int GetExchangeIDFromChartSuffix(string id)
      {
       return(30);
      }
-   if(id == ".byb")
+   if(id == ".byb")// spot
      {
-      return(31);
+      return(2);
      }
    if(id == ".avo")
      {
