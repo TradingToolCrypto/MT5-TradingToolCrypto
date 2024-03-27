@@ -21,4 +21,6 @@ June 24th, 2021 CBP FrameWork v1.02 Added new functions for deleting pending ord
 July 2021 New Libraries - CryptoBridgePro update - refactor Crypto Charts
 July 28th, 2021 - Add Historical Input Day/Date scripts v1.0
 Oct 1st, 2023 - docs updated, compiler errors fixed, CBLite fixed 
-Jan 12, 2024 - CB_ChartAll v1.32 : scripts, and include files uploaded. Bybit v5 api added for charting inverse, spot, linear markets
+Jan 12, 2024 - CB_ChartAll v1.32 : scripts, and include files uploaded. Bybit v5 api added for charting 
+inverse, spot, linear markets
+Mar 27, 2024 - CB_ChartAll v1.342 : binance spot fixed 
