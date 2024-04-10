@@ -42,6 +42,13 @@ CJAVal jasonClass(NULL, jtUNDEF);
 
 #define EXCHANGE_CHART_DIGIT 8
 
+/*
+BYBIT_USDT = 22,
+   BYBIT_SPOT = 31,
+   BYBIT_COIN_TEST = 23,
+   BYBIT_USDT_TEST = 24,
+*/
+
 enum ENUM_AVAILABLE_EXCHANGE
   {
    AEVO = 32,
@@ -57,11 +64,7 @@ enum ENUM_AVAILABLE_EXCHANGE
    BITMEX = 3,
    BITSTAMP =11,
    BTSE = 20,
-   BYBIT_COIN = 2,
-   BYBIT_USDT = 22,
-   BYBIT_SPOT = 31,
-   BYBIT_COIN_TEST = 23,
-   BYBIT_USDT_TEST = 24,
+   BYBIT = 2,
    COINBASE = 9,
    DERIBIT = 7,
    DIGITEX = 14,
@@ -273,8 +276,9 @@ string GetExchangeSuffixFromExchangeID(string suffix, int id)
       if(id == 2)
         {
          GLOBAL_exchange = "Bybit";
-         return(".byi");
+         return(".byb");
         }
+
       if(id == 3)
         {
          GLOBAL_exchange = "Binance";
@@ -373,22 +377,7 @@ string GetExchangeSuffixFromExchangeID(string suffix, int id)
          return(".bnd");
         }
 
-      if(id == 22)
-        {
-         GLOBAL_exchange = "BybitL";
-         return(".byl");
-        }
-      if(id == 23)
-        {
-         GLOBAL_exchange = "Bybit";// test net
-         return(".bybt");
-        }
-      if(id == 24)
-        {
-         GLOBAL_exchange = "BybitU";// test net
-         return(".bytt");
-        }
-      //--Bybit
+
       if(id == 25)
         {
          GLOBAL_exchange = "Gemini";
@@ -439,6 +428,10 @@ string GetExchangeSuffixFromExchangeID(string suffix, int id)
 /*
  suffix is unqiue for each exchange api
  - input the suffix and get the exchange_number for the cryptobridgeproClass
+
+ spot market suffix : byb
+linear markets suffix : byl
+inverse markets suffix : byi
 */
 int GetExchangeIDFromChartSuffix(string id)
   {
@@ -451,6 +444,18 @@ int GetExchangeIDFromChartSuffix(string id)
       return(1);
      }
    if(id == ".byi")// Inverse
+     {
+      return(2);
+     }
+   if(id == ".byl")// linear bybit usdt
+     {
+      return(2);
+     }
+   if(id == ".byb")// bybit spot
+     {
+      return(2);
+     }
+   if(id == ".byo") // bybit options
      {
       return(2);
      }
@@ -530,18 +535,7 @@ int GetExchangeIDFromChartSuffix(string id)
      {
       return(21);
      }
-   if(id == ".byl")// linear bybit usdt
-     {
-      return(2);
-     }
-   if(id == ".bybt")// bybit coin testnet
-     {
-      return(2);
-     }
-   if(id == ".bytt") // bybit usdt testnet
-     {
-      return(22);
-     }
+
    if(id == ".gem")
      {
       return(25);
