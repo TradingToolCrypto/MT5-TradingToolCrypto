@@ -21,7 +21,8 @@ includes full trading api support. market, limits, stops, etc.
 - Bybit Spot, Futures, Options 
 - Bitmex Futures
 - Ascendex Spot trading 
-- Kucoin Spot trading 
+- Kucoin Spot trading
+- Mexc Spot trading (up to Mexc to support the asset pair: contact them)
 - - Old
 - - ftx (scam)
 - - bithumb (scam)
