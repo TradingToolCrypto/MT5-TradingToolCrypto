@@ -18,7 +18,7 @@ Visit the [wiki](https://github.com/TradingToolCrypto/TradingTool/wiki) to disco
 # Exchange List (trading)
 includes full trading api support. market, limits, stops, etc.
 - Binance Spot and Futures
-- Bybit Futures 
+- Bybit Spot, Futures, Options 
 - Bitmex Futures
 - Ascendex Spot trading 
 - Kucoin Spot trading 
