@@ -11,9 +11,12 @@ Visit the [wiki](https://github.com/TradingToolCrypto/TradingTool/wiki) to disco
 
 # Trading Tool Crypto
 - [website](https://tradingtoolcrypto.com)
-- [Youtube Tutorials](https://youtu.be/7NNFIp6vtFI)
+- [Youtube Tutorials](https://youtube.com/@RealTradingTool)
 - [Telegram Announcements](https://t.me/tradingtool)
 - [Telegram Group](https://t.me/TradingToolCrypto)
+
+## Exchange List (charting)
+View [Full List](https://github.com/TradingToolCrypto/TradingTool-Wiki/wiki/CB-Charts#compare-crypto-exchange-charts)
 
 # Exchange List (trading)
 includes full trading api support. market, limits, stops, etc.
@@ -23,8 +26,5 @@ includes full trading api support. market, limits, stops, etc.
 - Ascendex Spot trading 
 - Kucoin Spot trading
 - Mexc Spot trading (up to Mexc to support the asset pair: contact them)
-- - Old
-- - ftx (scam)
-- - bithumb (scam)
-## Exchange List (charting)
-View [Full List](https://github.com/TradingToolCrypto/TradingTool-Wiki/wiki/CB-Charts#compare-crypto-exchange-charts)
+
+
