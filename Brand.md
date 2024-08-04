@@ -6,7 +6,7 @@ Colors
 
 
 ``` 
-color zDarkBlue = C'58,71,158,255';
+color zDarkBlue = `C'58,71,158,255'`;
 color     zLightBlue = C'20,188,252';
 color     zRed = C'234,53,75,255';
 ```
