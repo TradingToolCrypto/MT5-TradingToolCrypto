@@ -59,10 +59,11 @@ void charts_run(int LoopSize)
       if(SymbolSelect(symOpenChart, true))
         {
          ChartClose(prevChartId);
-         currentChartId=   ChartOpen(symOpenChart, PERIOD_M1);
+         currentChartId=   ChartOpen(symOpenChart, TF_M1);
          ChartApplyTemplate(currentChartId,Template_Name_M1);
          Sleep(TA_DELAY);
          prevChartId = currentChartId;
+
         }
      }
 

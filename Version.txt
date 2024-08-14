@@ -25,3 +25,4 @@ Jan 12, 2024 - CB_ChartAll v1.32 : scripts, and include files uploaded. Bybit v5
 inverse, spot, linear markets
 Mar 27, 2024 - CB_ChartAll v1.342 : binance spot fixed 
 Aug 1, 2024 - Pro and Elite packages , new paymentbot, scripts to manage charts, Historical_Input_Date_Quick 100x faster, Bar_Price replaces Chart_Symbol
+Aug 4, 2024 - Loop M1 Charts script 
