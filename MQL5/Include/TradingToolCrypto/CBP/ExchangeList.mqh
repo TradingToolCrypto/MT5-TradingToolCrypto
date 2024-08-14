@@ -6,48 +6,52 @@
 #property copyright "Copyright 2020, TradingToolCrypto Corp."
 #property link      "https://github.com/TradingToolCrypto/TradingTool-Wiki/wiki"
 #include <TradingToolCrypto\MQL\Jason.mqh>
+#include <TradingToolCrypto\CBP\ExchangeCandles.mqh>
+#include <TradingToolCrypto\CBP\ExchangeUrls.mqh>
+#include <TradingToolCrypto\TT\SymbolStrings.mqh>
+
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
 CJAVal jasonClass(NULL, jtUNDEF);
 //+------------------------------------------------------------------+
 //| defines                                                          |
 //+------------------------------------------------------------------+
 // #define MacrosYear    2010
 #define EXCHANGE_AEVO ".avo"
+#define EXCHANGE_ASCENDEX ".asc"
 #define EXCHANGE_BINANCE_DEX ".bnx"
 #define EXCHANGE_BINANCE ".bnc"
-#define EXCHANGE_BYBIT_INVERSE ".byi"
-#define EXCHANGE_BYBIT_LINEAR ".byl"
-#define EXCHANGE_BYBIT ".byb"
-#define EXCHANGE_BITMEX ".mex"
-#define EXCHANGE_BITHUMB ".hum"
-#define EXCHANGE_KUCOIN ".kuc"
 #define EXCHANGE_BINANCE_FUTURES ".bnf"
 #define EXCHANGE_BINANCE_FUTURES_COIN ".bnd"
 #define EXCHANGE_BINANCE_US ".bnu"
-#define EXCHANGE_DERIBIT ".der"
-#define EXCHANGE_OKEX ".okx"
-#define EXCHANGE_COINBASE ".cbs"
+#define EXCHANGE_BITMEX ".mex"
+#define EXCHANGE_BITHUMB ".hum"
 #define EXCHANGE_BITFINEX ".btf"
 #define EXCHANGE_BITSTAMP ".bsp"
-#define EXCHANGE_FTX ".ftx"
-#define EXCHANGE_SATANG ".sat"
-#define EXCHANGE_DIGITEX ".dig"
-#define EXCHANGE_HUOBI ".huo"
-#define EXCHANGE_PHEMEX ".pme"
-#define EXCHANGE_ZBG ".zbg"
-#define EXCHANGE_KRAKEN ".kra"
-#define EXCHANGE_KUCOIN_FUTURES ".kuf"
+#define EXCHANGE_BLOFIN ".fin"
 #define EXCHANGE_BTSE ".bts"
+#define EXCHANGE_BYBIT_INVERSE ".byi"
+#define EXCHANGE_BYBIT_LINEAR ".byl"
+#define EXCHANGE_BYBIT ".byb"
+#define EXCHANGE_BYBIT_OPTIONS ".byo"
+#define EXCHANGE_COINBASE ".cbs"
+#define EXCHANGE_DERIBIT ".der"
+#define EXCHANGE_DIGITEX ".dig" //Exchange ID 14 now available ||  Project Rebranded after closing down : https://roguechain.io/ 
+#define EXCHANGE_FTX ".ftx"
 #define EXCHANGE_GEMINI ".gem"
+#define EXCHANGE_HUOBI ".huo"
+#define EXCHANGE_KRAKEN ".kra"
+#define EXCHANGE_KUCOIN ".kuc"
+#define EXCHANGE_KUCOIN_FUTURES ".kuf"
 #define EXCHANGE_MEXC ".mxc"
-
+#define EXCHANGE_OKEX ".okx"
+#define EXCHANGE_PHEMEX ".phe"
+#define EXCHANGE_PHEMEX_FUTURES ".phf"
+#define EXCHANGE_SATANG ".sat"
+#define EXCHANGE_ZBG ".zbg"
+// More
 #define EXCHANGE_CHART_DIGIT 8
-
-/*
-BYBIT_USDT = 22,
-   BYBIT_SPOT = 31,
-   BYBIT_COIN_TEST = 23,
-   BYBIT_USDT_TEST = 24,
-*/
 
 enum ENUM_AVAILABLE_EXCHANGE
   {
@@ -63,6 +67,7 @@ enum ENUM_AVAILABLE_EXCHANGE
    BITFINEX = 10,
    BITMEX = 3,
    BITSTAMP =11,
+   BLOFIN = 33,
    BTSE = 20,
    BYBIT = 2,
    COINBASE = 9,
@@ -76,6 +81,7 @@ enum ENUM_AVAILABLE_EXCHANGE
    KUCOIN_FUTURES = 19,
    MEXC = 30,
    PHEMEX = 16,
+   PHEMEX_FUTURES = 34,
    SATANG_PRO = 13,
    ZBG = 17,
 // OKEX = 8,
@@ -118,7 +124,6 @@ int RemoveZerosFromString(string value)
   {
 
    value = RemoveZerosFromStringValue(value);
-
 
    int decimal = StringFind(value, ".", 0);
    if(decimal == -1)
@@ -266,123 +271,126 @@ string GetExchangeSuffixFromExchangeID(string suffix, int id)
      {
       if(id == 0)
         {
-         return(".bnx");
+         GLOBAL_exchange = "BinanceDex";
+         return(EXCHANGE_BINANCE_DEX);
         }
       if(id == 1)
         {
          GLOBAL_exchange = "Binance";
-         return(".bnc");
+         return(EXCHANGE_BINANCE);
         }
       if(id == 2)
         {
          GLOBAL_exchange = "Bybit";
-         return(".byb");
+         return(EXCHANGE_BYBIT);
         }
 
       if(id == 3)
         {
-         GLOBAL_exchange = "Binance";
-         return(".mex");
+         GLOBAL_exchange = "Bitmex";
+         return(EXCHANGE_BITMEX);
         }
+
       if(id == 4)
         {
          GLOBAL_exchange = "Kucoin";
-         return(".kuc");
+         return(EXCHANGE_KUCOIN);
         }
       if(id == 5)
         {
          GLOBAL_exchange = "BinanceFutures";
-         return(".bnf");
+         return(EXCHANGE_BINANCE_FUTURES);
         }
       if(id == 6)
         {
          GLOBAL_exchange = "BinanceUS";
-         return(".bnu");
+         return(EXCHANGE_BINANCE_US);
         }
       if(id == 7)
         {
          GLOBAL_exchange = "Deribit";
-         return(".der");
+         return(EXCHANGE_DERIBIT);
         }
       if(id == 8)
         {
          GLOBAL_exchange = "Okex";
-         return(".okx");
+         return(EXCHANGE_OKEX);
         }
       if(id == 9)
         {
          GLOBAL_exchange = "Coinbase";
-         return(".cbs");
+         return(EXCHANGE_COINBASE);
         }
       if(id == 10)
         {
          GLOBAL_exchange = "Bitfinex";
-         return(".btf");
+         return(EXCHANGE_BITFINEX);
         }
       if(id == 11)
         {
          GLOBAL_exchange = "Bitstamp";
-         return(".bsp");
+         return(EXCHANGE_BITSTAMP);
         }
       if(id == 12)
         {
          GLOBAL_exchange = "FTX";
-         return(".ftx");
+         return(EXCHANGE_FTX);
         }
       if(id == 13)
         {
          GLOBAL_exchange = "Satang";
-         return(".sat");
+         return(EXCHANGE_SATANG);
         }
       if(id == 14)
         {
          GLOBAL_exchange = "Digitex";
-         return(".dig");
+         return(EXCHANGE_DIGITEX);
         }
       if(id == 15)
         {
-         GLOBAL_exchange = "Huobia";
-         return(".huo");
+         GLOBAL_exchange = "Huobi";
+         return(EXCHANGE_HUOBI);
         }
       if(id == 16)
         {
          GLOBAL_exchange = "Phemex";
-         return(".phe");
+         return(EXCHANGE_PHEMEX);
         }
       if(id == 17)
         {
          GLOBAL_exchange = "ZBG";
-         return(".zbg");
+         return(EXCHANGE_ZBG);
         }
       if(id == 18)
         {
          GLOBAL_exchange = "Kraken";
-         return(".kra");
+         return(EXCHANGE_KRAKEN);
         }
       if(id == 19)
         {
          GLOBAL_exchange = "KucoinFutures";
-         return(".kuf");
+         return(EXCHANGE_KUCOIN_FUTURES);
         }
 
       if(id == 20)
         {
          GLOBAL_exchange = "BTSE";
-         return(".bts");
+         return(EXCHANGE_BTSE);
         }
 
       if(id == 21)
         {
-         GLOBAL_exchange = "BinanceFuturesC";
-         return(".bnd");
+         GLOBAL_exchange = "BinanceFuturesCoin";
+         return(EXCHANGE_BINANCE_FUTURES_COIN);
         }
 
 
       if(id == 25)
         {
          GLOBAL_exchange = "Gemini";
-         return(".gem");
+         return(EXCHANGE_GEMINI);
         }
+      // TEST NETS
       if(id == 26)
         {
          GLOBAL_exchange = "BinanceFutures";
@@ -396,30 +404,38 @@ string GetExchangeSuffixFromExchangeID(string suffix, int id)
       if(id == 28)
         {
          GLOBAL_exchange = "Ascendex";
-         return(".asc");
+         return(EXCHANGE_ASCENDEX);
         }
       if(id == 29)
         {
-         GLOBAL_exchange = "Bithumb";
-         return(".hum");
+         GLOBAL_exchange = "Bithumb";// Bithumb.global : scam exchange
+         return(EXCHANGE_BITHUMB);
         }
       if(id == 30)
         {
          GLOBAL_exchange = "Mexc";
-         return(".mxc");
+         return(EXCHANGE_MEXC);
         }
       //bybit spot
       if(id == 31)
         {
          GLOBAL_exchange = "Bybit";
-         return(".byb");
+         return(EXCHANGE_BYBIT);
         }
-
-      //bybit spot
       if(id == 32)
         {
          GLOBAL_exchange = "Aevo";
-         return(".avo");
+         return(EXCHANGE_AEVO);
+        }
+      if(id == 33)
+        {
+         GLOBAL_exchange = "Blofin";
+         return(EXCHANGE_BLOFIN);
+        }
+      if(id == 34)
+        {
+         GLOBAL_exchange = "PhemexFutures";
+         return(EXCHANGE_PHEMEX_FUTURES);
         }
      }
    return(suffix);
@@ -435,111 +451,112 @@ inverse markets suffix : byi
 */
 int GetExchangeIDFromChartSuffix(string id)
   {
-   if(id == ".bnx")
+   if(id == EXCHANGE_BINANCE_DEX)
      {
       return(0);
      }
-   if(id == ".bnc")
+   if(id == EXCHANGE_BINANCE)
      {
       return(1);
      }
-   if(id == ".byi")// Inverse
+   if(id == EXCHANGE_BYBIT_INVERSE)// Inverse
      {
       return(2);
      }
-   if(id == ".byl")// linear bybit usdt
+   if(id == EXCHANGE_BYBIT_LINEAR)// linear bybit usdt
      {
       return(2);
      }
-   if(id == ".byb")// bybit spot
+   if(id == EXCHANGE_BYBIT)// bybit spot
      {
       return(2);
      }
-   if(id == ".byo") // bybit options
+   if(id == EXCHANGE_BYBIT_OPTIONS) // bybit options
      {
       return(2);
      }
-   if(id == ".mex")
+   if(id == EXCHANGE_BITMEX)
      {
       return(3);
      }
-   if(id == ".kuc")
+   if(id == EXCHANGE_KUCOIN)
      {
       return(4);
      }
-   if(id == ".bnf")
+   if(id == EXCHANGE_BINANCE_FUTURES)
      {
       return(5);
      }
-   if(id == ".bnu")
+   if(id == EXCHANGE_BINANCE_US)
      {
       return(6);
      }
-   if(id == ".der")
+   if(id == EXCHANGE_DERIBIT)
      {
       return(7);
      }
-   if(id == ".okx")
+   if(id == EXCHANGE_OKEX)
      {
       return(8);
      }
-   if(id == ".cbs")
+   if(id == EXCHANGE_COINBASE)
      {
       return(9);
      }
-   if(id == ".btf")
+   if(id == EXCHANGE_BITFINEX)
      {
       return(10);
      }
-   if(id == ".bsp")
+   if(id == EXCHANGE_BITSTAMP)
      {
       return(11);
      }
-   if(id == ".ftx")
+   if(id == EXCHANGE_FTX)
      {
       return(12);
      }
-   if(id == ".sat")
+   if(id == EXCHANGE_SATANG)
      {
       return(13);
      }
-   if(id == ".dig")
+   if(id == EXCHANGE_DIGITEX)
      {
       return(14);
      }
-   if(id == ".huo")
+   if(id == EXCHANGE_HUOBI)
      {
       return(15);
      }
-   if(id == ".phe")
+   if(id == EXCHANGE_PHEMEX)
      {
       return(16);
      }
-   if(id == ".zbg")
+   if(id == EXCHANGE_ZBG)
      {
       return(17);
      }
-   if(id == ".kra")
+   if(id == EXCHANGE_KRAKEN)
      {
       return(18);
      }
-   if(id == ".kuf")
+   if(id == EXCHANGE_KUCOIN_FUTURES)
      {
       return(19);
      }
-   if(id == ".bts")
+   if(id == EXCHANGE_BTSE)
      {
       return(20);
      }
-   if(id == ".bnd")//binance futures coin
+   if(id == EXCHANGE_BINANCE_FUTURES_COIN)//binance futures coin
      {
       return(21);
      }
 
-   if(id == ".gem")
+   if(id == EXCHANGE_GEMINI)
      {
       return(25);
      }
+// TESTNETS
    if(id == ".bnft") // binance futures usdt testnet
      {
       return(26);
@@ -548,25 +565,30 @@ int GetExchangeIDFromChartSuffix(string id)
      {
       return(27);
      }
-   if(id == ".asc")
+   if(id == EXCHANGE_ASCENDEX)
      {
       return(28);
      }
-   if(id == ".hum")
+   if(id == EXCHANGE_BITHUMB)
      {
       return(29);
      }
-   if(id == ".mxc")
+   if(id == EXCHANGE_MEXC)
      {
       return(30);
      }
-   if(id == ".byb")// spot
-     {
-      return(2);
-     }
-   if(id == ".avo")
+
+   if(id == EXCHANGE_AEVO)
      {
       return(32);
+     }
+   if(id == EXCHANGE_BLOFIN)
+     {
+      return(33);
+     }
+   if(id == EXCHANGE_PHEMEX_FUTURES)
+     {
+      return(34);
      }
    return(-1);
   }

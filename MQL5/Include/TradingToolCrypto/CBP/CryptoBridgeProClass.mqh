@@ -5,33 +5,12 @@
 //+------------------------------------------------------------------+
 #property copyright "Copyright 2020, TradingToolCrypto Corp."
 #property link      "https://github.com/tradingtoolcrypto"
-#define VERSION 1.450
+#define VERSION 2.001
+/*
+   include header files
+*/
+#include <TradingToolCrypto\CBP\ExchangeList.mqh>
 
-#import "CBP_Functions.ex5"
-string RemoveSymbolSeperator(string symbolname, string seperator);
-int GetOrderNumberFromLineName(string linename);
-string GetVolumeFromLineName(string linename);
-string GetSideFromLineName(string linename);
-string GetTypeFromLineName(string linename);
-string GetObjectDesc(int what_order_number);
-void DeleteOjectLinesByName(string linedesc);
-void DeleteOjectLinesByDesc(string linedesc);
-void DeleteOjectLines(string sym);
-bool CreateOrderEntryLine(string name, string text, datetime time1, double price1, datetime time2, double price2, color col, int lineWidth, int lineStyle);
-bool CreateTPLine(string name, string text, datetime time1, double price1, datetime time2, double price2, color col, int lineWidth, int lineStyle);
-bool CreateEntryLine(string name, string text, datetime time1, double price1, datetime time2, double price2, color col, int lineWidth, int lineStyle);
-void DeleteSubWindowObjectAll(long chart_id, string objectname);
-void DeleteSubWindowObjectAll(long chart_id, int window_);
-void DeleteSubWindowObjectAll(long chart_id, int window_, string prefix);
-void DeleteSubWindowObjectName(long id_order,int subWindow, string objectname);
-double GetGlobal(string ExchangeName, string body);
-void DeleteGlobalOrderName(string exchangeName, string sym, double value);
-void DeleteGlobalPrefix(string prefix);
-void SetSubWindowText(string name, string text, int x, int y, color colour, int size);
-void SetAnySubWindowText(int subWindowIndex, string name, string text, int x, int y, color colour, int size);
-void RewriteGlobals(string checkifexist, string replacewith);
-string NormalizeString(string value, int digit);
-#import
 
 #import "Bithumb_api.ex5"
 void Bithumb_Set_Instance(int id);
@@ -184,7 +163,9 @@ bool Bybit_HedgeMode(string sym, string hedgeOn_true_else_false);
 
 #import "Bitmex_api.ex5"
 bool Bitmex_GetOpenOrders(string sym, int quote_precision);
+string Bitmex_GetOpenOrders_JSON(string sym, int quote_precision);
 bool Bitmex_Positions(string sym, int quote_precision);
+string Bitmex_Positions_JSON(string sym, int quote_precision);
 bool Bitmex_Cancel_Trade(string sym, string orderId, string clientOrderId);
 bool Bitmex_Cancel_Trade_All(string sym);
 bool Bitmex_Open_Trade(string sym, string side, string orderType, string orderSize, string orderPrice, int quoteDigit, int lotDigit, string orderId);
@@ -192,6 +173,7 @@ bool Bitmex_Open_Trade_Stop(string sym, string side, string orderType, string or
 bool Bitmex_Open_Trade_StopLimit(string sym, string side, string orderType, string orderSize, string orderPrice, string stopPrice, int quoteDigit, int lotDigit, string orderId);
 bool Bitmex_Modify_Trade(string sym, string side, string orderType, string orderSize, string orderPrice, string orderId, string clientOrderId, int quoteDigit, int lotDigit);
 bool Bitmex_Balance(string sym, string quotebase);
+string Bitmex_Balance_JSON(string sym, string quotebase);
 bool Bitmex_GetPriceBest(string sym);
 bool Bitmex_GetPrice(string sym);
 bool Bitmex_GetServerTime();
@@ -292,10 +274,7 @@ bool Okex_Set_Leverage(string sym, double leverage);
 #import
 */
 
-/*
-   include header files
-*/
-#include <TradingToolCrypto\CBP\ExchangeList.mqh>
+
 /*
  Create an ENUM to have a droplist of the available exchanges within your robot's expert properties
 */
@@ -1698,7 +1677,7 @@ void CryptoBridge::Parse_Orders(string exchangeName, int order_location, int id_
    ArrayFree(exchange_ordersize);
    ArrayFree(exchange_orderindex);
    ArrayFree(exchange_orderid);
-   SetAnySubWindowText(HD_Orders_SubWindow,"sub_orders_text_"+HD_Orders_SubWindow, "Orders", order_location, 0, Gray, HD_Text);
+   SetAnySubWindowText(HD_Orders_SubWindow,"sub_orders_text_"+HD_Orders_SubWindow, "Orders", order_location, 0, Gray, HD_Text,0);
    datetime bar_close = iTime(NULL, PERIOD_CURRENT, 0);
    int total = GlobalVariablesTotal();
    int counterD = 0;
@@ -1860,7 +1839,7 @@ void CryptoBridge::Parse_Wallets(string exchangeName, int x, int y)
    ArrayFree(exchange_wallets_pnl);
 
    DeleteSubWindowObjectAll(0,HD_Wallet_SubWindow,"sub_wallet_" + exchangeName);
-   SetAnySubWindowText(HD_Wallet_SubWindow,"sub_wallet_" + exchangeName, exchangeName + " Wallets", x, y, Gray, HD_Text);
+   SetAnySubWindowText(HD_Wallet_SubWindow,"sub_wallet_" + exchangeName, exchangeName + " Wallets", x, y, Gray, HD_Text,0);
 
    int total = GlobalVariablesTotal();
    string name = "";
@@ -1917,7 +1896,7 @@ void CryptoBridge::Parse_Wallets(string exchangeName, int x, int y)
               {
                SetAnySubWindowText(HD_Wallet_SubWindow,"sub_wallet_" + exchangeName + "_" + IntegerToString(i), exchange_wallets[i] + " " + DoubleToString(exchange_wallets_balance[i], 8) +
                                    " MARGIN " + DoubleToString(exchange_wallets_freemargin[i], 8) +
-                                   " PNL " + DoubleToString(exchange_wallets_pnl[i], 8), x, (y + 20+HD_Text) + (24 * i), Green, HD_Text);
+                                   " PNL " + DoubleToString(exchange_wallets_pnl[i], 8), x, (y + 20+HD_Text) + (24 * i), Green, HD_Text, 0);
 
 
               }
@@ -1925,7 +1904,7 @@ void CryptoBridge::Parse_Wallets(string exchangeName, int x, int y)
               {
                SetAnySubWindowText(HD_Wallet_SubWindow,"sub_wallet_" + exchangeName + "_" + IntegerToString(i), exchange_wallets[i] + " " + DoubleToString(exchange_wallets_balance[i], 8) +
                                    " MARGIN " + DoubleToString(exchange_wallets_freemargin[i], 8) +
-                                   " PNL " + DoubleToString(exchange_wallets_pnl[i], 8), x, (y + 16) + (20 * i), Green, HD_Text);
+                                   " PNL " + DoubleToString(exchange_wallets_pnl[i], 8), x, (y + 16) + (20 * i), Green, HD_Text, 0);
               }
            }
         }

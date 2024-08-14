@@ -1,8 +1,5 @@
 /*
 
-Give your current robot the ability to trade at crypto exchanges using the same logic. 
-This library allows your robot to operate as normally while trading your crypto account through api.
-
  - How to use the OrderSendClass with your current robots
  -- add InitCBP(); within the OnInit function to load your apik keys into the CryptoBridgeProClass
  -- OnInit(){ InitCBP(); }
@@ -24,14 +21,14 @@ This library allows your robot to operate as normally while trading your crypto 
  Notes
  - What are requests
  https://www.mql5.com/en/docs/constants/tradingconstants/enum_trade_request_actions
- 
- v- 1.02 
+
+ v- 1.02
  - if the position is closed ( find the SL and TP orders and delete them) ==> Checking the OnTransactions()
 
 */
 
 #include <TradingToolCrypto\CBP\CryptoBridgeProClass.mqh>
-#property version "1.02"
+#property version "1.01"
 
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -41,7 +38,7 @@ input group "---------------ORDER SEND CLASS SETUP---------------"
 input bool OSC_SEND_TO_EXCHANGE = true;
 input bool SEND_SL = false;
 input bool SEND_TP = false;
-input group "-------------ORDER SEND CLASS END SETUP-------------" 
+input group "-------------ORDER SEND CLASS END SETUP-------------"
 
 CryptoBridge bridge;
 
@@ -148,19 +145,20 @@ bool OrderSendCBP(const MqlTradeRequest &m_request, MqlTradeResult &m_result)
      {
       Print("TRADE_ACTION_REMOVE" + " | Type: " + type);
       //bridge.Cancel_Trade_All(Exchange_Symbol_Name, Exchange_Number);
-    
+
       string ord = m_result.order + "op";
       string ord_tp = m_result.order + "tp";
       string ord_sl = m_result.order + "sl";
-      
-      if(bridge.Cancel_Trade(Exchange_Symbol_Name,0,Exchange_Number,0,ord)){
-      
+
+      if(bridge.Cancel_Trade(Exchange_Symbol_Name,0,Exchange_Number,0,ord))
+        {
+
          Sleep(Exchange_RateLimiter);
          bridge.Cancel_Trade(Exchange_Symbol_Name,0,Exchange_Number,0,ord_tp);
          Sleep(Exchange_RateLimiter);
          bridge.Cancel_Trade(Exchange_Symbol_Name,0,Exchange_Number,0,ord_sl);
-      
-      }
+
+        }
      }
 
    if(m_request.action == TRADE_ACTION_DEAL)
@@ -315,7 +313,7 @@ bool OrderSendCBP(const MqlTradeRequest &m_request, MqlTradeResult &m_result)
             */
          if(m_request.tp != 0)
            {
-           //Modify_Trade(string sym, string side, string orderType, string orderSize,string orderPrice, string id, string clientId, int orderNumber,  int quoteDigit, int lotDigit,int exchangeNumber)
+            //Modify_Trade(string sym, string side, string orderType, string orderSize,string orderPrice, string id, string clientId, int orderNumber,  int quoteDigit, int lotDigit,int exchangeNumber)
             if(!bridge.Modify_Trade(Exchange_Symbol_Name,"SELL","LIMIT",Exchange_Lotsize,tp,"",order_id+"tp",0,Exchange_Quote_Precision,Exchange_Lot_Precision,Exchange_Number))
               {
                bridge.Open_Trade(Exchange_Symbol_Name, "SELL", "LIMIT", Exchange_Lotsize, tp, Exchange_Quote_Precision, Exchange_Lot_Precision, Exchange_Number,order_id+"tp");
@@ -393,9 +391,9 @@ string orderSide(int type)
 
    return ("ERROR");
   }
-/*
-These are the order types that the CryptoBridgePro uses as default
-*/
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
 string orderType(int type)
   {
    if(type == ORDER_TYPE_BUY)

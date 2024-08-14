@@ -81,7 +81,7 @@ public:
    double            position_avg_price_buy;
    double            position_volume_sell;
    double            position_volume_buy;
-
+   //Designed initially for perps/futures trading with usd or btc as  the base currency: however spot trading :
    bool              balance(string baseCurrency, int x_axis, int y_axis);
    double            balanceBaseCurrency;
    double            balanceMargin;
