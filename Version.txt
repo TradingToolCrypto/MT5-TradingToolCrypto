@@ -26,3 +26,5 @@ inverse, spot, linear markets
 Mar 27, 2024 - CB_ChartAll v1.342 : binance spot fixed 
 Aug 1, 2024 - Pro and Elite packages , new paymentbot, scripts to manage charts, Historical_Input_Date_Quick 100x faster, Bar_Price replaces Chart_Symbol
 Aug 4, 2024 - Loop M1 Charts script 
+Aug 16, 2024 - Build 4484 (previous build pre June may experience EX5 load error: Please update MT5)
+Sept 8, 2024 - TTC_KEY recompile for newier build
