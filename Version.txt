@@ -28,3 +28,4 @@ Aug 1, 2024 - Pro and Elite packages , new paymentbot, scripts to manage charts,
 Aug 4, 2024 - Loop M1 Charts script 
 Aug 16, 2024 - Build 4484 (previous build pre June may experience EX5 load error: Please update MT5)
 Sept 8, 2024 - TTC_KEY recompile for newier build
+Oct 25, 2024 - Create/Check Invoice as a script with open browser for online shopping cart
